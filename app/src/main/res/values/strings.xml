@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CatchMind</string>
+    <item type="id" name="recycle" />
+    <item type="id" name="conversation" />
+    <item type="id" name="userId" />
+    <item type="id" name="nickname" />
+    <item type="id" name="profile" />
+</resources>

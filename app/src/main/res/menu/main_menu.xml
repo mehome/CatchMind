@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_align"
+        android:orderInCategory="2"
+        android:icon="@drawable/align_icon"
+        android:title="align"
+        app:showAsAction="always" >
+
+        <menu>
+            <item
+                android:id="@+id/first"
+                android:title="11111" />
+
+            <item
+                android:id="@+id/second"
+                android:title="222222" />
+        </menu>
+
+    </item>
+
+    <item android:id="@+id/action_search"
+        android:icon="@drawable/search_icon"
+        android:title="search"
+        app:showAsAction="ifRoom|withText"/>
+
+</menu>
+

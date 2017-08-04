@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="회원가입"
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"/>
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:id="@+id/userIdInput_signup"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:hint="아이디"
+        android:layout_marginTop="130dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="아이디 중복확인"
+        android:textSize="12sp"
+        android:id="@+id/idCheck"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_below="@+id/userIdInput_signup"
+        android:onClick="idCheck"
+        />
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:id="@+id/passwordInput_signup"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:inputType="textPassword"
+        android:hint="비밀번호"
+        android:layout_below="@+id/idCheck" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="비밀번호는 숫자와 영문조합의 8~12자리여야 합니다"
+        android:textSize="12sp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_below="@+id/passwordInput_signup"
+        android:id="@+id/passwordTxt"/>
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:id="@+id/passwordInput_signup_check"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:inputType="textPassword"
+        android:hint="비밀번호확인"
+        android:layout_below="@+id/passwordTxt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_below="@+id/passwordInput_signup_check"
+        android:id="@+id/passwordCheckTxt"/>
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:id="@+id/nickname_signup"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:hint="닉네임"
+        android:layout_below="@+id/passwordCheckTxt" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임 중복확인"
+        android:textSize="12sp"
+        android:id="@+id/nicknameCheck"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_below="@+id/nickname_signup"
+        android:onClick="nicknameCheck"
+        />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="ID:   "
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_toStartOf="@+id/userIdInput_signup"
+        android:layout_alignBaseline="@+id/userIdInput_signup" />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="PASSWORD:   "
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_toStartOf="@+id/passwordInput_signup"
+        android:layout_alignBaseline="@+id/passwordInput_signup" />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="PASSWORD CHECK:  "
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_toStartOf="@+id/passwordInput_signup_check"
+        android:layout_alignBaseline="@+id/passwordInput_signup_check" />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="NICKNAME:   "
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_toStartOf="@+id/nickname_signup"
+        android:layout_alignBaseline="@+id/nickname_signup"
+        android:id="@+id/sNickname_signup"/>
+
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:text="취소"
+        android:textSize="20sp"
+        android:id="@+id/cancelButton"
+        android:textAllCaps="false"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/nicknameCheck"
+        android:layout_alignStart="@+id/sNickname_signup"
+        android:onClick="cancel"/>
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:text="가입완료"
+        android:textSize="20sp"
+        android:id="@+id/signUpCompleteButton"
+        android:textAllCaps="false"
+        android:layout_alignTop="@+id/cancelButton"
+        android:layout_alignEnd="@+id/nickname_signup"
+        android:onClick="complete"/>
+
+</RelativeLayout>
+
