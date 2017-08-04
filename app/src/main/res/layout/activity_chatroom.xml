@@ -28,7 +28,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#2F4F4F"
+        android:background="#FFFFFF"
         android:layout_below="@id/pagerChatRoom"
         android:layout_weight="1">
         <ImageButton
@@ -47,7 +47,7 @@
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/plus_btn"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginStart="5dp" />
 
         <Button
             android:id="@+id/button1"

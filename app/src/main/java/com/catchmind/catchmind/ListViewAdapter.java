@@ -143,10 +143,14 @@ public class ListViewAdapter extends BaseAdapter {
                     userId = FlistViewItemList.get(position-3).getId();
                     nickname = FlistViewItemList.get(position-3).getName();
                     profile = FlistViewItemList.get(position-3).getProfile();
-                    Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
-                            .error(R.drawable.default_profile_image)
-                            .signature(new StringSignature(profile))
-                            .into(viewHolder.icon);
+                    if(profile.equals("none")){
+                        viewHolder.icon.setImageResource(R.drawable.default_profile_image);
+                    }else {
+                        Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                                .error(R.drawable.default_profile_image)
+                                .signature(new StringSignature(profile))
+                                .into(viewHolder.icon);
+                    }
 
                 } else if (position == (3 + FlistSize)) {
                     viewHolder.sectionTxt.setText("친구");
@@ -161,10 +165,16 @@ public class ListViewAdapter extends BaseAdapter {
                     userId = listViewItemList.get(position-4-FlistSize).getId();
                     nickname = listViewItemList.get(position-4-FlistSize).getName();
                     profile = listViewItemList.get(position-4-FlistSize).getProfile();
-                    Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
-                            .error(R.drawable.default_profile_image)
-                            .signature(new StringSignature(profile))
-                            .into(viewHolder.icon);
+                    if(profile.equals("none")){
+                        viewHolder.icon.setImageResource(R.drawable.default_profile_image);
+                        Log.d("여긴데3",userId);
+                    }else {
+                        Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                                .error(R.drawable.default_profile_image)
+                                .signature(new StringSignature(profile))
+                                .into(viewHolder.icon);
+                        Log.d("여긴데4",userId);
+                    }
                 }
 
 
@@ -174,8 +184,10 @@ public class ListViewAdapter extends BaseAdapter {
                     viewHolder.sectionTxt.setText("친구");
                     viewHolder.section.setVisibility(View.VISIBLE);
                     viewHolder.profile_container.setVisibility(View.GONE);
+                    Log.d("여긴데친구",userId);
 
                 } else {
+
                     viewHolder.name.setText(listViewItemList.get(position - 3).getName());
                     viewHolder.message.setText(listViewItemList.get(position - 3).getMessage());
                     viewHolder.section.setVisibility(View.GONE);
@@ -183,10 +195,18 @@ public class ListViewAdapter extends BaseAdapter {
                     userId = listViewItemList.get(position-3).getId();
                     nickname = listViewItemList.get(position-3).getName();
                     profile = listViewItemList.get(position-3).getProfile();
-                    Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
-                            .error(R.drawable.default_profile_image)
-                            .signature(new StringSignature(profile))
-                            .into(viewHolder.icon);
+
+                    if(profile.equals("none")){
+                        viewHolder.icon.setImageResource(R.drawable.default_profile_image);
+                        Log.d("여긴데1",userId);
+                    }else {
+                        Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                                .error(R.drawable.default_profile_image)
+                                .signature(new StringSignature(profile))
+                                .into(viewHolder.icon);
+                        Log.d("여긴데2",userId);
+                    }
+
                 }
 
             }
@@ -213,6 +233,13 @@ public class ListViewAdapter extends BaseAdapter {
     public Object getItem(int position) {
         return listViewItemList.get(position) ;
     }
+
+
+    public void ChangeList(ArrayList<ListViewItem> FListData, ArrayList<ListViewItem> ListData){
+        this.FlistViewItemList = FListData;
+        this.listViewItemList = ListData;
+    }
+
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
 //    public void addItem(String id,Drawable icon, String name, String message) {

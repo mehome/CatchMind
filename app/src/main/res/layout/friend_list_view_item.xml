@@ -52,20 +52,36 @@
             android:layout_marginStart="10dp"/>
 
 
-        <TextView
-            android:layout_width="100dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Message"
-            android:id="@+id/textView2"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:textAlignment="gravity"
             android:layout_gravity="center_vertical"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"/>
+            android:layout_marginEnd="10dp">
 
-        </RelativeLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/friendBookmark"
+                android:text="즐겨찾기"
+                android:textSize="15sp"
+                android:textAlignment="gravity"
+                android:layout_gravity="center_vertical"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/friendDelete"
+                android:text="삭제"
+                android:textSize="15sp"
+                android:textAlignment="gravity"
+                android:layout_gravity="center_vertical"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </LinearLayout>

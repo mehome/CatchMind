@@ -30,9 +30,19 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".EditFriendActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AddFriendActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <provider android:name="android.support.v4.content.FileProvider" android:exported="false" android:grantUriPermissions="true" android:authorities="${applicationId}.provider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
         </provider>
+
+        <service android:name=".ChatService">
+
+        </service>
+
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>

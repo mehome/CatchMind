@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -41,6 +42,8 @@ public class LoginActivity extends AppCompatActivity{
     public MyDatabaseOpenHelper db;
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
+    public CheckBox autoLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -49,6 +52,7 @@ public class LoginActivity extends AppCompatActivity{
 
         userId = (EditText) findViewById(R.id.userIdInput);
         password = (EditText) findViewById(R.id.passwordInput);
+        autoLogin = (CheckBox) findViewById(R.id.autoLogin);
 
         sUserId = userId.getText().toString();
         sPassword = password.getText().toString();
@@ -64,10 +68,20 @@ public class LoginActivity extends AppCompatActivity{
         }
 
 
+        if(mPref.getBoolean("autoLogin",false) == true){
+
+            sUserId = mPref.getString("autoLoginId","");
+            sPassword = mPref.getString("autoLoginPassword","");
+
+            loginAT LAT = new loginAT();
+            LAT.execute();
+        }
+
     }
 
 
     public void login(View view) {
+
 
         sUserId = userId.getText().toString();
         sPassword = password.getText().toString();
@@ -105,6 +119,7 @@ public class LoginActivity extends AppCompatActivity{
 
         @Override
         protected String doInBackground(Void... unused) {
+
 
             try{
                 Thread.sleep(1000);
@@ -181,8 +196,12 @@ public class LoginActivity extends AppCompatActivity{
                 db = new MyDatabaseOpenHelper(this, "catchMind", null, 1);
 
 
-                db.clear();
+                db.clearFriendList();
                 db.createTable();
+                db.createMessageData(sUserId);
+//                db.insertMessageData(sUserId,"thdwndrl","안녕중기야","오후 5시20분",1);
+//                db.insertMessageData(sUserId,"qkrqhdud","안녕보영아","오후 5시20분",1);
+
 
                 Log.d("형태db",db.toString());
                 Log.d("형태디비",db.getDatabaseName());
@@ -216,6 +235,17 @@ public class LoginActivity extends AppCompatActivity{
                     }
                 }
 
+
+                if(autoLogin.isChecked()){
+                    editor.putBoolean("autoLogin",true);
+                    editor.putString("autoLoginId",sUserId);
+                    editor.putString("autoLoginPassword",sPassword);
+
+                    editor.commit();
+                }
+
+                Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
+                startService(serviceIntent);
 
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);

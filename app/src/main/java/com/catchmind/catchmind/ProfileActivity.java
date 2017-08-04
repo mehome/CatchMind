@@ -1,6 +1,7 @@
 package com.catchmind.catchmind;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,11 +65,13 @@ public class ProfileActivity extends AppCompatActivity {
     public TextView profileTitle;
     public Button profilebtn;
     public Button talkbtn;
+    public Button defaultbtn;
     public ImageView profileIV;
     public Bitmap photo;
     public File sourceFile ;
     public FileOutputStream fOut;
     Bitmap out;
+
 
     public String userId;
 
@@ -79,10 +83,12 @@ public class ProfileActivity extends AppCompatActivity {
         profileIV = (ImageView)findViewById(R.id.ProfileImage);
         profilebtn = (Button)findViewById(R.id.profilebtn);
         talkbtn = (Button)findViewById(R.id.talkbtn);
+        defaultbtn = (Button)findViewById(R.id.profileDefaultImageBtn);
         Intent intent = getIntent();
         int position = intent.getIntExtra("position",0);
         if(position == 1){
             profilebtn.setVisibility(View.VISIBLE);
+            defaultbtn.setVisibility(View.VISIBLE);
             talkbtn.setVisibility(View.GONE);
         }
         String nickname = intent.getStringExtra("nickname");
@@ -90,17 +96,32 @@ public class ProfileActivity extends AppCompatActivity {
         String profile = intent.getStringExtra("profile");
         profileTitle.setText(nickname+"님의 프로필");
         if(position ==1){
-            Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
-                    .error(R.drawable.default_profile_image)
-                    .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-                    .into(profileIV);
+            if(profile.equals("none")){
+                profileIV.setImageResource(R.drawable.default_profile_image);
+            }else {
+                Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                        .error(R.drawable.default_profile_image)
+                        .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                        .into(profileIV);
+            }
         }else {
-            Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
-                    .error(R.drawable.default_profile_image)
-                    .signature(new StringSignature(profile))
-                    .into(profileIV);
+            Toast.makeText(this,profile,Toast.LENGTH_SHORT).show();
+            if(profile.equals("none")){
+                profileIV.setImageResource(R.drawable.default_profile_image);
+            }else {
+                Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                        .error(R.drawable.default_profile_image)
+                        .signature(new StringSignature(profile))
+                        .into(profileIV);
+            }
         }
         profileIV.setBackgroundResource(R.drawable.profile_border);
+    }
+
+    public void imageDefault(View v){
+        profileIV.setImageResource(R.drawable.default_profile_image);
+        ImageDefaultThread idt = new ImageDefaultThread(userId);
+        idt.start();
     }
 
     public void imageSend(View v){
@@ -194,10 +215,6 @@ public class ProfileActivity extends AppCompatActivity {
         switch ( requestCode ){
 
             case PICK_FROM_CAMERA: {
-
-                if(data == null){
-                    return;
-                }
 
                 if(resultCode != RESULT_OK){
 
@@ -533,6 +550,58 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public class ImageDefaultThread extends Thread {
+
+        String sUserId;
+
+        public ImageDefaultThread (String userId){
+            this.sUserId = userId;
+        }
+
+        @Override
+        public void run() {
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "userId="+ sUserId;
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/defaultImage.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.d("디폴트스레드결과",data.toString());
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void talk(View v){

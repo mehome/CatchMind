@@ -34,10 +34,12 @@ public class TabFragment2 extends Fragment {
 
         ChatRoomItem[] addItem = new ChatRoomItem[10];
 
-        for(int i=0;i<10;i++){
-            addItem[i] = new ChatRoomItem("대화상대"+i,"대화내용"+i,i,"날짜"+i);
-            ListData.add(addItem[i]);
-        }
+
+        addItem[0] = new ChatRoomItem("nova","대화내용",1,"날짜");
+        ListData.add(addItem[0]);
+        addItem[1] = new ChatRoomItem("thdwndrl","대화내용",1,"날짜");
+        ListData.add(addItem[1]);
+
 
         ListView lv = (ListView) rootView.findViewById(R.id.list);
 
@@ -50,11 +52,10 @@ public class TabFragment2 extends Fragment {
                 String conversation =(String) view.getTag(R.id.conversation);
 //                Toast.makeText(getActivity().getApplicationContext(),""+position+"###"+conversation ,Toast.LENGTH_SHORT).show();
                 ChatRoomItem CRI = (ChatRoomItem) myListAdapter.getItem(position);
-                String tmpTitle = CRI.getTitle();
+                String friendId = CRI.getTitle();
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
-                intent.putExtra("tmpTitle",tmpTitle);
-
+                intent.putExtra("friendId",friendId);
                 startActivity(intent);
 
             }

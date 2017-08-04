@@ -9,12 +9,12 @@
 
         <menu>
             <item
-                android:id="@+id/first"
-                android:title="11111" />
+                android:id="@+id/add_friend"
+                android:title="친구추가" />
 
             <item
-                android:id="@+id/second"
-                android:title="222222" />
+                android:id="@+id/edit_friend"
+                android:title="친구목록편집" />
         </menu>
 
     </item>

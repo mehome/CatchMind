@@ -5,4 +5,7 @@
     <item type="id" name="userId" />
     <item type="id" name="nickname" />
     <item type="id" name="profile" />
+    <item type="id" name="bookmarkitem"/>
+    <item type="id" name="bookmarkmode"/>
+    <item type="id" name="index" />
 </resources>

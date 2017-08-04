@@ -1,8 +1,11 @@
 package com.catchmind.catchmind;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,30 +23,34 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
     ChatMessageAdapter chatListAdapter;
     ArrayList<ChatMessageItem> ListData;
+    SharedPreferences mPref;
+    SharedPreferences.Editor editor;
+
+    String userId;
+    String friendId;
+    public MyDatabaseOpenHelper db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.message_room_fragment, container, false);
 
-        ChatRoomActivity activity = (ChatRoomActivity) getActivity();
-        String Nickname = activity.getNickname();
+        userId = getArguments().getString("userId");
+        friendId = getArguments().getString("friendId");
 
         ListData = new ArrayList<ChatMessageItem>();
 
-        ChatMessageItem[] addItem = new ChatMessageItem[20];
+        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 7월 20일 목요일","무쓸모타임");
+        ListData.add(defaultItem);
 
-        addItem[0] = new ChatMessageItem(0,"무쓸모닉", "2017년 7월 20일 목요일","무쓸모타임");
-        ListData.add(addItem[0]);
+        db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
+        Cursor cursor = db.getMessageListJoinFriendList(userId,friendId);
+        while(cursor.moveToNext()) {
 
-//        for(int i=1;i<20;i++){
-//            if(i%2 == 1) {
-//                addItem[i] = new ChatMessageItem(1,Nickname,"내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용"+i,"오후 5시 2"+i+"분" );
-//            }else{
-//                addItem[i] = new ChatMessageItem(2,"무쓸모닉","내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용"+i,"오후 5시 2"+i+"분" );
-//            }
-//
-//            ListData.add(addItem[i]);
-//        }
+            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(1),cursor.getString(2));
+            ListData.add(addItem);
+
+            Log.d("커서야ChatMessageItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6)+"#####"+cursor.getString(7)+"#####"+cursor.getString(8));
+        }
 
         ListView lv = (ListView) rootView.findViewById(R.id.messageList);
 
@@ -51,23 +58,25 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         lv.setAdapter(chatListAdapter);
 
-
-
         return rootView;
+
     }
 
     @Override
-    public void passData(String name,String content,int type) {
+    public void passData(String friendId,String nickname, String profile,String content,String time,int type) {
 //        Toast.makeText(getActivity(),passdata+" 프래그먼트",Toast.LENGTH_SHORT).show();
 
         if(type == 1) {
-            ChatMessageItem addItem = new ChatMessageItem(1, name, content, "오후 5시 21분");
+            ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, time);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
         }else{
-            ChatMessageItem addItem = new ChatMessageItem(2, name, content, "오후 5시 21분");
+            ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, time);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
         }
     }
+
+
+
 }

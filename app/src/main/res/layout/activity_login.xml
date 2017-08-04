@@ -54,8 +54,8 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="아이디 저장"
-        android:id="@+id/checkBox"
+        android:text="자동 로그인"
+        android:id="@+id/autoLogin"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/signUpButton"
         android:layout_alignEnd="@+id/signUpButton"

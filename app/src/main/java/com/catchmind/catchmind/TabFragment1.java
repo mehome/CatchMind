@@ -33,6 +33,7 @@ public class TabFragment1 extends Fragment {
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
     public ListViewAdapter myListAdapter;
+    ListView lv;
 
 
     @Override
@@ -40,7 +41,7 @@ public class TabFragment1 extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.tab_fragment_1, container, false);
 
-        final ArrayList<ListViewItem> ListData = new ArrayList<ListViewItem>();
+        ArrayList<ListViewItem> ListData = new ArrayList<ListViewItem>();
         ArrayList<ListViewItem> FListData = new ArrayList<ListViewItem>();
 
 
@@ -67,7 +68,15 @@ public class TabFragment1 extends Fragment {
         }
 
 
-        ListView lv = (ListView) rootView.findViewById(R.id.list);
+//        Cursor cs = db.getMessageListJoinFriendList(myId,"thdwndrl");
+//
+//        while(cs.moveToNext()) {
+//
+//            Log.d("죽을때", cs.getString(0)+"#####"+cs.getString(1) + "#####" +cs.getString(2)+"#####"+cs.getString(3)+"#####"+cs.getString(4)+"#####"+cs.getString(5)+"#####"+cs.getString(6)+"#####"+cs.getString(7)+"#####"+cs.getString(8));
+//        }
+
+
+        lv = (ListView) rootView.findViewById(R.id.list);
 
         myListAdapter = (new ListViewAdapter(getActivity().getApplicationContext(),myItem,FListData,ListData));
 
@@ -84,7 +93,7 @@ public class TabFragment1 extends Fragment {
                     return;
                 }
 
-                Toast.makeText(getActivity().getApplicationContext(),""+position+"###"+userId,Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity().getApplicationContext(),""+position+"###"+userId,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity().getApplicationContext(),ProfileActivity.class);
                 intent.putExtra("position",position);
                 intent.putExtra("userId",userId);
@@ -101,6 +110,26 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ArrayList<ListViewItem> ListData = new ArrayList<ListViewItem>();
+        ArrayList<ListViewItem> FListData = new ArrayList<ListViewItem>();
+
+        db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
+        Cursor cursor = db.getList();
+
+        while(cursor.moveToNext()) {
+
+            ListViewItem addItem = new ListViewItem(cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3));
+            ListData.add(addItem);
+            if(cursor.getInt(4) == 1){
+                FListData.add(addItem);
+            }
+
+            Log.d("리쥼", cursor.getString(0)+"#####"+cursor.getString(1) + "" +cursor.getString(2));
+        }
+
+        myListAdapter.ChangeList(FListData,ListData);
+        myListAdapter.sizeReset();
         myListAdapter.notifyDataSetChanged();
+
     }
 }
