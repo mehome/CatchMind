@@ -1,5 +1,6 @@
 package com.catchmind.catchmind;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +21,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     public TabFragment3 tf3;
 
 
-    public TabPagerAdapter(FragmentManager fm, int tabCount, SharedPreferences SP) {
+    public TabPagerAdapter(FragmentManager fm, int tabCount, SharedPreferences SP,TabFragment1 f1,TabFragment2 f2,TabFragment3 f3) {
         super(fm);
         this.tabCount = tabCount;
         this.mPref = SP;
@@ -29,10 +30,11 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         this.bundle.putString("nickname",mPref.getString("nickname","닉없음"));
         this.bundle.putString("profile",mPref.getString("profile","수정날짜없음"));
         this.bundle.putString("message",mPref.getString("message","메세지없음"));
-        tf1 = new TabFragment1();
-        tf2 = new TabFragment2();
-        tf3 = new TabFragment3();
+        tf1 = f1;
+        tf2 = f2;
+        tf3 = f3;
         tf1.setArguments(bundle);
+        tf2.setArguments(bundle);
     }
 
     @Override

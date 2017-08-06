@@ -13,7 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ChatRoomAdapter extends BaseAdapter{
 
@@ -21,13 +26,18 @@ public class ChatRoomAdapter extends BaseAdapter{
     public ArrayList<ChatRoomItem> chatRoomList = new ArrayList<ChatRoomItem>() ;
     public Context mContext;
     public LayoutInflater inflater ;
-
+    public MyDatabaseOpenHelper db;
+    public String userId;
+    public SimpleDateFormat sdfNow ;
 
     // ListViewAdapter의 생성자
-    public ChatRoomAdapter(Context context,ArrayList<ChatRoomItem> ListData ) {
+    public ChatRoomAdapter(Context context,ArrayList<ChatRoomItem> ListData,String myId ) {
         this.mContext = context;
         this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.chatRoomList = ListData;
+        this.userId = myId;
+        this.sdfNow = new SimpleDateFormat("HH:mm");
+        db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
     }
 
     public void setChatRoomList(ArrayList<ChatRoomItem> ListData) {
@@ -55,7 +65,8 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder.title = (TextView) convertView.findViewById(R.id.chatRoomTitle);
             viewHolder.content = (TextView) convertView.findViewById(R.id.chatRoomContent);
             viewHolder.memberNum = (TextView) convertView.findViewById(R.id.chatRoomMemberNum);
-            viewHolder.date = (TextView) convertView.findViewById(R.id.chatRoomDate);
+            viewHolder.time = (TextView) convertView.findViewById(R.id.chatRoomDate);
+            viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.chatRoomImage);
 
             convertView.setTag(viewHolder);
 
@@ -63,13 +74,30 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder = (chatViewHolder) convertView.getTag();
         }
 
+        String profile = chatRoomList.get(position).getProfile();
+        String content = "";
+        long when = System.currentTimeMillis();
+
+        Cursor cursor = db.getLastRow(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
+        cursor.moveToNext();
+        content = cursor.getString(2);
+        when = cursor.getLong(3);
+
+        Date recvTime = new Date(when);
+        String time = this.sdfNow.format(recvTime);
+
 
         viewHolder.title.setText(chatRoomList.get(position).getTitle());
-        viewHolder.content.setText(chatRoomList.get(position).getContent());
+        viewHolder.content.setText(content);
+        viewHolder.time.setText(time);
         viewHolder.memberNum.setText(""+chatRoomList.get(position).getMemberNum());
-        viewHolder.date.setText(chatRoomList.get(position).getDate());
+        Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+chatRoomList.get(position).getFriendId()+".png")
+                .error(R.drawable.default_profile_image)
+                .signature(new StringSignature(profile))
+                .into(viewHolder.profileImage);
 
-        convertView.setTag(R.id.conversation,chatRoomList.get(position).getTitle());
+        convertView.setTag(R.id.userId,chatRoomList.get(position).getFriendId());
+        convertView.setTag(R.id.nickname,chatRoomList.get(position).getTitle());
 
         return convertView;
 
@@ -87,10 +115,18 @@ public class ChatRoomAdapter extends BaseAdapter{
         return chatRoomList.get(position) ;
     }
 
-    // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String title, String content, int memberNum, String date) {
-        ChatRoomItem item = new ChatRoomItem(title,content,memberNum, date);
 
-        chatRoomList.add(item);
+    public void ChangeList(ArrayList<ChatRoomItem> ListData){
+        this.chatRoomList = ListData;
     }
+
+
+
+
+    // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
+//    public void addItem(String title, String content, int memberNum, String date) {
+//        ChatRoomItem item = new ChatRoomItem(title,content,memberNum, date);
+//
+//        chatRoomList.add(item);
+//    }
 }

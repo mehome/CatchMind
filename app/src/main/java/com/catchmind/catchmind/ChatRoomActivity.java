@@ -88,17 +88,19 @@ public class ChatRoomActivity extends AppCompatActivity {
         editor = mPref.edit();
 
         userId = mPref.getString("userId","아이디없음");
-
+        Log.d("chatroomId",userId);
         Intent GI = getIntent();
 
         friendId = GI.getStringExtra("friendId");
+        Log.d("chatroomId2",friendId);
+        String nickname = GI.getStringExtra("nickname");
 
         Cursor cursor = db.getFriendData(friendId);
         cursor.moveToNext();
         friendNickname = cursor.getString(1);
         friendProfile = cursor.getString(2);
 
-        getSupportActionBar().setTitle(friendId);
+        getSupportActionBar().setTitle(nickname);
 
         // Initializing ViewPager
         viewPager = (ViewPager) findViewById(R.id.pagerChatRoom);
@@ -138,11 +140,11 @@ public class ChatRoomActivity extends AppCompatActivity {
 
                 if(msg.what == 1) {
                     String content = msg.getData().getString("content");
-                    String time = msg.getData().getString("time");
+                    long time = msg.getData().getLong("time");
                     fragmentCommunicator.passData(friendId,friendNickname,friendProfile, content, time,1);
                 }else if(msg.what ==2){
                     String content = msg.getData().getString("content");
-                    String time = msg.getData().getString("time");
+                    long time = msg.getData().getLong("time");
                     fragmentCommunicator.passData("내아아이디","내닉네임","내프로필", content, time, 2);
                 }else{
 
@@ -157,14 +159,14 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     public interface FragmentCommunicator {
 
-        void passData(String friendId, String nickname, String profile, String content, String date,int type);
+        void passData(String friendId, String nickname, String profile, String content, long time,int type);
 
     }
 
-    public void passVal(FragmentCommunicator fragmentCommunicator) {
-        this.fragmentCommunicator = fragmentCommunicator;
-
-    }
+//    public void passVal(FragmentCommunicator fragmentCommunicator) {
+//        this.fragmentCommunicator = fragmentCommunicator;
+//
+//    }
 
     private ServiceConnection mConnection = new ServiceConnection() {
         // Called when the connection with the service is established
@@ -184,14 +186,14 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private ChatService.ICallback mCallback = new ChatService.ICallback() {
 
-        public void recvData(String friendId,String content,String time) {
+        public void recvData(String friendId,String content,long time) {
 
                         Message message= Message.obtain();
                         message.what = 1;
                         Bundle bundle = new Bundle();
                         bundle.putString("friendId",friendId);
                         bundle.putString("content",content);
-                        bundle.putString("time",time);
+                        bundle.putLong("time",time);
                         message.setData(bundle);
                         handler.sendMessage(message);
 
@@ -213,22 +215,24 @@ public class ChatRoomActivity extends AppCompatActivity {
 
 
         long now = System.currentTimeMillis();
-        Date nowdate = new Date(now);
-        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
-        String time = sdfNow.format(nowdate);
+//        Date nowdate = new Date(now);
+//        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+//        String time = sdfNow.format(nowdate);
 
         String et = sendcontent.getText().toString();
+        sendcontent.setText("");
 
-        db.insertMessageData(userId,friendId,et,time,2);
+        db.insertMessageData(userId,friendId,et,now,2);
+        Log.d("sendMessage,db.insert",userId+"####"+friendId+"####"+et);
 
-        mService.sendMessage(friendId,et,time);
+        mService.sendMessage(friendId,et,now);
 
         Message message= Message.obtain();
         message.what = 2;
 
         Bundle bundle = new Bundle();
         bundle.putString("content",et);
-        bundle.putString("time",time);
+        bundle.putLong("time",now);
 
         message.setData(bundle);
 

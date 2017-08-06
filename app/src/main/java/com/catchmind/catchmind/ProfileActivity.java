@@ -74,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     public String userId;
+    public String nickname;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
             defaultbtn.setVisibility(View.VISIBLE);
             talkbtn.setVisibility(View.GONE);
         }
-        String nickname = intent.getStringExtra("nickname");
+        nickname = intent.getStringExtra("nickname");
         userId = intent.getStringExtra("userId");
         String profile = intent.getStringExtra("profile");
         profileTitle.setText(nickname+"님의 프로필");
@@ -606,8 +607,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void talk(View v){
 
+        Intent intent = new Intent();
+        intent.putExtra("friendId",userId);
+        intent.putExtra("nickname",nickname);
+        setResult(RESULT_OK, intent);
+        finish();
 
     }
+
 
 
 }

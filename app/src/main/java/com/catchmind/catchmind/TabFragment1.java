@@ -1,5 +1,7 @@
 package com.catchmind.catchmind;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +26,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class TabFragment1 extends Fragment {
@@ -99,7 +103,7 @@ public class TabFragment1 extends Fragment {
                 intent.putExtra("userId",userId);
                 intent.putExtra("nickname",nickname);
                 intent.putExtra("profile",profile);
-                startActivity(intent);
+                startActivityForResult(intent,1234);
 
             }
         });
@@ -131,5 +135,34 @@ public class TabFragment1 extends Fragment {
         myListAdapter.sizeReset();
         myListAdapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode == RESULT_OK) {
+            Toast.makeText(getContext(), requestCode + "###" + resultCode, Toast.LENGTH_SHORT).show();
+            String friendId = data.getExtras().getString("friendId");
+            String nickname = data.getExtras().getString("nickname");
+            STA.sendToActivity(friendId,nickname);
+        }
+    }
+
+    public interface sendToActivity {
+        void sendToActivity(String friendId,String nickname);
+    }
+
+    sendToActivity STA;
+
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        MainActivity MA = (MainActivity) context;
+        try {
+            STA = (sendToActivity) MA;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(MA.toString() + " must implement onSomeEventListener");
+        }
     }
 }

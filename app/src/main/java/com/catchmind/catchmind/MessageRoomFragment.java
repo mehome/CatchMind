@@ -13,7 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by sonsch94 on 2017-07-19.
@@ -43,10 +45,14 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         ListData.add(defaultItem);
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
-        Cursor cursor = db.getMessageListJoinFriendList(userId,friendId);
+        Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId);
+        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+
         while(cursor.moveToNext()) {
 
-            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(1),cursor.getString(2));
+            Date recvTime = new Date(cursor.getLong(3));
+            String time = sdfNow.format(recvTime);
+            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(4),cursor.getString(6),cursor.getString(7),cursor.getString(8),cursor.getString(2),time);
             ListData.add(addItem);
 
             Log.d("커서야ChatMessageItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6)+"#####"+cursor.getString(7)+"#####"+cursor.getString(8));
@@ -63,8 +69,12 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
     }
 
     @Override
-    public void passData(String friendId,String nickname, String profile,String content,String time,int type) {
+    public void passData(String friendId,String nickname, String profile,String content,long now,int type) {
 //        Toast.makeText(getActivity(),passdata+" 프래그먼트",Toast.LENGTH_SHORT).show();
+
+        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+        Date recvTime = new Date(now);
+        String time = sdfNow.format(recvTime);
 
         if(type == 1) {
             ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, time);

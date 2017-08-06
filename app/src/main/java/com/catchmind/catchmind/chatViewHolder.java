@@ -1,5 +1,6 @@
 package com.catchmind.catchmind;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -11,6 +12,7 @@ public class chatViewHolder {
     public TextView title;
     public TextView content;
     public TextView memberNum;
-    public TextView date;
+    public TextView time;
+    public ImageView profileImage;
 
 }

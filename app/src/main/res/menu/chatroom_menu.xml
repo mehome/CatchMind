@@ -10,12 +10,15 @@
 
         <menu>
             <item
-                android:id="@+id/add_friend"
-                android:title="친구추가" />
+                android:id="@+id/edit_chatroom"
+                android:title="편집" />
 
             <item
-                android:id="@+id/edit_friend"
-                android:title="친구목록편집" />
+                android:id="@+id/align_chatroom"
+                android:title="정렬" />
+            <item
+                android:id="@+id/aㅇㅇ_chatroom"
+                android:title="추가" />
         </menu>
 
     </item>

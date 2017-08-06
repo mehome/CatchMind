@@ -195,10 +195,15 @@ public class LoginActivity extends AppCompatActivity{
 
                 db = new MyDatabaseOpenHelper(this, "catchMind", null, 1);
 
-
+                Log.d("여긴 어떤가",sUserId);
                 db.clearFriendList();
                 db.createTable();
                 db.createMessageData(sUserId);
+                db.createChatFriendList(sUserId);
+                db.createChatRoomList(sUserId);
+
+//                db.insertChatFriendData(sUserId,0,"thdwndrl","송중기","xxx","상태메시지",1234);
+
 //                db.insertMessageData(sUserId,"thdwndrl","안녕중기야","오후 5시20분",1);
 //                db.insertMessageData(sUserId,"qkrqhdud","안녕보영아","오후 5시20분",1);
 
@@ -229,6 +234,7 @@ public class LoginActivity extends AppCompatActivity{
                         editor.putString("nickname",nickname);
                         editor.putString("profile",profile);
                         editor.putString("message",message);
+                        db.insertChatFriendData(sUserId,0,sUserId,nickname,profile,message,0);
                         editor.commit();
                     }else {
                         db.insert(friendId, nickname, profile, message, bookmark);

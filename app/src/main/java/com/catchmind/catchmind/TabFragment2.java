@@ -16,51 +16,100 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
-public class TabFragment2 extends Fragment {
+public class TabFragment2 extends Fragment implements MainActivity.FragmentCommunicator{
 
 
     ChatRoomAdapter myListAdapter;
-
+    MyDatabaseOpenHelper db;
+    String myId;
+    String myNickname;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
+        myId = getArguments().getString("userId");
+
+        myNickname = getArguments().getString("nickname");
+
+
         ArrayList<ChatRoomItem> ListData = new ArrayList<ChatRoomItem>();
 
-        ChatRoomItem[] addItem = new ChatRoomItem[10];
 
+        db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
+        Cursor cursor = db.getChatRoomListJoinChatFriendList(myId);
+//        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+//        Date recvTime = new Date(cursor.getLong(2));
+//        String time = sdfNow.format(recvTime);
 
-        addItem[0] = new ChatRoomItem("nova","대화내용",1,"날짜");
-        ListData.add(addItem[0]);
-        addItem[1] = new ChatRoomItem("thdwndrl","대화내용",1,"날짜");
-        ListData.add(addItem[1]);
+        while(cursor.moveToNext()) {
 
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),1,cursor.getString(6));
+            ListData.add(addItem);
+
+            Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6));
+        }
 
         ListView lv = (ListView) rootView.findViewById(R.id.list);
 
-        myListAdapter = new ChatRoomAdapter(getActivity().getApplicationContext(),ListData);
+        myListAdapter = new ChatRoomAdapter(getActivity().getApplicationContext(),ListData,myId);
 
         lv.setAdapter(myListAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String conversation =(String) view.getTag(R.id.conversation);
-//                Toast.makeText(getActivity().getApplicationContext(),""+position+"###"+conversation ,Toast.LENGTH_SHORT).show();
-                ChatRoomItem CRI = (ChatRoomItem) myListAdapter.getItem(position);
-                String friendId = CRI.getTitle();
+
+                String friendId = (String) view.getTag(R.id.userId);
+                String nickname = (String) view.getTag(R.id.nickname);
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
                 intent.putExtra("friendId",friendId);
+                intent.putExtra("nickname",nickname);
                 startActivity(intent);
 
             }
         });
 
         return rootView;
+    }
+
+
+    @Override
+    public void notifyRecvData(){
+        myListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void changeRoomListFC() {
+        Log.d("진짜로?",myId);
+        Cursor cursor = db.getChatRoomListJoinChatFriendList(myId);
+        ArrayList<ChatRoomItem> ListData = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),1,cursor.getString(6));
+            ListData.add(addItem);
+
+            Log.d("커서야ChatRoomItem","changeRoomListFC");
+        }
+
+        myListAdapter.ChangeList(ListData);
+        myListAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void startChatRoomActivity(String friendId,String nickname) {
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
+        intent.putExtra("friendId",friendId);
+        intent.putExtra("nickname",nickname);
+        startActivity(intent);
     }
 }

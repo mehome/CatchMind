@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
+
 import java.util.ArrayList;
 
 /**
@@ -97,6 +100,12 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftText.setVisibility(View.GONE);
             viewHolder.rightText.setVisibility(View.VISIBLE);
+            userId = chatMessageList.get(position).getUserId();
+            profile = chatMessageList.get(position).getProfile();
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
+                    .error(R.drawable.default_profile_image)
+                    .signature(new StringSignature(profile))
+                    .into(viewHolder.profileImage);
 
 
         }else if(chatMessageList.get(position).Type == 2){
@@ -112,6 +121,12 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftText.setVisibility(View.VISIBLE);
             viewHolder.rightText.setVisibility(View.GONE);
+            userId = chatMessageList.get(position).getUserId();
+            profile = chatMessageList.get(position).getProfile();
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
+                    .error(R.drawable.default_profile_image)
+                    .signature(new StringSignature(profile))
+                    .into(viewHolder.profileImage);
 
 
         }

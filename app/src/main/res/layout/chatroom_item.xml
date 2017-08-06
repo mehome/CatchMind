@@ -56,7 +56,8 @@ android:layout_height="70dp"   >
         android:layout_toEndOf="@+id/chatRoomTitle"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
-        android:background="#e2e0dc"/>
+        android:background="#e2e0dc"
+        android:visibility="gone"/>
 
     <TextView
         android:layout_width="50dp"
