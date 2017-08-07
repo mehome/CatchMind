@@ -8,21 +8,34 @@
 
     <!--Custom Toolbar-->
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbarEditFriend"
+        android:id="@+id/toolbarInviteFriend"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="#703800"
-        android:theme="@style/AppTheme.NoActionBar" />
+        android:theme="@style/AppTheme.NoActionBar">
+
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:id="@+id/groupNum"
+            android:textColor="#FFFF00"
+            android:text="0"
+            android:textSize="16sp"
+            android:layout_marginStart="2dp"
+            android:gravity="center_vertical"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <SearchView android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-        android:id="@+id/searchView"
+        android:id="@+id/searchView_makeGroup"
         android:elevation="2dp"/>
 
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/editFriendList"
+        android:id="@+id/inviteFriendList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">

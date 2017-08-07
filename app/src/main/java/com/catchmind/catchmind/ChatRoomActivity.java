@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,6 +68,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     public SharedPreferences.Editor editor;
     String userId;
     public MyDatabaseOpenHelper db;
+    public int no;
 
 
     @Override
@@ -92,6 +94,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         Intent GI = getIntent();
 
         friendId = GI.getStringExtra("friendId");
+        no = GI.getIntExtra("no",0);
         Log.d("chatroomId2",friendId);
         String nickname = GI.getStringExtra("nickname");
 
@@ -101,6 +104,8 @@ public class ChatRoomActivity extends AppCompatActivity {
         friendProfile = cursor.getString(2);
 
         getSupportActionBar().setTitle(nickname);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Initializing ViewPager
         viewPager = (ViewPager) findViewById(R.id.pagerChatRoom);
@@ -109,7 +114,8 @@ public class ChatRoomActivity extends AppCompatActivity {
         fragmentCommunicator = (FragmentCommunicator) mf;
         ChatRoomPagerAdapter pagerAdapter = new ChatRoomPagerAdapter(getSupportFragmentManager(),mf,df,mPref,friendId);
 
-
+        db.initailizeChatRoomUnRead(userId,no,friendId);
+        Log.d("chatRoomActivity",userId+"###"+no+"###"+friendId);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -175,6 +181,9 @@ public class ChatRoomActivity extends AppCompatActivity {
             mService = binder.getService(); //서비스 받아옴
             mService.registerCallback(mCallback); //콜백 등록
             mService.boundCheck = true;
+            mService.boundedNo = no;
+            mService.boundedFriendId = friendId;
+
         }
 
         // Called when the connection with the service disconnects unexpectedly
@@ -204,6 +213,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mService.boundCheck = false;
+        mService.boundedNo = -1;
+        mService.boundedFriendId ="";
         unbindService(mConnection);
     }
 
@@ -222,10 +233,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         String et = sendcontent.getText().toString();
         sendcontent.setText("");
 
-        db.insertMessageData(userId,friendId,et,now,2);
+        db.insertMessageData(userId,no,friendId,et,now,2,true);
         Log.d("sendMessage,db.insert",userId+"####"+friendId+"####"+et);
 
-        mService.sendMessage(friendId,et,now);
+        mService.sendMessage(no,friendId,et,now);
 
         Message message= Message.obtain();
         message.what = 2;
@@ -245,7 +256,15 @@ public class ChatRoomActivity extends AppCompatActivity {
         return userId;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
 
+        return super.onOptionsItemSelected(item);
+    }
 
 
 

@@ -23,7 +23,7 @@
         android:id="@+id/pagerChatRoom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="10"/>
+        android:layout_weight="100"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"

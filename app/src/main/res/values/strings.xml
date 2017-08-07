@@ -8,4 +8,6 @@
     <item type="id" name="bookmarkitem"/>
     <item type="id" name="bookmarkmode"/>
     <item type="id" name="index" />
+    <item type="id" name="no" />
+    <item type="id" name="checkIcon" />
 </resources>

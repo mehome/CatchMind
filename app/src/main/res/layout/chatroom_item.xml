@@ -60,17 +60,31 @@ android:layout_height="70dp"   >
         android:visibility="gone"/>
 
     <TextView
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:text="오전 12:56"
+        android:text="12:56"
         android:id="@+id/chatRoomDate"
         android:textSize="12sp"
         android:textColor="#666666"
-        android:textAlignment="gravity"
+        android:textAlignment="center"
         android:layout_gravity="center_vertical"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="3"
+        android:id="@+id/unRead"
+        android:textSize="14sp"
+        android:textColor="#0000FF"
+        android:textAlignment="center"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

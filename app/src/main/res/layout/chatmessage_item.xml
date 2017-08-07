@@ -33,7 +33,8 @@
             android:layout_weight="1"
             android:background="#89cbed"
             android:text="nickname"
-            android:textSize="13sp"/>
+            android:textSize="13sp"
+            android:textColor="#000000" />
 
         <LinearLayout
             android:id="@+id/textLayout"
@@ -50,7 +51,8 @@
                 android:layout_weight="300"
                 android:background="#89cbed"
                 android:textSize="10sp"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:textColor="#000000" />
 
 
 
@@ -76,7 +78,8 @@
                 android:layout_weight="300"
                 android:background="#89cbed"
                 android:textSize="10sp"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:textColor="#000000" />
 
         </LinearLayout>
 

@@ -50,9 +50,9 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         while(cursor.moveToNext()) {
 
-            Date recvTime = new Date(cursor.getLong(3));
+            Date recvTime = new Date(cursor.getLong(4));
             String time = sdfNow.format(recvTime);
-            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(4),cursor.getString(6),cursor.getString(7),cursor.getString(8),cursor.getString(2),time);
+            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(5),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(3),time);
             ListData.add(addItem);
 
             Log.d("커서야ChatMessageItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6)+"#####"+cursor.getString(7)+"#####"+cursor.getString(8));

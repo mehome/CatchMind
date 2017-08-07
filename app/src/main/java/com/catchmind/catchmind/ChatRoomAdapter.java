@@ -67,6 +67,7 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder.memberNum = (TextView) convertView.findViewById(R.id.chatRoomMemberNum);
             viewHolder.time = (TextView) convertView.findViewById(R.id.chatRoomDate);
             viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.chatRoomImage);
+            viewHolder.unRead = (TextView) convertView.findViewById(R.id.unRead);
 
             convertView.setTag(viewHolder);
 
@@ -77,11 +78,20 @@ public class ChatRoomAdapter extends BaseAdapter{
         String profile = chatRoomList.get(position).getProfile();
         String content = "";
         long when = System.currentTimeMillis();
+        int no = 0;
 
-        Cursor cursor = db.getLastRow(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
+        Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
         cursor.moveToNext();
-        content = cursor.getString(2);
-        when = cursor.getLong(3);
+        content = cursor.getString(3);
+        when = cursor.getLong(4);
+        no = cursor.getInt(8);
+        Log.d("unRead",no+"");
+        if(no==0){
+            viewHolder.unRead.setVisibility(View.INVISIBLE);
+        }else{
+            viewHolder.unRead.setVisibility(View.VISIBLE);
+            viewHolder.unRead.setText(no+"");
+        }
 
         Date recvTime = new Date(when);
         String time = this.sdfNow.format(recvTime);
@@ -98,6 +108,7 @@ public class ChatRoomAdapter extends BaseAdapter{
 
         convertView.setTag(R.id.userId,chatRoomList.get(position).getFriendId());
         convertView.setTag(R.id.nickname,chatRoomList.get(position).getTitle());
+        convertView.setTag(R.id.no,chatRoomList.get(position).getNo());
 
         return convertView;
 

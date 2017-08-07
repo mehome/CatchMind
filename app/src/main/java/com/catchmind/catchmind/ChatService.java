@@ -46,6 +46,8 @@ public class ChatService extends Service {
     public boolean boundCheck;
     public boolean boundCheck_2;
     public ArrayList<String> chatFriendList = new ArrayList<>();
+    public int boundedNo;
+    public String boundedFriendId;
 
 
     public class ChatServiceBinder extends Binder {
@@ -144,8 +146,8 @@ public class ChatService extends Service {
     }
 
     //액티비티에서 서비스 함수를 호출하기 위한 함수 생성
-    public void sendMessage(String friendId, String content, long time){
-        SendThread st = new SendThread(socket,friendId, content, time);
+    public void sendMessage(int no,String friendId, String content, long time){
+        SendThread st = new SendThread(socket,no,friendId, content, time);
         st.start();
     }
 
@@ -244,12 +246,14 @@ public class ChatService extends Service {
                             return;
                         }
 
+                        int no = 0;
                         String friendId = null;
                         String content = null;
                         long time = 0 ;
 
                         try {
                             JSONObject obj = new JSONObject(response);
+                            no = obj.getInt("no");
                             friendId = obj.getString("friendId");
                             content = obj.getString("content");
                             time = obj.getLong("time");
@@ -257,8 +261,10 @@ public class ChatService extends Service {
                         }catch(JSONException e){
 
                         }
-                        Log.d("getFriendBoolean",chatFriendList.contains(friendId)+"");
+                        Log.d("getFriend_isContain?",chatFriendList.contains(friendId)+"");
+
                         if(!chatFriendList.contains(friendId)){
+
                             getFriendThread gft = new getFriendThread(friendId,time);
                             Log.d("getFriend이프안",chatFriendList.contains(friendId)+"");
                             gft.start();
@@ -280,7 +286,21 @@ public class ChatService extends Service {
 
                         }
 
-                        db.insertMessageData(userId, friendId, content, time, 1);
+                        boolean currentChatRoom;
+                        if(no == boundedNo){
+                            if(no>0){
+                                currentChatRoom = true;
+                            }else if(friendId.equals(boundedFriendId)){
+                                currentChatRoom = true;
+                            }else {
+                                currentChatRoom = false;
+                            }
+
+                        }else{
+                            currentChatRoom = false;
+                        }
+
+                        db.insertMessageData(userId,no,friendId, content, time, 1,currentChatRoom);
 
                         if(boundCheck == true) {
                             mCallback.recvData(friendId, content, time);
@@ -295,7 +315,9 @@ public class ChatService extends Service {
 
 //                    }
                 } catch (IOException e) {
+                    Log.d("소켓exception?","힘들어");
                     e.printStackTrace();
+                    break;
                 }
             }
 
@@ -312,18 +334,17 @@ public class ChatService extends Service {
         long time;
         int no;
 
-        boolean group_chat;
-
         OutputStream sender ;
 
         DataOutputStream output;
 
-        public SendThread(Socket threadSocket,String friendId, String msg,long time) {
+        public SendThread(Socket threadSocket,int no, String friendId, String msg,long time) {
 
+            this.no = no;
             this.friendId = friendId;
             this.sendmsg = msg;
             this.time = time;
-            this.group_chat = false;
+
 
             try {
                 this.sender = threadSocket.getOutputStream();
@@ -336,23 +357,7 @@ public class ChatService extends Service {
 
         }
 
-        public SendThread(Socket threadSocket,int no, String msg,long time) {
 
-            this.no = no;
-            this.sendmsg = msg;
-            this.time = time;
-            this.group_chat = true;
-
-            try {
-                this.sender = threadSocket.getOutputStream();
-                this.output = new DataOutputStream(sender);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-
-            Log.d("내용물1t",sendmsg);
-
-        }
 
         @Override
         public void run() {
@@ -382,21 +387,13 @@ public class ChatService extends Service {
 
                 JSONObject obj = new JSONObject();
 
-                if(this.group_chat){
                     obj.put("userId", userId);
                     obj.put("no", this.no);
-                    obj.put("content", this.sendmsg);
-                    obj.put("time", time);
-                    obj.put("groupchat",1);
-                }else {
-                    obj.put("userId", userId);
                     obj.put("friendId", friendId);
                     Log.d("최종",userId);
                     Log.d("최종",friendId);
                     obj.put("content", this.sendmsg);
                     obj.put("time", time);
-                    obj.put("groupchat",0);
-                }
 
                 this.sendmsg = obj.toString();
 
@@ -492,7 +489,16 @@ public class ChatService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d("서비스종료",userId);
+    }
 
+    public void terminateService(){
+        try {
+            this.socket.close();
+        }catch (IOException e){
 
+            Log.d("chatService","terminateService-exception");
+        }
+        Log.d("chatService","terminateService");
+        this.stopSelf();
     }
 }

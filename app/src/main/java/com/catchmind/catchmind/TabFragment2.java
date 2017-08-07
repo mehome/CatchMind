@@ -67,10 +67,12 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
                 String friendId = (String) view.getTag(R.id.userId);
                 String nickname = (String) view.getTag(R.id.nickname);
+                int no = (int) view.getTag(R.id.no);
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
                 intent.putExtra("friendId",friendId);
                 intent.putExtra("nickname",nickname);
+                intent.putExtra("no",no);
                 startActivity(intent);
 
             }
@@ -110,6 +112,13 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
         Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
         intent.putExtra("friendId",friendId);
         intent.putExtra("nickname",nickname);
+        intent.putExtra("no",0);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myListAdapter.notifyDataSetChanged();
     }
 }

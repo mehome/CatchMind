@@ -18,5 +18,6 @@ public class nameViewHolder {
     public LinearLayout section;
     public TextView sectionTxt;
     public RelativeLayout profile_container;
+    public ImageView check;
 
 }

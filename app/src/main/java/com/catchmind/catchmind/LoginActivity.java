@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity{
     public SharedPreferences.Editor editor;
     public CheckBox autoLogin;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -73,10 +74,11 @@ public class LoginActivity extends AppCompatActivity{
             sUserId = mPref.getString("autoLoginId","");
             sPassword = mPref.getString("autoLoginPassword","");
 
-            loginAT LAT = new loginAT();
+            loginAT LAT = new loginAT(true);
             LAT.execute();
         }
 
+        autoLogin.setChecked(true);
     }
 
 
@@ -86,7 +88,7 @@ public class LoginActivity extends AppCompatActivity{
         sUserId = userId.getText().toString();
         sPassword = password.getText().toString();
 
-        loginAT LAT = new loginAT();
+        loginAT LAT = new loginAT(false);
         LAT.execute();
 
     }
@@ -101,16 +103,23 @@ public class LoginActivity extends AppCompatActivity{
 
     public class loginAT extends AsyncTask<Void, Integer, String> {
 
-
         ProgressDialog asyncDialog = new ProgressDialog(LoginActivity.this);
+        public boolean autoLoginMode;
+
+        public loginAT(boolean ALM){
+            this.autoLoginMode = ALM;
+        }
 
         @Override
         protected void onPreExecute() {
-            asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            asyncDialog.setMessage("로그인 중입니다...");
+            if(!this.autoLoginMode) {
+                asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                asyncDialog.setMessage("로그인 중입니다...");
 
-            // show dialog
-            asyncDialog.show();
+                // show dialog
+                asyncDialog.show();
+
+            }
             super.onPreExecute();
         }
 
@@ -176,7 +185,9 @@ public class LoginActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(String s){
             super.onPostExecute(s);
-            asyncDialog.dismiss();
+            if(!this.autoLoginMode) {
+                asyncDialog.dismiss();
+            }
             login_check(s);
 
         }

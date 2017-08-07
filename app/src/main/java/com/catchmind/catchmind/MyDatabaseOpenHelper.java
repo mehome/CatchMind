@@ -104,7 +104,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     public void createMessageData(String userId){
 
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "CREATE TABLE IF NOT EXISTS messageData_"+userId+"(idx INTEGER PRIMARY KEY AUTOINCREMENT,friendId TEXT NOT NULL,content TEXT,time INTEGER,type INTEGER);";
+        String sql = "CREATE TABLE IF NOT EXISTS messageData_"+userId+"(idx INTEGER PRIMARY KEY AUTOINCREMENT,no INTEGER NOT NULL,friendId TEXT NOT NULL,content TEXT,time INTEGER,type INTEGER);";
         try {
             db.execSQL(sql);
             Log.d("혹여1",sql);
@@ -115,15 +115,22 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
-    public void insertMessageData(String userId,String friendId, String content,long time,int type) {
+    public void insertMessageData(String userId,int no,String friendId, String content,long time,int type,boolean isBounded) {
         Log.d("db.insertMD",userId+"####"+friendId+"####"+content);
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
-        String sql="INSERT INTO messageData_"+userId+" (friendId,content,time,type) VALUES('"+friendId+"','"+content+"','"+time+"','"+type+"');";
+        String sql="INSERT INTO messageData_"+userId+" (no,friendId,content,time,type) VALUES('"+no+"','"+friendId+"','"+content+"','"+time+"','"+type+"');";
+        String sql_2;
+        if(isBounded) {
+            sql_2 = "UPDATE chatRoomList_" + userId + " SET `unRead`=0 WHERE no='" + no + "' AND friendId='" + friendId + "'";
+        }else{
+            sql_2 = "UPDATE chatRoomList_" + userId + " SET `unRead`=(`unRead`+1) WHERE no='" + no + "' AND friendId='" + friendId + "'";
+        }
         Log.d("insert안",sql);
         try
         {
             db.execSQL(sql);
+            db.execSQL(sql_2);
             db.setTransactionSuccessful();
         }
         catch (Exception e)
@@ -326,6 +333,30 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         db.close();
     }
 
+    public void initailizeChatRoomUnRead(String userId,int no,String friendId) {
+        Log.d("db.initICRUR",userId+"####"+friendId+"####"+no);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        String sql = "UPDATE chatRoomList_" + userId + " SET `unRead`=0 WHERE no='" + no + "' AND friendId='" + friendId + "'";
+        Log.d("initICRUR",sql);
+        try
+        {
+            db.execSQL(sql);
+            db.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            db.endTransaction();
+        }
+        db.close();
+    }
+
+
+
     public Cursor getChatFriendList(String userId){
         Log.d("db.getCFL",userId);
         SQLiteDatabase db = this.getReadableDatabase();
@@ -356,14 +387,17 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
-    public Cursor getLastRow(String userId,String friendId,int no){
+    public Cursor getLastRowJoinOnChatRoomList(String userId,String friendId,int no){
         Log.d("db.getLR",friendId);
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM messageData_"+userId+" WHERE friendId='"+friendId+"' ORDER BY idx DESC LIMIT 1;";
+        String sql = "SELECT * FROM messageData_"+userId+" INNER JOIN chatRoomList_"+userId+" ON messageData_"+userId+".no = chatRoomList_"+userId+".no AND messageData_"+userId+".friendId = chatRoomList_"+userId+".friendId WHERE messageData_"+userId+".friendId='"+friendId+"' ORDER BY messageData_"+userId+".idx DESC LIMIT 1;";
+        Log.d("getLastRow",sql);
         Cursor cursor = db.rawQuery(sql,null);
 
         return cursor;
     }
+
+
 
 }
 

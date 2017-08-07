@@ -210,6 +210,13 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         super.onDestroy();
         mService.boundCheck_2 = false;
         unbindService(mConnection);
+
+        boolean autoLogin = mPref.getBoolean("autoLogin",false);
+        Log.d("MainActivity","onDestroy"+autoLogin);
+        if(!autoLogin){
+            mService.terminateService();
+        }
+
     }
 
     public interface FragmentCommunicator {
@@ -260,6 +267,12 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
                 startActivity(intent);
                 break;
 
+            case R.id.add_chatroom:
+
+                Intent intentMakeGroup = new Intent(this,MakeGroupActivity.class);
+                startActivity(intentMakeGroup);
+                break;
+
         }
 
 
@@ -271,10 +284,14 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         editor.putBoolean("autoLogin",false);
         editor.commit();
+        mService.terminateService();
+        Log.d("MainActivity","Logout");
 
         Intent intent = new Intent(this,LoginActivity.class);
         startActivity(intent);
         finish();
+
     }
+
 
 }

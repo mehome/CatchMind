@@ -13,6 +13,7 @@ public class chatViewHolder {
     public TextView content;
     public TextView memberNum;
     public TextView time;
+    public TextView unRead;
     public ImageView profileImage;
 
 }
