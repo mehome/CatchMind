@@ -1,6 +1,7 @@
 package com.catchmind.catchmind;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +9,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +34,10 @@ public class MakeGroupActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView groupNumTV;
     int groupNum;
+    ArrayList<String> inviteList = new ArrayList<>();
+    String myId;
+    public SharedPreferences mPref;
+    public SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +53,10 @@ public class MakeGroupActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("대화상대초대");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        mPref = getSharedPreferences("login",MODE_PRIVATE);
+        myId = mPref.getString("userId","닉없음");
+        editor = mPref.edit();
 
 
         final ArrayList<ListViewItemCheck> ListData = new ArrayList<ListViewItemCheck>();
@@ -88,9 +101,11 @@ public class MakeGroupActivity extends AppCompatActivity {
                 if(friendListAdapter.isChecked.get(userId)) {
                     groupNum = groupNum -1;
                     groupNumTV.setText(groupNum+"");
+                    inviteList.remove(userId);
                 }else{
                     groupNum = groupNum +1;
                     groupNumTV.setText(groupNum+"");
+                    inviteList.add(userId);
                 }
 
                 friendListAdapter.changeIsChecked(userId);
@@ -106,12 +121,37 @@ public class MakeGroupActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle arrow click here
-        if (item.getItemId() == android.R.id.home) {
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
             finish(); // close this activity and return to preview activity (if there is any)
+        }else if(id == R.id.invite_check_button){
+
+            JSONArray jsonArray = new JSONArray();
+            for (int i=0; i < inviteList.size(); i++) {
+                jsonArray.put(inviteList.get(i));
+            }
+
+            Intent intent = new Intent();
+            intent.putExtra("friendId",jsonArray.toString());
+            intent.putExtra("nickname","임시 방제");
+            setResult(RESULT_OK, intent);
+            finish();
+
+//            Toast.makeText(this,jsonArray.toString(),Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.make_group_menu, menu);
+        return true;
+    }
 
 }

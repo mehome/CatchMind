@@ -46,6 +46,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
         Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId);
+
         SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 
         while(cursor.moveToNext()) {
@@ -87,6 +88,8 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         }
     }
 
-
-
+    @Override
+    public void alertChange() {
+        chatListAdapter.notifyDataSetChanged();
+    }
 }

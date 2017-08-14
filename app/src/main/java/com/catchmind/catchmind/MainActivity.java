@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     public Handler handler;
     public String userId;
     public String nickname;
+    public static final int MakeGroupActivity = 5409;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
         Cursor cursor = db.getChatFriendList(userId);
-        Log.d("getfriend메시CFL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2)+"####"+cursor.getColumnName(3)+"####"+cursor.getColumnName(4)+"####"+cursor.getColumnName(5));
+        Log.d("getfriend메시CFL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2)+"####"+cursor.getColumnName(3)+"####"+cursor.getColumnName(4));
         while(cursor.moveToNext()) {
             Log.d("getfriendCFL", cursor.getString(0) + "###" + cursor.getString(1));
         }
@@ -270,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             case R.id.add_chatroom:
 
                 Intent intentMakeGroup = new Intent(this,MakeGroupActivity.class);
-                startActivity(intentMakeGroup);
+                startActivityForResult(intentMakeGroup,MakeGroupActivity);
                 break;
 
         }
@@ -293,5 +294,15 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == MakeGroupActivity){
+            if(resultCode == RESULT_OK){
+                String fId = data.getExtras().getString("friendId");
+                String nick = data.getExtras().getString("nickname");
+                fragmentCommunicator.startChatRoomActivity(fId,nick);
+            }
+        }
+    }
 }

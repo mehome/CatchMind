@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.StringSignature;
 
+import org.json.JSONArray;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,38 +79,57 @@ public class ChatRoomAdapter extends BaseAdapter{
 
         String profile = chatRoomList.get(position).getProfile();
         String content = "";
-        long when = System.currentTimeMillis();
-        int no = 0;
+        long when = 0;
+        long myWhen = 0;
 
         Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
         cursor.moveToNext();
         content = cursor.getString(3);
         when = cursor.getLong(4);
-        no = cursor.getInt(8);
-        Log.d("unRead",no+"");
-        if(no==0){
+        myWhen = cursor.getLong(8);
+        Log.d("myWhen_"+position,myWhen+"");
+        int unRead = db.getUnRead(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo(),myWhen);
+
+        if(unRead==0){
             viewHolder.unRead.setVisibility(View.INVISIBLE);
         }else{
             viewHolder.unRead.setVisibility(View.VISIBLE);
-            viewHolder.unRead.setText(no+"");
+            viewHolder.unRead.setText(unRead+"");
         }
 
         Date recvTime = new Date(when);
         String time = this.sdfNow.format(recvTime);
 
+        if(chatRoomList.get(position).getNo()==0) {
+            viewHolder.title.setText(chatRoomList.get(position).getTitle());
+            viewHolder.content.setText(content);
+            viewHolder.time.setText(time);
+            viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + chatRoomList.get(position).getFriendId() + ".png")
+                    .error(R.drawable.default_profile_image)
+                    .signature(new StringSignature(profile))
+                    .into(viewHolder.profileImage);
 
-        viewHolder.title.setText(chatRoomList.get(position).getTitle());
-        viewHolder.content.setText(content);
-        viewHolder.time.setText(time);
-        viewHolder.memberNum.setText(""+chatRoomList.get(position).getMemberNum());
-        Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+chatRoomList.get(position).getFriendId()+".png")
-                .error(R.drawable.default_profile_image)
-                .signature(new StringSignature(profile))
-                .into(viewHolder.profileImage);
+            convertView.setTag(R.id.userId, chatRoomList.get(position).getFriendId());
+            convertView.setTag(R.id.nickname, chatRoomList.get(position).getTitle());
+            convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
+        }else{
+            viewHolder.title.setText("그룹채팅 "+chatRoomList.get(position).getNo());
+            viewHolder.content.setText(content);
+            viewHolder.time.setText(time);
+//            viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
+            viewHolder.profileImage.setImageResource(R.drawable.group_icon);
 
-        convertView.setTag(R.id.userId,chatRoomList.get(position).getFriendId());
-        convertView.setTag(R.id.nickname,chatRoomList.get(position).getTitle());
-        convertView.setTag(R.id.no,chatRoomList.get(position).getNo());
+            JSONArray jarray = new JSONArray();
+            Cursor cs = db.getChatFriendListByNo(userId,chatRoomList.get(position).getNo());
+            while(cs.moveToNext()) {
+                jarray.put(cursor.getString(1));
+            }
+
+            convertView.setTag(R.id.userId, jarray.toString());
+            convertView.setTag(R.id.nickname, "그룹채팅 "+chatRoomList.get(position).getNo());
+            convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
+        }
 
         return convertView;
 

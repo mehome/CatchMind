@@ -114,7 +114,6 @@ public class ChatRoomActivity extends AppCompatActivity {
         fragmentCommunicator = (FragmentCommunicator) mf;
         ChatRoomPagerAdapter pagerAdapter = new ChatRoomPagerAdapter(getSupportFragmentManager(),mf,df,mPref,friendId);
 
-        db.initailizeChatRoomUnRead(userId,no,friendId);
         Log.d("chatRoomActivity",userId+"###"+no+"###"+friendId);
 
         viewPager.setAdapter(pagerAdapter);
@@ -163,10 +162,18 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        db.updateChatRoomData(userId,no,friendId,System.currentTimeMillis());
+        fragmentCommunicator.alertChange();
+    }
+
     public interface FragmentCommunicator {
 
         void passData(String friendId, String nickname, String profile, String content, long time,int type);
-
+        void alertChange();
     }
 
 //    public void passVal(FragmentCommunicator fragmentCommunicator) {
@@ -207,6 +214,24 @@ public class ChatRoomActivity extends AppCompatActivity {
                         handler.sendMessage(message);
 
         }
+
+        public void changeNo(int passNo){
+            no = passNo;
+        }
+
+        public void sendMessageMark(String content,long time){
+            Message message= Message.obtain();
+            message.what = 2;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("content",content);
+            bundle.putLong("time",time);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+        }
+
     };
 
     @Override
@@ -233,21 +258,23 @@ public class ChatRoomActivity extends AppCompatActivity {
         String et = sendcontent.getText().toString();
         sendcontent.setText("");
 
-        db.insertMessageData(userId,no,friendId,et,now,2,true);
+//        db.insertMessageData(userId,no,friendId,et,now,2,true);
         Log.d("sendMessage,db.insert",userId+"####"+friendId+"####"+et);
+
 
         mService.sendMessage(no,friendId,et,now);
 
-        Message message= Message.obtain();
-        message.what = 2;
 
-        Bundle bundle = new Bundle();
-        bundle.putString("content",et);
-        bundle.putLong("time",now);
-
-        message.setData(bundle);
-
-        handler.sendMessage(message);
+//        Message message= Message.obtain();
+//        message.what = 2;
+//
+//        Bundle bundle = new Bundle();
+//        bundle.putString("content",et);
+//        bundle.putLong("time",now);
+//
+//        message.setData(bundle);
+//
+//        handler.sendMessage(message);
 
     }
 
