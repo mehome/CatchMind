@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         tabPosition = 0;
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     @Override
     public void sendToActivity(String friendId,String nickname) {
         viewPager.setCurrentItem(1);
-        fragmentCommunicator.startChatRoomActivity(friendId,nickname);
+        fragmentCommunicator.startChatRoomActivity(0,friendId,nickname);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         void notifyRecvData();
         void changeRoomListFC();
-        void startChatRoomActivity(String friendId, String nickname);
+        void startChatRoomActivity(int no,String friendId, String nickname);
 
     }
 
@@ -299,9 +302,10 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == MakeGroupActivity){
             if(resultCode == RESULT_OK){
+                int no = data.getExtras().getInt("no");
                 String fId = data.getExtras().getString("friendId");
                 String nick = data.getExtras().getString("nickname");
-                fragmentCommunicator.startChatRoomActivity(fId,nick);
+                fragmentCommunicator.startChatRoomActivity(no,fId,nick);
             }
         }
     }

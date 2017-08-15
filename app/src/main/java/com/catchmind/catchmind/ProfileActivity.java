@@ -610,6 +610,7 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("friendId",userId);
         intent.putExtra("nickname",nickname);
+        intent.putExtra("no",0);
         setResult(RESULT_OK, intent);
         finish();
 

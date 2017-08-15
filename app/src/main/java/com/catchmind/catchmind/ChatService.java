@@ -113,7 +113,7 @@ public class ChatService extends Service {
                 chatRoomList.add(cursor.getInt(0)+"");
             }
 
-            Log.d("커서야ChatServiceOnStart",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3));
+            Log.d("커서야ChatServiceOnStart",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2));
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -132,6 +132,7 @@ public class ChatService extends Service {
         public void recvData(String friendId,String content,long time); //액티비티에서 선언한 콜백 함수.
         public void changeNo(int no);
         public void sendMessageMark(String content,long time);
+        public void resetHash();
     }
 
     public interface ICallback_2{
@@ -161,15 +162,19 @@ public class ChatService extends Service {
                 gnt.join();
                 no = gnt.returnNO();
                 if(no >0){
-                    mCallback.changeNo(no);
+                    if(boundCheck) {
+                        mCallback.changeNo(no);
+                    }
                     Log.d("CS.sendMessage","액티비티도 no고쳐라: "+no);
                 }
                 if(!chatRoomList.contains(no+"")) {
                     db.insertChatFriendDataMultipleByJoin(userId, friendId, no);
                     db.insertChatRoomData(userId, no, "group", time);
-                    chatRoomList.add(no+"");
+                    chatRoomList.add(no + "");
+                    if (boundCheck) {
+                        mCallback.resetHash();
+                    }
                 }
-
             }catch (InterruptedException e){
                 e.printStackTrace();
                 Log.d("gnt.InterruptedExep","no: "+no);
@@ -431,6 +436,7 @@ public class ChatService extends Service {
                     Log.d("최종",friendId);
                     obj.put("content", this.sendmsg);
                     obj.put("time", time);
+                    obj.put("kind", 1);
 
                 this.sendmsg = obj.toString();
 

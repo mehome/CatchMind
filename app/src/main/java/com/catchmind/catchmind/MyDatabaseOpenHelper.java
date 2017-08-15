@@ -530,18 +530,20 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
     public int getMinNo(String userId){
-        Log.d("db.getMinNO","getMinNO");
+        Log.d("db.getMinNO","getMinNO###"+userId);
         SQLiteDatabase db = this.getReadableDatabase();
         String sql;
 
         sql = "SELECT * FROM chatRoomList_" + userId + " ORDER BY no ASC LIMIT 1;";
 
-        Log.d("getLastRow",sql);
+        Log.d("getMinNo",sql);
         Cursor cursor = db.rawQuery(sql,null);
-        cursor.moveToNext();
-        int result = cursor.getInt(0) -1;
+        while(cursor.moveToNext()) {
+            int result = cursor.getInt(0) - 1;
+            return result;
+        }
 
-        return result;
+            return -1;
     }
 
     public int getUnRead(String userId,String friendId, int no ,long cTime){
@@ -549,9 +551,9 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         SQLiteDatabase db = this.getReadableDatabase();
         String sql;
         if(no ==0) {
-            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE friendId='"+friendId+"' AND time >"+cTime;
+            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='0' AND friendId='"+friendId+"' AND time >"+cTime+" AND type='1'";
         }else{
-            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='"+no+"' AND time >"+cTime;
+            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='"+no+"' AND time >"+cTime+" AND type='1'";
         }
         Log.d("getLastRow",sql);
         Cursor cursor = db.rawQuery(sql,null);

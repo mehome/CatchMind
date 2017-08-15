@@ -134,6 +134,7 @@ public class MakeGroupActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent();
+            intent.putExtra("no",db.getMinNo(myId));
             intent.putExtra("friendId",jsonArray.toString());
             intent.putExtra("nickname","임시 방제");
             setResult(RESULT_OK, intent);

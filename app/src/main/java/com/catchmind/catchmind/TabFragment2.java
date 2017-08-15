@@ -107,12 +107,12 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
     }
 
     @Override
-    public void startChatRoomActivity(String friendId,String nickname) {
+    public void startChatRoomActivity(int no,String friendId,String nickname) {
 
         Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
         intent.putExtra("friendId",friendId);
         intent.putExtra("nickname",nickname);
-        intent.putExtra("no",0);
+        intent.putExtra("no",no);
         startActivity(intent);
     }
 

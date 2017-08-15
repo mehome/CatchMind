@@ -40,6 +40,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 
 /**
@@ -69,6 +70,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     String userId;
     public MyDatabaseOpenHelper db;
     public int no;
+    public HashMap<String,String> NickHash = new HashMap<>();
+    public HashMap<String,String> ProfileHash = new HashMap<>();
 
 
     @Override
@@ -98,10 +101,14 @@ public class ChatRoomActivity extends AppCompatActivity {
         Log.d("chatroomId2",friendId);
         String nickname = GI.getStringExtra("nickname");
 
-        Cursor cursor = db.getFriendData(friendId);
-        cursor.moveToNext();
-        friendNickname = cursor.getString(1);
-        friendProfile = cursor.getString(2);
+        if(no == 0) {
+            Cursor cursor = db.getFriendData(friendId);
+            cursor.moveToNext();
+            friendNickname = cursor.getString(1);
+            friendProfile = cursor.getString(2);
+        }else {
+            ResetHash();
+        }
 
         getSupportActionBar().setTitle(nickname);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -144,9 +151,18 @@ public class ChatRoomActivity extends AppCompatActivity {
 
 
                 if(msg.what == 1) {
-                    String content = msg.getData().getString("content");
-                    long time = msg.getData().getLong("time");
-                    fragmentCommunicator.passData(friendId,friendNickname,friendProfile, content, time,1);
+
+                    if(no ==0) {
+                        String content = msg.getData().getString("content");
+                        long time = msg.getData().getLong("time");
+                        fragmentCommunicator.passData(friendId, friendNickname, friendProfile, content, time, 1);
+                    }else{
+                        String friendId = msg.getData().getString("friendId");
+                        String content = msg.getData().getString("content");
+                        long time = msg.getData().getLong("time");
+                        fragmentCommunicator.passData(friendId, NickHash.get(friendId), ProfileHash.get(friendId), content, time, 1);
+                    }
+
                 }else if(msg.what ==2){
                     String content = msg.getData().getString("content");
                     long time = msg.getData().getLong("time");
@@ -162,6 +178,16 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     }
 
+    public void ResetHash(){
+        NickHash = new HashMap<>();
+        ProfileHash = new HashMap<>();
+        Cursor cursor = db.getChatFriendListByNo(userId,no);
+        while(cursor.moveToNext()){
+            NickHash.put(cursor.getString(1),cursor.getString(2));
+            ProfileHash.put(cursor.getString(1),cursor.getString(3));
+        }
+
+    }
 
     @Override
     protected void onStart() {
@@ -230,6 +256,10 @@ public class ChatRoomActivity extends AppCompatActivity {
             message.setData(bundle);
 
             handler.sendMessage(message);
+        }
+
+        public void resetHash(){
+            ResetHash();
         }
 
     };
