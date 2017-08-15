@@ -119,7 +119,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         mf = new MessageRoomFragment();
         df = new DrawRoomFragment();
         fragmentCommunicator = (FragmentCommunicator) mf;
-        ChatRoomPagerAdapter pagerAdapter = new ChatRoomPagerAdapter(getSupportFragmentManager(),mf,df,mPref,friendId);
+        ChatRoomPagerAdapter pagerAdapter = new ChatRoomPagerAdapter(getSupportFragmentManager(),mf,df,mPref,friendId,no);
 
         Log.d("chatRoomActivity",userId+"###"+no+"###"+friendId);
 
@@ -200,6 +200,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         void passData(String friendId, String nickname, String profile, String content, long time,int type);
         void alertChange();
+        void changeNo(int sNo);
     }
 
 //    public void passVal(FragmentCommunicator fragmentCommunicator) {
@@ -243,6 +244,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         public void changeNo(int passNo){
             no = passNo;
+            fragmentCommunicator.changeNo(passNo);
         }
 
         public void sendMessageMark(String content,long time){

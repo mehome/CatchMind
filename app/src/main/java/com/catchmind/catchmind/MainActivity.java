@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             if(resultCode == RESULT_OK){
                 int no = data.getExtras().getInt("no");
                 String fId = data.getExtras().getString("friendId");
+                Log.d("Main.onactresult",fId);
                 String nick = data.getExtras().getString("nickname");
                 fragmentCommunicator.startChatRoomActivity(no,fId,nick);
             }

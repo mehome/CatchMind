@@ -77,7 +77,7 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder = (chatViewHolder) convertView.getTag();
         }
 
-        String profile = chatRoomList.get(position).getProfile();
+
         String content = "";
         long when = 0;
         long myWhen = 0;
@@ -101,7 +101,14 @@ public class ChatRoomAdapter extends BaseAdapter{
         String time = this.sdfNow.format(recvTime);
 
         if(chatRoomList.get(position).getNo()==0) {
-            viewHolder.title.setText(chatRoomList.get(position).getTitle());
+
+            Cursor userCS = db.getChatFriendListByIdAndNo(userId,chatRoomList.get(position).getNo(),chatRoomList.get(position).getFriendId());
+            userCS.moveToNext();
+
+            String nickname = userCS.getString(2);
+            String profile = userCS.getString(3);
+
+            viewHolder.title.setText(nickname);
             viewHolder.content.setText(content);
             viewHolder.time.setText(time);
             viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
@@ -111,7 +118,7 @@ public class ChatRoomAdapter extends BaseAdapter{
                     .into(viewHolder.profileImage);
 
             convertView.setTag(R.id.userId, chatRoomList.get(position).getFriendId());
-            convertView.setTag(R.id.nickname, chatRoomList.get(position).getTitle());
+            convertView.setTag(R.id.nickname, nickname);
             convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
         }else{
             viewHolder.title.setText("그룹채팅 "+chatRoomList.get(position).getNo());
@@ -123,7 +130,10 @@ public class ChatRoomAdapter extends BaseAdapter{
             JSONArray jarray = new JSONArray();
             Cursor cs = db.getChatFriendListByNo(userId,chatRoomList.get(position).getNo());
             while(cs.moveToNext()) {
-                jarray.put(cursor.getString(1));
+
+                jarray.put(cs.getString(1));
+
+                Log.d("chatRoomAdapter","cs?"+cs.getString(1));
             }
 
             convertView.setTag(R.id.userId, jarray.toString());

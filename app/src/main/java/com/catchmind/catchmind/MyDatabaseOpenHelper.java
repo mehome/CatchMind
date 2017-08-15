@@ -153,10 +153,15 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
-    public Cursor getMessageListJoinChatFriendList(String userId,String friendId){
+    public Cursor getMessageListJoinChatFriendList(String userId,String friendId,int no){
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM messageData_"+userId+" INNER JOIN chatFriendList_"+userId+" ON messageData_"+userId+".friendId = chatFriendList_"+userId+".friendId where messageData_"+userId+".friendId='"+friendId+"'";
+        String sql;
+        if(no==0) {
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList_" + userId + " ON messageData_" + userId + ".friendId = chatFriendList_" + userId + ".friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
+        }else{
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList_" + userId + " ON messageData_" + userId + ".friendId = chatFriendList_" + userId + ".friendId AND messageData_" + userId + ".no = chatFriendList_" + userId + ".no WHERE messageData_" + userId + ".no='" + no +"'" ;
+        }
         Cursor cursor = db.rawQuery(sql,null);
 
         return cursor;
@@ -356,7 +361,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
                 String message = (String) jobject.getString("message");
                 long time = (long) jobject.getLong("time");
 
-                sql = sql + "('"+no+"','"+friendId+"','"+nickname+"','"+profile+"','"+message+"','"+time+"');";
+                sql = sql + "('"+no+"','"+friendId+"','"+nickname+"','"+profile+"','"+message+"','"+time+"')";
             }
 
 
@@ -485,13 +490,23 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
     public Cursor getChatFriendListByNo(String userId,int no){
-        Log.d("db.getCFL",userId);
+        Log.d("db.getCFLByNO",userId);
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM chatFriendList_"+userId+" WHERE no='"+no+"'";
         Cursor cursor = db.rawQuery(sql,null);
 
         return cursor;
     }
+
+    public Cursor getChatFriendListByIdAndNo(String userId,int no,String friendId){
+        Log.d("db.getCFLByIdNo",userId);
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM chatFriendList_"+userId+" WHERE no='"+no+"' AND friendId='"+friendId+"'";
+        Cursor cursor = db.rawQuery(sql,null);
+
+        return cursor;
+    }
+
 
 
 

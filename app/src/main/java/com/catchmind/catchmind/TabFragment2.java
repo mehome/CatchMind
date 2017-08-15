@@ -35,7 +35,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
         final View rootView = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
         myId = getArguments().getString("userId");
-
+        Log.d("진짜로?",myId);
         myNickname = getArguments().getString("nickname");
 
 
@@ -43,17 +43,17 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
-        Cursor cursor = db.getChatRoomListJoinChatFriendList(myId);
+        Cursor cursor = db.getChatRoomList(myId);
 //        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 //        Date recvTime = new Date(cursor.getLong(2));
 //        String time = sdfNow.format(recvTime);
 
         while(cursor.moveToNext()) {
 
-            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),1,cursor.getString(6));
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1));
             ListData.add(addItem);
 
-            Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6));
+            Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1));
         }
 
         ListView lv = (ListView) rootView.findViewById(R.id.list);
@@ -95,7 +95,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
         while(cursor.moveToNext()) {
 
-            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(3),cursor.getString(4),cursor.getString(5),1,cursor.getString(6));
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1));
             ListData.add(addItem);
 
             Log.d("커서야ChatRoomItem","changeRoomListFC");
@@ -111,6 +111,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
         Intent intent = new Intent(getActivity().getApplicationContext(), ChatRoomActivity.class);
         intent.putExtra("friendId",friendId);
+        Log.d("scra",friendId);
         intent.putExtra("nickname",nickname);
         intent.putExtra("no",no);
         startActivity(intent);

@@ -215,10 +215,18 @@ public class ChatService extends Service {
 
         if(st.isSuccess()){
             Log.d("st.isSucess",content+"####"+time);
-            db.insertMessageData(userId,no,friendId,content,time,2);
+            if(no ==0) {
+                db.insertMessageData(userId, no, friendId, content, time, 2);
+            }else{
+                db.insertMessageData(userId, no, userId, content, time, 2);
+            }
             mCallback.sendMessageMark(content,time);
         }else{
-            db.insertMessageData(userId,no,friendId,content,time,3);
+            if(no ==0) {
+                db.insertMessageData(userId, no, friendId, content, time, 3);
+            }else{
+                db.insertMessageData(userId, no, userId, content, time, 3);
+            }
         }
 
     }
@@ -336,7 +344,7 @@ public class ChatService extends Service {
                         }catch(JSONException e){
 
                         }
-                        Log.d("getFriend_isContain?",chatRoomList.contains(friendId)+"");
+                        Log.d("리시브데이터","no: "+no+", friendId: "+friendId+", content: "+content+", time: "+time+", kind: "+kind);
 
                         if(no==0 && !chatRoomList.contains(friendId)){
 
@@ -356,7 +364,9 @@ public class ChatService extends Service {
 
                         }else{
 
-                            db.insertMessageData(userId,no,friendId, content, time, 1);
+//                            db.insertMessageData(userId,no,friendId, content, time, 1);
+                            ReceiveMessageThread rmt = new ReceiveMessageThread(no,friendId,content,time);
+                            rmt.start();
 
                             if(boundCheck == true) {
                                 mCallback.recvData(friendId, content, time);
@@ -813,6 +823,45 @@ public class ChatService extends Service {
 
 
     }
+
+
+
+    public class ReceiveMessageThread extends Thread{
+
+        public int sNo;
+        public String sFriendId;
+        public String sContent;
+        public long sTime;
+
+        public ReceiveMessageThread(int no,String friendId,String content,long time){
+
+            this.sNo = no;
+            this.sFriendId = friendId;
+            this.sContent = content;
+            this.sTime = time;
+            Log.d("ReceiveMessageThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId);
+
+        }
+
+        @Override
+        public void run() {
+            db.insertMessageData(userId,sNo,sFriendId, sContent, sTime, 1);
+            if(boundCheck) {
+                if(sNo == 0 ) {
+                    if(boundedNo == 0 && boundedFriendId == sFriendId) {
+                        db.updateChatRoomData(userId, sNo, sFriendId, sTime);
+                    }
+                }else{
+                    if(boundedNo == sNo) {
+                        db.updateChatRoomData(userId, sNo, sFriendId, sTime);
+                    }
+                }
+            }
+        }
+
+
+    }
+
 
 
 }

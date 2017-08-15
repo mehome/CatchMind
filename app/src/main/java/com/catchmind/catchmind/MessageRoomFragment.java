@@ -30,6 +30,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
     String userId;
     String friendId;
+    int no;
     public MyDatabaseOpenHelper db;
 
     @Override
@@ -38,6 +39,9 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         userId = getArguments().getString("userId");
         friendId = getArguments().getString("friendId");
+        no = getArguments().getInt("no");
+
+        Log.d("한번확인",no+"");
 
         ListData = new ArrayList<ChatMessageItem>();
 
@@ -45,7 +49,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         ListData.add(defaultItem);
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
-        Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId);
+        Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId,no);
 
         SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 
@@ -93,5 +97,10 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         if(chatListAdapter != null) {
             chatListAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void changeNo(int sNo) {
+        this.no = sNo ;
     }
 }
