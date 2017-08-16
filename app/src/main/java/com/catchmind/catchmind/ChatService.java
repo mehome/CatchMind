@@ -85,6 +85,7 @@ public class ChatService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("onStart","intent: "+intent.toString() + ", flags: "+flags +", startId: "+startId);
         if(socket != null) {
             try {
                 socket.close();
@@ -868,7 +869,7 @@ public class ChatService extends Service {
             this.sFriendId = friendId;
             this.sContent = content;
             this.sTime = time;
-            Log.d("ReceiveMessageThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId);
+            Log.d("ReceiveMessageThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId + ", content: "+sContent);
 
         }
 

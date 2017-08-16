@@ -123,6 +123,8 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         Log.d("db.insertMD",userId+"####"+friendId+"####"+content);
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
+        content = content.replace("'","''");
+
         String sql="INSERT INTO messageData_"+userId+" (no,friendId,content,time,type) VALUES('"+no+"','"+friendId+"','"+content+"','"+time+"','"+type+"');";
 
         Log.d("insert안",sql);

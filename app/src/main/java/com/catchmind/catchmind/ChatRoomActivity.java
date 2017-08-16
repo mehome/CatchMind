@@ -167,8 +167,8 @@ public class ChatRoomActivity extends AppCompatActivity {
                     String content = msg.getData().getString("content");
                     long time = msg.getData().getLong("time");
                     fragmentCommunicator.passData("내아아이디","내닉네임","내프로필", content, time, 2);
-                }else{
-
+                }else if(msg.what==3){
+                    fragmentCommunicator.alertChange();
                 }
 
 
@@ -229,6 +229,8 @@ public class ChatRoomActivity extends AppCompatActivity {
             mService.boundStart = true;
             mService.boundedNo = no;
             mService.boundedFriendId = friendId;
+            long now = System.currentTimeMillis();
+            mService.sendRead(no, friendId, now);
 
         }
 
@@ -255,7 +257,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
 
         public void recvUpdate(){
-            fragmentCommunicator.alertChange();
+            Message message= Message.obtain();
+            message.what = 3;
+            handler.sendMessage(message);
         }
 
         public void changeNo(int passNo){
