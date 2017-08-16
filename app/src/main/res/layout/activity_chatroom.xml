@@ -39,6 +39,12 @@
             android:scaleType="centerCrop"
             android:layout_alignParentStart="true"
             android:id="@+id/plus_btn"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toEndOf="@+id/plus_btn">
         <EditText
             android:hint="메세지를 입력하세요"
             android:id="@+id/messageContent"
@@ -46,16 +52,17 @@
             android:maxLines="4"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/plus_btn"
-            android:layout_marginStart="5dp" />
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
             android:text="전 송"
             android:onClick="sendMessage"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

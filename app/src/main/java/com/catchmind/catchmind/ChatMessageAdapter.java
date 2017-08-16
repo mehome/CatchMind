@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -59,12 +60,16 @@ public class ChatMessageAdapter extends BaseAdapter {
 
             viewHolder = new MessageViewHolder();
             viewHolder.layout = (LinearLayout) convertView.findViewById(R.id.layout);
+            viewHolder.leftLayout = (LinearLayout) convertView.findViewById(R.id.leftTextContainer);
+            viewHolder.rightLayout = (LinearLayout) convertView.findViewById(R.id.rightTextContainer);
             viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.messageProfileImage);
             viewHolder.nickName = (TextView) convertView.findViewById(R.id.messageNickname);
-
             viewHolder.leftText = (TextView) convertView.findViewById(R.id.leftText);
+            viewHolder.leftUnread = (TextView) convertView.findViewById(R.id.leftUnread);
             viewHolder.chatContent = (TextView) convertView.findViewById(R.id.chatContent);
             viewHolder.rightText = (TextView) convertView.findViewById(R.id.rightText);
+            viewHolder.rightUnread = (TextView) convertView.findViewById(R.id.rightUnread);
+
 
 
             convertView.setTag(viewHolder);
@@ -83,8 +88,9 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.profileImage.setVisibility(View.GONE);
             viewHolder.nickName.setVisibility(View.GONE);
             viewHolder.chatContent.setVisibility(View.VISIBLE);
-            viewHolder.leftText.setVisibility(View.GONE);
-            viewHolder.rightText.setVisibility(View.GONE);
+            viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.rightLayout.setVisibility(View.GONE);
+
 
 
         }else if(chatMessageList.get(position).Type == 1){
@@ -98,8 +104,8 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.profileImage.setVisibility(View.VISIBLE);
             viewHolder.nickName.setVisibility(View.VISIBLE);
             viewHolder.chatContent.setVisibility(View.VISIBLE);
-            viewHolder.leftText.setVisibility(View.GONE);
-            viewHolder.rightText.setVisibility(View.VISIBLE);
+            viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.rightLayout.setVisibility(View.VISIBLE);
             userId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
             Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
@@ -114,13 +120,13 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent.setText(chatMessageList.get(position).getContent());
             viewHolder.chatContent.setBackgroundResource(R.drawable.outchat);
             viewHolder.nickName.setGravity(Gravity.RIGHT);
-            viewHolder.leftText.setGravity(Gravity.RIGHT);
+            viewHolder.leftLayout.setGravity(Gravity.RIGHT);
             viewHolder.leftText.setText(chatMessageList.get(position).getTime());
             viewHolder.profileImage.setVisibility(View.GONE);
             viewHolder.nickName.setVisibility(View.GONE);
             viewHolder.chatContent.setVisibility(View.VISIBLE);
-            viewHolder.leftText.setVisibility(View.VISIBLE);
-            viewHolder.rightText.setVisibility(View.GONE);
+            viewHolder.leftLayout.setVisibility(View.VISIBLE);
+            viewHolder.rightLayout.setVisibility(View.GONE);
             userId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
             Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
