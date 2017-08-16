@@ -45,6 +45,7 @@ public class ChatService extends Service {
     public MyDatabaseOpenHelper db;
     public boolean boundCheck;
     public boolean boundCheck_2;
+    public boolean boundStart;
     public ArrayList<String> chatRoomList = new ArrayList<>();
     public int boundedNo;
     public String boundedFriendId;
@@ -133,6 +134,8 @@ public class ChatService extends Service {
         public void changeNo(int no);
         public void sendMessageMark(String content,long time);
         public void resetHash();
+        public void recvUpdate();
+        public String getFriendId();
     }
 
     public interface ICallback_2{
@@ -152,7 +155,19 @@ public class ChatService extends Service {
         mCallback_2 = cb_2;
     }
 
-    //액티비티에서 서비스 함수를 호출하기 위한 함수 생성
+    //액티비티에서 읽음 전송
+    public void sendRead(int no, String friendId, long time){
+        if (no < 0){
+            return;
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, "justUpdate", time , 2);
+        st.start();
+
+    }
+
+
+    //액티비티에서 메세지 전송
     public void sendMessage(int no,String friendId, String content, long time){
 
         if(no < 0 ){
@@ -203,7 +218,7 @@ public class ChatService extends Service {
         }
 
 
-            SendThread st = new SendThread(socket, no, friendId, content, time);
+            SendThread st = new SendThread(socket, no, friendId, content, time , 1);
             st.start();
 
             try {
@@ -346,35 +361,47 @@ public class ChatService extends Service {
                         }
                         Log.d("리시브데이터","no: "+no+", friendId: "+friendId+", content: "+content+", time: "+time+", kind: "+kind);
 
-                        if(no==0 && !chatRoomList.contains(friendId)){
-
-                            getFriendThread gft = new getFriendThread(friendId,content,time);
-                            Log.d("gft.start전",chatRoomList.contains(friendId)+"");
-                            gft.start();
-
-
-                            Log.d("gft.start후",chatRoomList.contains(friendId)+"");
+                        if(kind == 1) {
 
 
 
-                        }else if(no>0 && !chatRoomList.contains(no+"")){
+                                if (no == 0 && !chatRoomList.contains(friendId)) {
 
-                            getGroupThread ggt = new getGroupThread(no,friendId,content,time);
-                            ggt.start();
+                                    getFriendThread gft = new getFriendThread(friendId, content, time);
+                                    Log.d("gft.start전", chatRoomList.contains(friendId) + "");
+                                    gft.start();
 
-                        }else{
 
-//                            db.insertMessageData(userId,no,friendId, content, time, 1);
-                            ReceiveMessageThread rmt = new ReceiveMessageThread(no,friendId,content,time);
-                            rmt.start();
+                                    Log.d("gft.start후", chatRoomList.contains(friendId) + "");
 
-                            if(boundCheck == true) {
-                                mCallback.recvData(friendId, content, time);
-                            }
 
-                            if(boundCheck_2 == true) {
-                                mCallback_2.recvData();
-                            }
+                                } else if (no > 0 && !chatRoomList.contains(no + "")) {
+
+                                    getGroupThread ggt = new getGroupThread(no, friendId, content, time);
+                                    ggt.start();
+
+                                } else {
+
+    //                            db.insertMessageData(userId,no,friendId, content, time, 1);
+                                    ReceiveMessageThread rmt = new ReceiveMessageThread(no, friendId, content, time);
+                                    rmt.start();
+
+                                    if (boundCheck == true) {
+                                        mCallback.recvData(friendId, content, time);
+                                    }
+
+                                    if (boundCheck_2 == true) {
+                                        mCallback_2.recvData();
+                                    }
+                                }
+
+
+
+                        }else if(kind == 2){
+
+                            ReceiveUpdateThread rut = new ReceiveUpdateThread(no,friendId,time);
+                            rut.start();
+
                         }
 
 
@@ -403,18 +430,20 @@ public class ChatService extends Service {
         long time;
         int no;
         boolean success;
+        int kind;
 
         OutputStream sender ;
 
         DataOutputStream output;
 
-        public SendThread(Socket threadSocket,int no, String friendId, String msg,long time) {
+        public SendThread(Socket threadSocket,int no, String friendId, String msg,long time,int kind) {
 
             this.no = no;
             this.friendId = friendId;
             this.sendmsg = msg;
             this.time = time;
             this.success = true;
+            this.kind = kind;
 
 
             try {
@@ -446,7 +475,7 @@ public class ChatService extends Service {
                     Log.d("최종",friendId);
                     obj.put("content", this.sendmsg);
                     obj.put("time", time);
-                    obj.put("kind", 1);
+                    obj.put("kind", kind);
 
                 this.sendmsg = obj.toString();
 
@@ -846,17 +875,59 @@ public class ChatService extends Service {
         @Override
         public void run() {
             db.insertMessageData(userId,sNo,sFriendId, sContent, sTime, 1);
-            if(boundCheck) {
+            if(boundStart) {
                 if(sNo == 0 ) {
                     if(boundedNo == 0 && boundedFriendId == sFriendId) {
                         db.updateChatRoomData(userId, sNo, sFriendId, sTime);
+                        sendRead(sNo,mCallback.getFriendId(),sTime);
                     }
                 }else{
                     if(boundedNo == sNo) {
                         db.updateChatRoomData(userId, sNo, sFriendId, sTime);
+                        sendRead(sNo,mCallback.getFriendId(),sTime);
                     }
                 }
             }
+        }
+
+
+    }
+
+
+    public class ReceiveUpdateThread extends Thread{
+
+        public int sNo;
+        public String sFriendId;
+        public String sContent;
+        public long sTime;
+
+        public ReceiveUpdateThread(int no,String friendId,long time){
+
+            this.sNo = no;
+            this.sFriendId = friendId;
+            this.sTime = time;
+            Log.d("ReceiveUpdateThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId);
+
+        }
+
+        @Override
+        public void run() {
+            db.updateChatFriendData(userId,sNo,sFriendId,sTime);
+
+            if(boundStart) {
+
+                if(sNo == 0 ) {
+                    if(boundedNo == 0 && boundedFriendId == sFriendId) {
+                        mCallback.recvUpdate();
+                    }
+                }else{
+                    if(boundedNo == sNo) {
+                        mCallback.recvUpdate();
+                    }
+                }
+
+            }
+
         }
 
 

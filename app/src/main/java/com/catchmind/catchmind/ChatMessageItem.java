@@ -11,9 +11,9 @@ public class ChatMessageItem {
     public String Nickname;
     public String Profile;
     public String Content;
-    public String Time;
+    public long Time;
 
-    public ChatMessageItem(int type,String userId, String nickname, String profile, String content, String time){
+    public ChatMessageItem(int type,String userId, String nickname, String profile, String content, long time){
 
         this.Type = type;
         this.UserId = userId;
@@ -37,7 +37,7 @@ public class ChatMessageItem {
         this.Content = content ;
     }
 
-    public void setTime(String time) { this.Time = time ; }
+    public void setTime(long time) { this.Time = time ; }
 
 
 
@@ -53,7 +53,7 @@ public class ChatMessageItem {
         return this.Content;
     }
 
-    public String getTime() {
+    public long getTime() {
         return this.Time;
     }
 

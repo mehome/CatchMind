@@ -193,7 +193,18 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         db.updateChatRoomData(userId,no,friendId,System.currentTimeMillis());
+        if(mService != null) {
+            mService.boundStart = true;
+            long now = System.currentTimeMillis();
+            mService.sendRead(no, friendId, now);
+        }
         fragmentCommunicator.alertChange();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mService.boundStart = false;
     }
 
     public interface FragmentCommunicator {
@@ -215,6 +226,7 @@ public class ChatRoomActivity extends AppCompatActivity {
             mService = binder.getService(); //서비스 받아옴
             mService.registerCallback(mCallback); //콜백 등록
             mService.boundCheck = true;
+            mService.boundStart = true;
             mService.boundedNo = no;
             mService.boundedFriendId = friendId;
 
@@ -242,6 +254,10 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         }
 
+        public void recvUpdate(){
+            fragmentCommunicator.alertChange();
+        }
+
         public void changeNo(int passNo){
             no = passNo;
             fragmentCommunicator.changeNo(passNo);
@@ -264,12 +280,17 @@ public class ChatRoomActivity extends AppCompatActivity {
             ResetHash();
         }
 
+        public String getFriendId(){
+            return friendId;
+        }
+
     };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mService.boundCheck = false;
+        mService.boundStart = false;
         mService.boundedNo = -1;
         mService.boundedFriendId ="";
         unbindService(mConnection);

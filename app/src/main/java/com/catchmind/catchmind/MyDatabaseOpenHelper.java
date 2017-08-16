@@ -430,7 +430,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
 
     public void updateChatRoomData(String userId,int no,String friendId,long time) {
-        Log.d("db.insertCRD",userId+"####"+friendId+"####"+no);
+        Log.d("db.updateCRD",userId+"####"+friendId+"####"+no);
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         String sql;
@@ -439,7 +439,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }else {
             sql = "UPDATE chatRoomList_" + userId + " SET time='" + time + "' WHERE no='"+no+"';";
         }
-        Log.d("insertChatRoom안",sql);
+        Log.d("updateChatRD안",sql);
         try
         {
             db.execSQL(sql);
@@ -455,6 +455,33 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }
         db.close();
     }
+
+
+
+    public void updateChatFriendData(String userId,int no,String friendId,long time) {
+        Log.d("db.updateCFD",userId+"####"+friendId+"####"+no);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        String sql = "UPDATE chatFriendList_" + userId + " SET time='" + time + "' WHERE friendId='"+friendId+"' AND no='"+no+"';";
+
+        Log.d("updateChatFD안",sql);
+        try
+        {
+            db.execSQL(sql);
+            db.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            db.endTransaction();
+        }
+        db.close();
+    }
+
+
 
 //    public void initailizeChatRoomUnRead(String userId,int no,String friendId) {
 //        Log.d("db.initICRUR",userId+"####"+friendId+"####"+no);
@@ -570,7 +597,44 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }else{
             sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='"+no+"' AND time >"+cTime+" AND type='1'";
         }
-        Log.d("getLastRow",sql);
+        Log.d("getUnRead",sql);
+        Cursor cursor = db.rawQuery(sql,null);
+        cursor.moveToNext();
+        int result = cursor.getInt(0) ;
+
+        return result;
+
+    }
+
+    public int getUnReadWith(String userId,String friendId, int no ,long cTime){
+
+        if(no ==0) {
+            return 0;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM chatFriendList_" + userId + " WHERE no='"+no+"' AND friendId NOT IN ('"+userId+"','"+friendId+"') AND time <"+cTime;
+
+        Log.d("getUnReadWith1",sql);
+        Cursor cursor = db.rawQuery(sql,null);
+        cursor.moveToNext();
+        int result = cursor.getInt(0) ;
+
+        return result;
+
+    }
+
+
+    public int getUnReadWith(String userId, int no ,long cTime){
+
+        if(no ==0) {
+            return 0;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM chatFriendList_" + userId + " WHERE no='"+no+"' AND friendId NOT IN ('"+userId+"') AND time <"+cTime;
+
+        Log.d("getUnReadWith2",sql);
         Cursor cursor = db.rawQuery(sql,null);
         cursor.moveToNext();
         int result = cursor.getInt(0) ;

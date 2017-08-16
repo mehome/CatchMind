@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.StringSignature;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by sonsch94 on 2017-07-19.
@@ -26,12 +28,19 @@ public class ChatMessageAdapter extends BaseAdapter {
     public ArrayList<ChatMessageItem> chatMessageList = new ArrayList<ChatMessageItem>() ;
     public Context mContext;
     public LayoutInflater inflater ;
-
+    public MyDatabaseOpenHelper db;
+    public String myId;
+    public int no;
+    public SimpleDateFormat sdfNow ;
     // ListViewAdapter의 생성자
-    public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData ) {
+    public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no) {
         this.mContext = context;
         this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.chatMessageList = ListData;
+        this.myId = myId;
+        this.no = no;
+        this.sdfNow = new SimpleDateFormat("HH:mm");
+        db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
     }
 
     public void setChatRoomList(ArrayList<ChatMessageItem> ListData) {
@@ -50,9 +59,10 @@ public class ChatMessageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         MessageViewHolder viewHolder;
-        String userId = "";
+        String friendId = "";
         String nickname = "";
         String profile = "";
+
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
@@ -94,46 +104,65 @@ public class ChatMessageAdapter extends BaseAdapter {
 
 
         }else if(chatMessageList.get(position).Type == 1){
+            long now = chatMessageList.get(position).getTime();
+            Date when = new Date(now);
+            String time = sdfNow.format(when);
 
             viewHolder.layout.setGravity(Gravity.LEFT);
             viewHolder.chatContent.setText(chatMessageList.get(position).getContent());
             viewHolder.chatContent.setBackgroundResource(R.drawable.inchat);
             viewHolder.nickName.setGravity(Gravity.LEFT);
             viewHolder.nickName.setText(chatMessageList.get(position).getNickname());
-            viewHolder.rightText.setText(chatMessageList.get(position).getTime());
+            viewHolder.rightText.setText(time);
             viewHolder.profileImage.setVisibility(View.VISIBLE);
             viewHolder.nickName.setVisibility(View.VISIBLE);
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftLayout.setVisibility(View.GONE);
             viewHolder.rightLayout.setVisibility(View.VISIBLE);
-            userId = chatMessageList.get(position).getUserId();
+            friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
                     .error(R.drawable.default_profile_image)
                     .signature(new StringSignature(profile))
                     .into(viewHolder.profileImage);
 
+            int tmpUnread = db.getUnReadWith(myId,friendId,no,now) ;
+            if(tmpUnread <=0) {
+                viewHolder.rightUnread.setText("");
+            }else{
+                viewHolder.rightUnread.setText(tmpUnread+"");
+            }
 
         }else if(chatMessageList.get(position).Type == 2){
+
+            long now = chatMessageList.get(position).getTime();
+            Date when = new Date(now);
+            String time = sdfNow.format(when);
 
             viewHolder.layout.setGravity(Gravity.RIGHT);
             viewHolder.chatContent.setText(chatMessageList.get(position).getContent());
             viewHolder.chatContent.setBackgroundResource(R.drawable.outchat);
             viewHolder.nickName.setGravity(Gravity.RIGHT);
             viewHolder.leftLayout.setGravity(Gravity.RIGHT);
-            viewHolder.leftText.setText(chatMessageList.get(position).getTime());
+            viewHolder.leftText.setText(time);
             viewHolder.profileImage.setVisibility(View.GONE);
             viewHolder.nickName.setVisibility(View.GONE);
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftLayout.setVisibility(View.VISIBLE);
             viewHolder.rightLayout.setVisibility(View.GONE);
-            userId = chatMessageList.get(position).getUserId();
+            friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
                     .error(R.drawable.default_profile_image)
                     .signature(new StringSignature(profile))
                     .into(viewHolder.profileImage);
 
+            int tmpUnread = db.getUnReadWith(myId,no,now) ;
+            if(tmpUnread <=0) {
+                viewHolder.leftUnread.setText("");
+            }else{
+                viewHolder.leftUnread.setText(tmpUnread+"");
+            }
 
         }
 

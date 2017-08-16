@@ -45,19 +45,19 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListData = new ArrayList<ChatMessageItem>();
 
-        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 7월 20일 목요일","무쓸모타임");
+        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 7월 20일 목요일",0);
         ListData.add(defaultItem);
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
         Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId,no);
 
-        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+//        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 
         while(cursor.moveToNext()) {
 
-            Date recvTime = new Date(cursor.getLong(4));
-            String time = sdfNow.format(recvTime);
-            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(5),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(3),time);
+//            Date recvTime = new Date(cursor.getLong(4));
+//            String time = sdfNow.format(recvTime);
+            ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(5),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(3),cursor.getLong(4));
             ListData.add(addItem);
 
             Log.d("커서야ChatMessageItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6)+"#####"+cursor.getString(7)+"#####"+cursor.getString(8));
@@ -65,7 +65,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListView lv = (ListView) rootView.findViewById(R.id.messageList);
 
-        chatListAdapter = (new ChatMessageAdapter(getActivity().getApplicationContext(),ListData));
+        chatListAdapter = (new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no));
 
         lv.setAdapter(chatListAdapter);
 
@@ -77,16 +77,16 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
     public void passData(String friendId,String nickname, String profile,String content,long now,int type) {
 //        Toast.makeText(getActivity(),passdata+" 프래그먼트",Toast.LENGTH_SHORT).show();
 
-        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
-        Date recvTime = new Date(now);
-        String time = sdfNow.format(recvTime);
+//        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+//        Date recvTime = new Date(now);
+//        String time = sdfNow.format(recvTime);
 
         if(type == 1) {
-            ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, time);
+            ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
         }else{
-            ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, time);
+            ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
         }
