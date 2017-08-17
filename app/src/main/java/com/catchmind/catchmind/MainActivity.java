@@ -158,12 +158,12 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
 
         db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
-        Cursor cursor = db.getChatFriendList(userId);
+        Cursor cursor = db.getChatFriendList();
         Log.d("getfriend메시CFL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2)+"####"+cursor.getColumnName(3)+"####"+cursor.getColumnName(4));
         while(cursor.moveToNext()) {
             Log.d("getfriendCFL", cursor.getString(0) + "###" + cursor.getString(1));
         }
-        cursor = db.getChatRoomList(userId);
+        cursor = db.getChatRoomList();
         Log.d("getfriend메시CRL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2));
         while(cursor.moveToNext()){
         Log.d("getfriend메시CRL",cursor.getString(0)+"###"+cursor.getString(1));

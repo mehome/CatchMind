@@ -181,7 +181,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     public void ResetHash(){
         NickHash = new HashMap<>();
         ProfileHash = new HashMap<>();
-        Cursor cursor = db.getChatFriendListByNo(userId,no);
+        Cursor cursor = db.getChatFriendListByNo(no);
         while(cursor.moveToNext()){
             NickHash.put(cursor.getString(1),cursor.getString(2));
             ProfileHash.put(cursor.getString(1),cursor.getString(3));
@@ -192,7 +192,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        db.updateChatRoomData(userId,no,friendId,System.currentTimeMillis());
+        db.updateChatRoomData(no,friendId,System.currentTimeMillis());
         if(mService != null) {
             mService.boundStart = true;
             long now = System.currentTimeMillis();

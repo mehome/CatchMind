@@ -40,6 +40,7 @@ public class ChatRoomAdapter extends BaseAdapter{
         this.userId = myId;
         this.sdfNow = new SimpleDateFormat("HH:mm");
         db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
+        Log.d("새로생기나?",db.toString());
     }
 
     public void setChatRoomList(ArrayList<ChatRoomItem> ListData) {
@@ -81,14 +82,25 @@ public class ChatRoomAdapter extends BaseAdapter{
         String content = "";
         long when = 0;
         long myWhen = 0;
+        int unRead = 0;
+        Date recvTime;
+        String time;
 
         Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
-        cursor.moveToNext();
-        content = cursor.getString(3);
-        when = cursor.getLong(4);
-        myWhen = cursor.getLong(8);
-        Log.d("myWhen_"+position,myWhen+"");
-        int unRead = db.getUnRead(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo(),myWhen);
+        if(cursor.getCount() != 0) {
+            cursor.moveToNext();
+            content = cursor.getString(3);
+            when = cursor.getLong(4);
+            myWhen = cursor.getLong(8);
+            Log.d("myWhen_" + position, myWhen + "");
+            unRead = db.getUnRead(userId, chatRoomList.get(position).getFriendId(), chatRoomList.get(position).getNo(), myWhen);
+            recvTime = new Date(when);
+            time = this.sdfNow.format(recvTime);
+        }else{
+            time = "";
+        }
+
+        cursor.close();
 
         if(unRead==0){
             viewHolder.unRead.setVisibility(View.INVISIBLE);
@@ -97,16 +109,17 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder.unRead.setText(unRead+"");
         }
 
-        Date recvTime = new Date(when);
-        String time = this.sdfNow.format(recvTime);
+
 
         if(chatRoomList.get(position).getNo()==0) {
 
-            Cursor userCS = db.getChatFriendListByIdAndNo(userId,chatRoomList.get(position).getNo(),chatRoomList.get(position).getFriendId());
+            Cursor userCS = db.getChatFriendListByIdAndNo(chatRoomList.get(position).getNo(),chatRoomList.get(position).getFriendId());
             userCS.moveToNext();
 
             String nickname = userCS.getString(2);
             String profile = userCS.getString(3);
+
+            userCS.close();
 
             viewHolder.title.setText(nickname);
             viewHolder.content.setText(content);
@@ -128,13 +141,14 @@ public class ChatRoomAdapter extends BaseAdapter{
             viewHolder.profileImage.setImageResource(R.drawable.group_icon);
 
             JSONArray jarray = new JSONArray();
-            Cursor cs = db.getChatFriendListByNo(userId,chatRoomList.get(position).getNo());
+            Cursor cs = db.getChatFriendListByNo(chatRoomList.get(position).getNo());
             while(cs.moveToNext()) {
 
                 jarray.put(cs.getString(1));
 
                 Log.d("chatRoomAdapter","cs?"+cs.getString(1));
             }
+            cs.close();
 
             convertView.setTag(R.id.userId, jarray.toString());
             convertView.setTag(R.id.nickname, "그룹채팅 "+chatRoomList.get(position).getNo());

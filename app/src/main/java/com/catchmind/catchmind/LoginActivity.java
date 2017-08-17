@@ -227,8 +227,8 @@ public class LoginActivity extends AppCompatActivity{
                 db.clearFriendList();
                 db.createTable();
                 db.createMessageData(sUserId);
-                db.createChatFriendList(sUserId);
-                db.createChatRoomList(sUserId);
+                db.createChatFriendList();
+                db.createChatRoomList();
 
 
 //                db.insertChatFriendData(sUserId,0,"thdwndrl","송중기","xxx","상태메시지",1234);
@@ -287,7 +287,7 @@ public class LoginActivity extends AppCompatActivity{
                         editor.putString("nickname",nickname);
                         editor.putString("profile",profile);
                         editor.putString("message",message);
-                        db.insertChatFriendData(sUserId,0,sUserId,nickname,profile,message,0);
+                        db.insertChatFriendData(0,sUserId,nickname,profile,message,0);
                         editor.commit();
                     }else {
                         db.insert(friendId, nickname, profile, message, bookmark);
@@ -309,7 +309,7 @@ public class LoginActivity extends AppCompatActivity{
 //
 //                    db.insertChatFriendData(sUserId,no,friendId,nickname,profile,message,time);
 
-                    db.insertChatFriendDataMultiple(sUserId,dataArray.get(1).toString());
+                    db.insertChatFriendDataMultiple(dataArray.get(1).toString());
 
 //                }
 
@@ -321,7 +321,7 @@ public class LoginActivity extends AppCompatActivity{
                     int no = (int) jobject.getInt("no");
                     String friendId = (String) jobject.getString("friendId");
 
-                    db.insertChatRoomData(sUserId,no,friendId,0);
+                    db.insertChatRoomData(no,friendId,0);
 
                 }
 
@@ -333,7 +333,7 @@ public class LoginActivity extends AppCompatActivity{
                     String friendId = (String) jobject.getString("friendId");
                     long time = (long) jobject.getLong("time");
 
-                    db.updateChatRoomData(sUserId,no,friendId,time);
+                    db.updateChatRoomData(no,friendId,time);
 
                 }
 
