@@ -1,7 +1,10 @@
 package com.catchmind.catchmind;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -47,7 +50,7 @@ import java.util.HashMap;
  * Created by sonsch94 on 2017-07-19.
  */
 
-public class ChatRoomActivity extends AppCompatActivity {
+public class ChatRoomActivity extends AppCompatActivity implements DrawLine.sendToActivity{
 
 
     private ViewPager viewPager;
@@ -62,6 +65,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     MessageRoomFragment mf;
     DrawRoomFragment df;
     FragmentCommunicator fragmentCommunicator;
+    DrawCommunicator drawCommunicator;
     public String sendName;
     public String sendContent;
     private ChatService mService;
@@ -72,7 +76,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     public int no;
     public HashMap<String,String> NickHash = new HashMap<>();
     public HashMap<String,String> ProfileHash = new HashMap<>();
-
+    BroadcastReceiver NetworkChangeUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +106,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         String nickname = GI.getStringExtra("nickname");
 
         if(no == 0) {
-            Cursor cursor = db.getFriendData(friendId);
+            Cursor cursor = db.getChatFriendData(friendId);
             cursor.moveToNext();
             friendNickname = cursor.getString(1);
             friendProfile = cursor.getString(2);
@@ -114,11 +118,27 @@ public class ChatRoomActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        NetworkChangeUpdater = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //UI update here
+                if (intent != null) {
+                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+                    UpdateNetwork();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("receiver.to.activity.transfer");
+        registerReceiver(NetworkChangeUpdater, filter);
+
         // Initializing ViewPager
         viewPager = (ViewPager) findViewById(R.id.pagerChatRoom);
         mf = new MessageRoomFragment();
         df = new DrawRoomFragment();
         fragmentCommunicator = (FragmentCommunicator) mf;
+        drawCommunicator = (DrawCommunicator) df;
         ChatRoomPagerAdapter pagerAdapter = new ChatRoomPagerAdapter(getSupportFragmentManager(),mf,df,mPref,friendId,no);
 
         Log.d("chatRoomActivity",userId+"###"+no+"###"+friendId);
@@ -169,6 +189,9 @@ public class ChatRoomActivity extends AppCompatActivity {
                     fragmentCommunicator.passData("내아아이디","내닉네임","내프로필", content, time, 2);
                 }else if(msg.what==3){
                     fragmentCommunicator.alertChange();
+                }else if(msg.what==10){
+                    String path = msg.getData().getString("path");
+                    drawCommunicator.receivePath(path);
                 }
 
 
@@ -176,6 +199,11 @@ public class ChatRoomActivity extends AppCompatActivity {
         };
 
 
+    }
+
+    public void UpdateNetwork(){
+        Intent serviceIntent = new Intent(this, ChatService.class);
+        bindService(serviceIntent, mConnection, this.BIND_AUTO_CREATE);
     }
 
     public void ResetHash(){
@@ -212,6 +240,12 @@ public class ChatRoomActivity extends AppCompatActivity {
         void passData(String friendId, String nickname, String profile, String content, long time,int type);
         void alertChange();
         void changeNo(int sNo);
+    }
+
+    public interface DrawCommunicator {
+
+        void receivePath(String PATH);
+
     }
 
 //    public void passVal(FragmentCommunicator fragmentCommunicator) {
@@ -288,7 +322,26 @@ public class ChatRoomActivity extends AppCompatActivity {
             return friendId;
         }
 
+        public void resetToolbar() { resetTitle(); }
+
+        public void receivePath(String PATH){
+
+            Message message= Message.obtain();
+            message.what = 10;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("path",PATH);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+        }
+
     };
+
+    public void resetTitle(){
+        getSupportActionBar().setTitle("그룹채팅 "+no);
+    }
 
     @Override
     protected void onDestroy() {
@@ -298,10 +351,14 @@ public class ChatRoomActivity extends AppCompatActivity {
         mService.boundedNo = -1;
         mService.boundedFriendId ="";
         unbindService(mConnection);
+        unregisterReceiver(NetworkChangeUpdater);
     }
 
-
-
+    @Override
+    public void sendPath(String PATH){
+        long now = System.currentTimeMillis();
+        mService.sendPATH(no,friendId,PATH,now);
+    }
 
 
     public void sendMessage(View v){

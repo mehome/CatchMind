@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity{
     public MyDatabaseOpenHelper db;
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
-    public CheckBox autoLogin;
+//    public CheckBox autoLogin;
 
 
     @Override
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity{
 
         userId = (EditText) findViewById(R.id.userIdInput);
         password = (EditText) findViewById(R.id.passwordInput);
-        autoLogin = (CheckBox) findViewById(R.id.autoLogin);
+//        autoLogin = (CheckBox) findViewById(R.id.autoLogin);
 
         sUserId = userId.getText().toString();
         sPassword = password.getText().toString();
@@ -71,14 +72,21 @@ public class LoginActivity extends AppCompatActivity{
 
         if(mPref.getBoolean("autoLogin",false) == true){
 
-            sUserId = mPref.getString("autoLoginId","");
-            sPassword = mPref.getString("autoLoginPassword","");
+            Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
+            startService(serviceIntent);
 
-            loginAT LAT = new loginAT(true);
-            LAT.execute();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+
+//            sUserId = mPref.getString("autoLoginId","");
+//            sPassword = mPref.getString("autoLoginPassword","");
+//
+//            loginAT LAT = new loginAT(true);
+//            LAT.execute();
         }
 
-        autoLogin.setChecked(true);
+//        autoLogin.setChecked(true);
     }
 
 
@@ -338,13 +346,13 @@ public class LoginActivity extends AppCompatActivity{
                 }
 
 
-                if(autoLogin.isChecked()){
-                    editor.putBoolean("autoLogin",true);
-                    editor.putString("autoLoginId",sUserId);
-                    editor.putString("autoLoginPassword",sPassword);
 
-                    editor.commit();
-                }
+                editor.putBoolean("autoLogin",true);
+                editor.putString("autoLoginId",sUserId);
+                editor.putString("autoLoginPassword",sPassword);
+
+                editor.commit();
+
 
                 Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
                 startService(serviceIntent);

@@ -65,7 +65,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListView lv = (ListView) rootView.findViewById(R.id.messageList);
 
-        chatListAdapter = (new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no));
+        chatListAdapter = (new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no,friendId));
 
         lv.setAdapter(chatListAdapter);
 
@@ -102,5 +102,6 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
     @Override
     public void changeNo(int sNo) {
         this.no = sNo ;
+        chatListAdapter.no = sNo;
     }
 }

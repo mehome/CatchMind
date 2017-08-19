@@ -35,7 +35,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
         final View rootView = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
         myId = getArguments().getString("userId");
-        Log.d("진짜로?",myId);
+//        Log.d("진짜로?",myId);
         myNickname = getArguments().getString("nickname");
 
 
@@ -89,8 +89,8 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
     @Override
     public void changeRoomListFC() {
-        Log.d("진짜로?",myId);
-        Cursor cursor = db.getChatRoomListJoinChatFriendList();
+//        Log.d("진짜로?",myId);
+        Cursor cursor = db.getChatRoomList();
         ArrayList<ChatRoomItem> ListData = new ArrayList<>();
 
         while(cursor.moveToNext()) {

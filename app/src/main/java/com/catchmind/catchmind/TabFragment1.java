@@ -114,6 +114,7 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         ArrayList<ListViewItem> ListData = new ArrayList<ListViewItem>();
         ArrayList<ListViewItem> FListData = new ArrayList<ListViewItem>();
 

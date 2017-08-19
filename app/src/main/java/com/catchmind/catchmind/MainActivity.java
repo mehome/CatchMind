@@ -3,10 +3,12 @@ package com.catchmind.catchmind;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     public String userId;
     public String nickname;
     public static final int MakeGroupActivity = 5409;
-
+    public NetworkChangeReceiver mNCR;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         nickname = mPref.getString("nickname","메세지없음");
 
         editor = mPref.edit();
+
+        mNCR = new NetworkChangeReceiver();
+        registerReceiver(mNCR,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
 //        Bundle bundle = new Bundle();
 //        bundle.putString("nickname",userId);
 //        bundle.putString("message",nickname);
@@ -220,6 +227,9 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         if(!autoLogin){
             mService.terminateService();
         }
+
+        unregisterReceiver(mNCR);
+        mNCR = null;
 
     }
 

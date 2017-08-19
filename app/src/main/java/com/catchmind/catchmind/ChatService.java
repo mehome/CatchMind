@@ -60,7 +60,7 @@ public class ChatService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.d("ChatServiceOnCreate","크리에이트");
 
 
 
@@ -137,6 +137,8 @@ public class ChatService extends Service {
         public void resetHash();
         public void recvUpdate();
         public String getFriendId();
+        public void resetToolbar();
+        public void receivePath(String PATH);
     }
 
     public interface ICallback_2{
@@ -157,6 +159,19 @@ public class ChatService extends Service {
     }
 
     //액티비티에서 읽음 전송
+
+
+    public void sendPATH(int no,String friendId, String content, long time){
+        if (no < 0){
+            return;
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, content, time , 10);
+        st.start();
+
+    }
+
+
     public void sendRead(int no, String friendId, long time){
         if (no < 0){
             return;
@@ -189,7 +204,14 @@ public class ChatService extends Service {
                     chatRoomList.add(no + "");
                     if (boundCheck) {
                         mCallback.resetHash();
+                        mCallback.recvUpdate();
+                        mCallback.resetToolbar();
                     }
+
+                    if(boundCheck_2 == true){
+                        mCallback_2.changeRoomList();
+                    }
+
                 }
             }catch (InterruptedException e){
                 e.printStackTrace();
@@ -199,6 +221,7 @@ public class ChatService extends Service {
         }
 
         if( no == 0 && !chatRoomList.contains(friendId) ){
+
 
             Cursor cursor = db.getFriendData(friendId);
             cursor.moveToNext();
@@ -246,6 +269,7 @@ public class ChatService extends Service {
         }
 
     }
+
 
     public void postConnect(){
         ReceiveThread startReceive = new ReceiveThread(socket);
@@ -532,7 +556,7 @@ public class ChatService extends Service {
                         mCallback_2.changeRoomList();
                     }
 
-                    db.insertMessageData(userId,0,friendId, sContent, sTime, 1);
+//                    db.insertMessageData(userId,0,friendId, sContent, sTime, 1);
 
                     if(boundCheck == true) {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
@@ -784,7 +808,7 @@ public class ChatService extends Service {
                     mCallback_2.changeRoomList();
                 }
 
-                db.insertMessageData(userId,sNo,sFriendId,sContent, sTime, 1);
+//                db.insertMessageData(userId,sNo,sFriendId,sContent, sTime, 1);
 
                 if(boundCheck == true) {
                     if(boundedNo == sNo ) {
@@ -1005,6 +1029,13 @@ public class ChatService extends Service {
                             mCallback.recvUpdate();
                         }
                     }
+
+                }
+            }else if(sKind == 10){
+
+                if(boundCheck) {
+
+                    mCallback.receivePath(sContent);
 
                 }
             }

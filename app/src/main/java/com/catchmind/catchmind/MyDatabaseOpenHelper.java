@@ -2,6 +2,7 @@ package com.catchmind.catchmind;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,16 +13,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 {
 
     SQLiteDatabase dbr;
     SQLiteDatabase dbw;
+    public SharedPreferences mPref;
+
 
     public MyDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         dbr = getReadableDatabase();
         dbw = getWritableDatabase();
+        mPref = context.getSharedPreferences("login",MODE_PRIVATE);
     }
 
     @Override
@@ -165,7 +171,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 //        SQLiteDatabase db = this.getReadableDatabase();
         String sql;
         if(no==0) {
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId AND messageData_" + userId + ".no = chatFriendList.no WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
         }else{
             sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId AND messageData_" + userId + ".no = chatFriendList.no WHERE messageData_" + userId + ".no='" + no +"'" ;
         }
@@ -264,6 +270,16 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         return cursor;
     }
 
+    public Cursor getChatFriendData(String friendId){
+
+        Log.d("db.getCFD",friendId);
+//        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM chatFriendList where friendId='"+friendId+"' AND no='0'";
+        Cursor cursor = dbr.rawQuery(sql,null);
+
+        return cursor;
+    }
+
     public void createChatFriendList(){
 
 //        SQLiteDatabase db = getWritableDatabase();
@@ -323,6 +339,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             while(cursor.moveToNext()){
                 sql_2 = sql_2 + ",('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
             }
+            sql_2 = sql_2 + ",('"+no+"','"+mPref.getString("userId","null")+"','"+mPref.getString("nickname","null")+"','"+mPref.getString("profile","null")+"','"+mPref.getString("message","null")+"','0')";
 
             Log.d("ICFDM",sql_2);
 
@@ -490,8 +507,6 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
 
 
-
-
     public Cursor getChatFriendList(){
         Log.d("db.getCFL","noUserId");
 //        SQLiteDatabase db = this.getReadableDatabase();
@@ -591,7 +606,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
-    public int getUnReadWith(String userId,String friendId, int no ,long cTime){
+    public int getUnReadWithRight(String userId,String friendId, int no ,long cTime){
 
         if(no ==0) {
             return 0;
@@ -610,12 +625,16 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
 
-    public int getUnReadWith(String userId, int no ,long cTime){
+    public int getUnReadWithLeft(String userId,String friendId, int no ,long cTime){
 
 
 //        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT COUNT(*) FROM chatFriendList WHERE no='"+no+"' AND friendId NOT IN ('"+userId+"') AND time <"+cTime;
-
+        String sql;
+        if(no == 0){
+            sql = "SELECT COUNT(*) FROM chatFriendList WHERE no='0' AND friendId = '"+friendId+"' AND time <" + cTime;
+        }else {
+            sql = "SELECT COUNT(*) FROM chatFriendList WHERE no='" + no + "' AND friendId NOT IN ('" + userId + "') AND time <" + cTime;
+        }
         Log.d("getUnReadWith2",sql);
         Cursor cursor = dbr.rawQuery(sql,null);
         cursor.moveToNext();

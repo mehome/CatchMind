@@ -129,6 +129,7 @@ public class MakeGroupActivity extends AppCompatActivity {
         }else if(id == R.id.invite_check_button){
 
             JSONArray jsonArray = new JSONArray();
+
             for (int i=0; i < inviteList.size(); i++) {
                 jsonArray.put(inviteList.get(i));
             }

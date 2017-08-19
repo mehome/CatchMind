@@ -1,11 +1,15 @@
 package com.catchmind.catchmind;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,11 +19,54 @@ import java.util.ArrayList;
  * Created by sonsch94 on 2017-07-19.
  */
 
-public class DrawRoomFragment extends Fragment{
+public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawCommunicator{
+
+    LinearLayout sketchBook;
+
+    private DrawLine drawLine = null;
+    ChatRoomActivity cra;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.draw_room_fragment, container, false);
+
+        final View rootView = inflater.inflate(R.layout.draw_room_fragment, container, false);
+
+        cra = (ChatRoomActivity)getActivity();
+
+        sketchBook = (LinearLayout) rootView.findViewById(R.id.SketchBook);
+
+        if(sketchBook != null) //그리기 뷰가 보여질 레이아웃이 있으면...
+        {
+            //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
+            Rect rect = new Rect(0, 0,
+                    1000, 1600);
+            Log.d("담배zz",sketchBook.getWidth()+"###"+sketchBook.getHeight());
+            //그리기 뷰 초기화..
+            drawLine = new DrawLine(getContext(), rect, cra );
+
+
+            //그리기 뷰를 그리기 뷰 레이아웃에 넣기 -- 이렇게 하면 그리기 뷰가 화면에 보여지게 됨.
+            sketchBook.addView(drawLine);
+
+        }
+
+
+
+        return rootView;
+
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void receivePath(String PATH) {
+        drawLine.receiveLine(PATH);
+    }
+
+
 
 }

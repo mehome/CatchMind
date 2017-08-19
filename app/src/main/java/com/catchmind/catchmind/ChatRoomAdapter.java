@@ -114,11 +114,18 @@ public class ChatRoomAdapter extends BaseAdapter{
         if(chatRoomList.get(position).getNo()==0) {
 
             Cursor userCS = db.getChatFriendListByIdAndNo(chatRoomList.get(position).getNo(),chatRoomList.get(position).getFriendId());
-            userCS.moveToNext();
+            String nickname = "";
+            String profile = "";
+            Log.d("가라",position+"###"+userCS.getCount());
+            if(userCS.getCount() != 0) {
+                userCS.moveToNext();
 
-            String nickname = userCS.getString(2);
-            String profile = userCS.getString(3);
+                nickname = userCS.getString(2);
+                profile = userCS.getString(3);
 
+                Log.d("가라",position+"###"+nickname);
+                Log.d("가라",position+"###"+profile);
+            }
             userCS.close();
 
             viewHolder.title.setText(nickname);

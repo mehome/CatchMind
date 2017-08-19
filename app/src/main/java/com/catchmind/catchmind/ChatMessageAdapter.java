@@ -30,16 +30,18 @@ public class ChatMessageAdapter extends BaseAdapter {
     public LayoutInflater inflater ;
     public MyDatabaseOpenHelper db;
     public String myId;
+    public String zeroFriendId;
     public int no;
     public SimpleDateFormat sdfNow ;
     // ListViewAdapter의 생성자
-    public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no) {
+    public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no, String friendId) {
         this.mContext = context;
         this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.chatMessageList = ListData;
         this.myId = myId;
         this.no = no;
         this.sdfNow = new SimpleDateFormat("HH:mm");
+        this.zeroFriendId = friendId;
         db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
     }
 
@@ -126,7 +128,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                     .signature(new StringSignature(profile))
                     .into(viewHolder.profileImage);
 
-            int tmpUnread = db.getUnReadWith(myId,friendId,no,now) ;
+            int tmpUnread = db.getUnReadWithRight(myId,friendId,no,now) ;
             if(tmpUnread <=0) {
                 viewHolder.rightUnread.setText("");
             }else{
@@ -157,7 +159,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                     .signature(new StringSignature(profile))
                     .into(viewHolder.profileImage);
 
-            int tmpUnread = db.getUnReadWith(myId,no,now) ;
+            int tmpUnread = db.getUnReadWithLeft(myId,zeroFriendId,no,now) ;
             if(tmpUnread <=0) {
                 viewHolder.leftUnread.setText("");
             }else{

@@ -106,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
                         .into(profileIV);
             }
         }else {
-            Toast.makeText(this,profile,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this,profile,Toast.LENGTH_SHORT).show();
             if(profile.equals("none")){
                 profileIV.setImageResource(R.drawable.default_profile_image);
             }else {
