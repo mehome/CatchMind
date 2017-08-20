@@ -106,10 +106,13 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
         String nickname = GI.getStringExtra("nickname");
 
         if(no == 0) {
-            Cursor cursor = db.getChatFriendData(friendId);
-            cursor.moveToNext();
-            friendNickname = cursor.getString(1);
-            friendProfile = cursor.getString(2);
+            Cursor cursor = db.getFriendData(friendId);
+            friendNickname = nickname;
+            friendProfile = "";
+            if(cursor.getCount() != 0) {
+                cursor.moveToNext();
+                friendProfile = cursor.getString(2);
+            }
         }else {
             ResetHash();
         }
@@ -123,8 +126,10 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
             public void onReceive(Context context, Intent intent) {
                 //UI update here
                 if (intent != null) {
-                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
-                    UpdateNetwork();
+//                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+                    String networkType = intent.getExtras().getString("wifi");
+                    UpdateNetwork(networkType);
+
                 }
             }
         };
@@ -201,9 +206,16 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
 
     }
 
-    public void UpdateNetwork(){
-        Intent serviceIntent = new Intent(this, ChatService.class);
-        bindService(serviceIntent, mConnection, this.BIND_AUTO_CREATE);
+    public void UpdateNetwork(String type){
+        if(type.equals("wifi")) {
+            Intent serviceIntent = new Intent(this, ChatService.class);
+            bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
+            Log.d("담배Net","UPDATE wifi##"+type);
+        }else{
+            Intent serviceIntent = new Intent(this, ChatService.class);
+            bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
+            Log.d("담배Net","UPDATE nonewifi##"+type);
+        }
     }
 
     public void ResetHash(){

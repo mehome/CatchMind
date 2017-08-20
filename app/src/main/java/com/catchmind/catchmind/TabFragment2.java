@@ -84,7 +84,9 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
     @Override
     public void notifyRecvData(){
-        myListAdapter.notifyDataSetChanged();
+        if(myListAdapter != null) {
+            myListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

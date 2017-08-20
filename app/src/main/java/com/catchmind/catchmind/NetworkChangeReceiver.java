@@ -27,21 +27,29 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if (activeNetwork != null) { // connected to the internet
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                 // connected to wifi
-                Intent serviceIntent = new Intent(context,ChatService.class);
-                context.startService(serviceIntent);
+
                 Intent local = new Intent();
                 local.setAction("receiver.to.activity.transfer");
+                local.putExtra("wifi","wifi");
                 context.sendBroadcast(local);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
+                Intent serviceIntent = new Intent(context,ChatService.class);
+                context.startService(serviceIntent);
+                Log.d("담배Net","Receiver wifi##");
 
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                 // connected to the mobile provider's data plan
-                Intent serviceIntent = new Intent(context,ChatService.class);
-                context.startService(serviceIntent);
+
                 Intent local = new Intent();
                 local.setAction("receiver.to.activity.transfer");
+                local.putExtra("wifi","mobile");
                 context.sendBroadcast(local);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
+
+                Intent serviceIntent = new Intent(context,ChatService.class);
+                context.startService(serviceIntent);
+                Log.d("담배Net","Receiver mobile##");
+
             }
         } else {
             // not connected to the internet

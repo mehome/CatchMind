@@ -45,7 +45,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListData = new ArrayList<ChatMessageItem>();
 
-        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 7월 20일 목요일",0);
+        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 8월 20일 일요일",0);
         ListData.add(defaultItem);
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);

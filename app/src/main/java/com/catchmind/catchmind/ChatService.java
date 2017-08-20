@@ -100,6 +100,7 @@ public class ChatService extends Service {
         userId = mPref.getString("userId","아이디없음");
 
         Log.d("ChatServiceOnStart",userId);
+        Log.d("담배Net","ChatService mobile##");
 
         ConnectThread ct = new ConnectThread();
         ct.start();
@@ -206,6 +207,7 @@ public class ChatService extends Service {
                         mCallback.resetHash();
                         mCallback.recvUpdate();
                         mCallback.resetToolbar();
+                        mCallback.changeNo(no);
                     }
 
                     if(boundCheck_2 == true){
@@ -328,8 +330,10 @@ public class ChatService extends Service {
         DataInputStream input;
         String checkId;
 
+
         public ReceiveThread(Socket threadsocket) {
             this.checkId = userId;
+
             try{
                 this.receiver = threadsocket.getInputStream();
                 this.input = new DataInputStream(receiver);
@@ -400,7 +404,11 @@ public class ChatService extends Service {
                 }
 
                 Log.d("리시브 죽었당",userId +"####"+response);
-
+//                try {
+//                    tmp_socket.close();
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
             }
 
         }
@@ -439,7 +447,7 @@ public class ChatService extends Service {
                 e.printStackTrace();
             }
 
-            Log.d("내용물1t",sendmsg);
+            Log.d("내용물sendThread",sendmsg);
 
         }
 

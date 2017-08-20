@@ -196,6 +196,7 @@ public class DrawLine extends View
             float c = (float) jarray.getDouble(2);
             float d = (float) jarray.getDouble(3);
             Log.d("되냐",a+"####"+b+"####"+c+"####"+d);
+            Rpath.moveTo(a,b);
             Rpath.quadTo(a,b,c,d);
             canvas.drawPath(Rpath, paint);
             invalidate();

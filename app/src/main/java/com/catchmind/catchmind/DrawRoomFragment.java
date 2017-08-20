@@ -39,7 +39,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
         {
             //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
             Rect rect = new Rect(0, 0,
-                    1000, 1600);
+                    500, 1000);
             Log.d("담배zz",sketchBook.getWidth()+"###"+sketchBook.getHeight());
             //그리기 뷰 초기화..
             drawLine = new DrawLine(getContext(), rect, cra );
