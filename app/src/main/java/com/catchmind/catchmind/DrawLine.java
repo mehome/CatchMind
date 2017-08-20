@@ -91,6 +91,10 @@ public class DrawLine extends View
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
+        if(!ChatRoomViewPager.DrawMode){
+            return false;
+        }
+
         float x = event.getX();
         float y = event.getY();
 

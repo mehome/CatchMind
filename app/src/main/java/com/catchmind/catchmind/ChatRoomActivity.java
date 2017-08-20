@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -53,7 +54,8 @@ import java.util.HashMap;
 public class ChatRoomActivity extends AppCompatActivity implements DrawLine.sendToActivity{
 
 
-    private ViewPager viewPager;
+//    private ViewPager viewPager;
+    private ChatRoomViewPager viewPager;
     String friendId;
     String friendNickname;
     String friendProfile;
@@ -77,6 +79,8 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
     public HashMap<String,String> NickHash = new HashMap<>();
     public HashMap<String,String> ProfileHash = new HashMap<>();
     BroadcastReceiver NetworkChangeUpdater;
+    public ImageButton plusBtn;
+    public Button drawModeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +91,8 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
 
         // Adding Toolbar to the activity
         toolbar = (Toolbar) findViewById(R.id.toolbarChatRoom);
+        plusBtn = (ImageButton) findViewById(R.id.plus_btn);
+        drawModeBtn = (Button) findViewById(R.id.drawMode_btn);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true); //커스터마이징 하기 위해 필요
@@ -139,7 +145,7 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
         registerReceiver(NetworkChangeUpdater, filter);
 
         // Initializing ViewPager
-        viewPager = (ViewPager) findViewById(R.id.pagerChatRoom);
+        viewPager = (ChatRoomViewPager) findViewById(R.id.pagerChatRoom);
         mf = new MessageRoomFragment();
         df = new DrawRoomFragment();
         fragmentCommunicator = (FragmentCommunicator) mf;
@@ -157,6 +163,16 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
 
             @Override
             public void onPageSelected(int position) {
+
+                if(position == 0){
+                    ChatRoomViewPager.DrawMode = false;
+                    drawModeBtn.setVisibility(View.GONE);
+                    plusBtn.setVisibility(View.VISIBLE);
+                }else if(position == 1){
+                    ChatRoomViewPager.DrawMode = false;
+                    plusBtn.setVisibility(View.GONE);
+                    drawModeBtn.setVisibility(View.VISIBLE);
+                }
 
             }
 
@@ -419,7 +435,18 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
         return super.onOptionsItemSelected(item);
     }
 
+    public void ImageSendBtn(View v){
+        Toast.makeText(this,"ImageSendBtn",Toast.LENGTH_SHORT);
+    }
 
-
+    public void DrawModeBtn(View v){
+        if(ChatRoomViewPager.DrawMode){
+            drawModeBtn.setBackgroundResource(R.drawable.btn_border);
+            ChatRoomViewPager.DrawMode = false;
+        }else{
+            drawModeBtn.setBackgroundResource(R.drawable.btn_border_active);
+            ChatRoomViewPager.DrawMode = true;
+        }
+    }
 
 }

@@ -94,6 +94,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
     @Override
     public void alertChange() {
+        Log.d("MessageRoomF","alertChange");
         if(chatListAdapter != null) {
             chatListAdapter.notifyDataSetChanged();
         }
@@ -104,4 +105,6 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         this.no = sNo ;
         chatListAdapter.no = sNo;
     }
+
+
 }

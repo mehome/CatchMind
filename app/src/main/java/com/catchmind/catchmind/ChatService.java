@@ -196,6 +196,7 @@ public class ChatService extends Service {
                 if(no >0){
                     if(boundCheck) {
                         mCallback.changeNo(no);
+                        boundedNo = no;
                     }
                     Log.d("CS.sendMessage","액티비티도 no고쳐라: "+no);
                 }
@@ -1025,7 +1026,7 @@ public class ChatService extends Service {
             }else if(sKind == 2){
 
                 db.updateChatFriendData(sNo,sFriendId,sTime);
-
+                Log.d("도태",sNo+"####"+sFriendId+"###"+boundStart+"###"+boundedNo+"###"+boundedFriendId);
                 if(boundStart) {
 
                     if(sNo == 0 ) {
@@ -1035,6 +1036,7 @@ public class ChatService extends Service {
                     }else{
                         if(boundedNo == sNo) {
                             mCallback.recvUpdate();
+                            Log.d("도태2",sNo+"####"+sFriendId+"###"+boundStart);
                         }
                     }
 

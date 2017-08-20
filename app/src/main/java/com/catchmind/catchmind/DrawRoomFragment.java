@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,6 +26,8 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
     private DrawLine drawLine = null;
     ChatRoomActivity cra;
+    int width = 0;
+    int height = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,10 +40,22 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
         if(sketchBook != null) //그리기 뷰가 보여질 레이아웃이 있으면...
         {
+
+           ViewTreeObserver vto = sketchBook.getViewTreeObserver();
+
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    width  = sketchBook.getMeasuredWidth();
+                    height = sketchBook.getMeasuredHeight();
+
+                }
+            });
             //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
             Rect rect = new Rect(0, 0,
                     500, 1000);
-            Log.d("담배zz",sketchBook.getWidth()+"###"+sketchBook.getHeight());
+            Log.d("담배zz",width+"###"+height);
             //그리기 뷰 초기화..
             drawLine = new DrawLine(getContext(), rect, cra );
 
