@@ -51,7 +51,7 @@ import java.util.HashMap;
  * Created by sonsch94 on 2017-07-19.
  */
 
-public class ChatRoomActivity extends AppCompatActivity implements DrawLine.sendToActivity{
+public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToActivity{
 
 
 //    private ViewPager viewPager;
@@ -220,7 +220,30 @@ public class ChatRoomActivity extends AppCompatActivity implements DrawLine.send
         };
 
 
+        attachKeyboardListeners();
+
     }
+
+
+
+    @Override
+    protected void onShowKeyboard(int keyboardHeight) {
+        // do things when keyboard is shown
+        Toast.makeText(this,"show",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onHideKeyboard() {
+        // do things when keyboard is hidden
+        Toast.makeText(this,"hide",Toast.LENGTH_SHORT).show();
+    }
+
+
+
+
+
+
+
 
     public void UpdateNetwork(String type){
         if(type.equals("wifi")) {

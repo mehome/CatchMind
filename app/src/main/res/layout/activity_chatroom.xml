@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.catchmind.catchmind.MainActivity">
+    tools:context="com.catchmind.catchmind.MainActivity"
+    android:id="@+id/rootLayout">
 
     <!--Custom Toolbar-->
     <android.support.v7.widget.Toolbar
@@ -26,10 +27,22 @@
         <!--android:layout_weight="100"/>-->
 
     <com.catchmind.catchmind.ChatRoomViewPager
-        android:id="@+id/pagerChatRoom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="100"/>
+            android:id="@+id/pagerChatRoom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="100"
+        />
+
+    <!--<ScrollView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/sketch_scroll"-->
+        <!--android:fillViewport="true"-->
+        <!--android:layout_weight="100">-->
+
+    <!--</ScrollView>-->
+
+
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -74,22 +87,22 @@
             android:orientation="horizontal"
             android:layout_toEndOf="@+id/ButtonContainer">
 
-        <EditText
-            android:hint="메세지를 입력하세요"
-            android:id="@+id/messageContent"
-            android:inputType="textMultiLine"
-            android:maxLines="4"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            <EditText
+                android:hint="메세지를 입력하세요"
+                android:id="@+id/messageContent"
+                android:inputType="textMultiLine"
+                android:maxLines="4"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="전 송"
-            android:onClick="sendMessage"/>
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="전 송"
+                android:onClick="sendMessage"/>
 
         </LinearLayout>
 

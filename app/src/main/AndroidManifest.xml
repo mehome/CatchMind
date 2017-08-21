@@ -27,7 +27,8 @@
         <activity android:name=".SignUpActivity"
                     android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ChatRoomActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <activity android:name=".ProfileActivity"

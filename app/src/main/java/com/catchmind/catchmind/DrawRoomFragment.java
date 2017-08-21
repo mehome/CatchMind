@@ -2,6 +2,7 @@ package com.catchmind.catchmind;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,9 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,7 +26,8 @@ import java.util.ArrayList;
 
 public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawCommunicator{
 
-    LinearLayout sketchBook;
+    RelativeLayout sketchBook;
+
 
     private DrawLine drawLine = null;
     ChatRoomActivity cra;
@@ -36,26 +41,17 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
         cra = (ChatRoomActivity)getActivity();
 
-        sketchBook = (LinearLayout) rootView.findViewById(R.id.SketchBook);
+        sketchBook = (RelativeLayout) rootView.findViewById(R.id.SketchBook);
+        sketchBook.setEnabled(false);
 
         if(sketchBook != null) //그리기 뷰가 보여질 레이아웃이 있으면...
         {
 
-           ViewTreeObserver vto = sketchBook.getViewTreeObserver();
 
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-
-                    width  = sketchBook.getMeasuredWidth();
-                    height = sketchBook.getMeasuredHeight();
-
-                }
-            });
             //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
             Rect rect = new Rect(0, 0,
-                    500, 1000);
-            Log.d("담배zz",width+"###"+height);
+                    500, 1200);
+
             //그리기 뷰 초기화..
             drawLine = new DrawLine(getContext(), rect, cra );
 
@@ -67,7 +63,15 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
 
 
+
         return rootView;
+
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
     }
 
@@ -75,12 +79,31 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
     public void onStart() {
         super.onStart();
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ViewTreeObserver vto = sketchBook.getViewTreeObserver();
+
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                width  = sketchBook.getWidth();
+                height = sketchBook.getHeight();
+                sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Log.d("담배zz",width+"###"+height);
+            }
+        });
     }
 
     @Override
     public void receivePath(String PATH) {
         drawLine.receiveLine(PATH);
     }
+
 
 
 
