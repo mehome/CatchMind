@@ -48,20 +48,29 @@ public class DrawLine extends View
     public ArrayList<Coordinate> pathList = new ArrayList<>();
 
     public int OriginalWidth;
+    public int OriginalHeight;
 
     public int ResizeWidth;
 
     public Context mContext;
+
+    public Rect OriginalRect;
+
+    public boolean Resized;
+
+    public float rate_width;
+    public float rate_height;
 
     /**
      * 생성자.. new DrawLine(this, rect) 하면 여기가 호출됨.
      * @param context   Context객체
      * @param rect      그리기 범위 화면 사이즈
      */
-    public DrawLine(Context context, Rect rect,ChatRoomActivity CRA,int originalWidth)
+    public DrawLine(Context context, Rect rect,ChatRoomActivity CRA)
     {
         this(context);
         this.mContext = context;
+        this.OriginalRect = rect;
 
         cra = CRA;
         STA = (sendToActivity) cra;
@@ -76,7 +85,8 @@ public class DrawLine extends View
         path = new Path();
         Rpath = new Path();
 
-        this.OriginalWidth = originalWidth;
+        this.OriginalWidth = rect.width();
+        this.OriginalHeight = rect.height();
 
         setLineColor();
     }
@@ -96,12 +106,12 @@ public class DrawLine extends View
     {
         //그리기 bitmap이 있으면 현재 화면에 bitmap을 그린다.
         //자바의 view는 onDraw할때 마다 화면을 싹 지우고 다시 그리게 됨.
-        if(resizedBitmap != null)
-        {
+        if(resizedBitmap != null) {
             int Half = (OriginalWidth - ResizeWidth)/2;
-
             canvas.drawBitmap(resizedBitmap, Half, 0, null);
-        }else if( bitmap != null){
+        }
+
+        if( bitmap != null){
             canvas.drawBitmap(bitmap, 0, 0, null);
         }
 
@@ -162,6 +172,8 @@ public class DrawLine extends View
                         jarray.put(oldY);
                         jarray.put(x);
                         jarray.put(y);
+                        jarray.put(OriginalWidth);
+                        jarray.put(OriginalHeight);
                         sendPath = jarray.toString();
                     }catch(JSONException e){
                         e.printStackTrace();
@@ -221,15 +233,32 @@ public class DrawLine extends View
 
             JSONArray jarray = new JSONArray(PATH);
 
-            float a = (float) jarray.getDouble(0);
-            float b = (float) jarray.getDouble(1);
-            float c = (float) jarray.getDouble(2);
-            float d = (float) jarray.getDouble(3);
+            float opt_rate_width = (float)OriginalWidth / (float)jarray.getDouble(4);
+            float opt_rate_height = (float)OriginalHeight / (float)jarray.getDouble(5);
+            float Oldx = (float) jarray.getDouble(0) * opt_rate_width;
+            float Oldy = (float) jarray.getDouble(1) * opt_rate_height;
+            float x = (float) jarray.getDouble(2) * opt_rate_width;
+            float y = (float) jarray.getDouble(3) * opt_rate_height;
 
-            Log.d("되냐",a+"####"+b+"####"+c+"####"+d);
-            Rpath.moveTo(a,b);
-            Rpath.quadTo(a,b,c,d);
-            canvas.drawPath(Rpath, paint);
+            Coordinate tmpCD = new Coordinate(Oldx,Oldy,x,y);
+            pathList.add(tmpCD);
+
+            Log.d("되냐비율",rate_width+"");
+
+            if(Resized) {
+                float NOldx = Oldx * rate_width;
+                float NOldy = Oldy * rate_height;
+                float Nx = x * rate_width;
+                float Ny = y * rate_height;
+                Rpath.moveTo(NOldx,NOldy);
+                Rpath.quadTo(NOldx,NOldy,Nx,Ny);
+                canvas.drawPath(Rpath, paint);
+            }else {
+                Log.d("되냐", Oldx + "####" + Oldy + "####" + x + "####" + y);
+                Rpath.moveTo(Oldx, Oldy);
+                Rpath.quadTo(Oldx, Oldy, x, y);
+                canvas.drawPath(Rpath, paint);
+            }
             invalidate();
         }catch (JSONException e){
             e.printStackTrace();
@@ -237,17 +266,25 @@ public class DrawLine extends View
 
     }
 
-    public void changeBitmap(int width){
-        if(width < OriginalWidth) {
+    public void changeBitmap(int height){
+
+        if(height < OriginalHeight) {
+            Resized = true;
+            bitmap = null;
+            int width = (int)((float)OriginalWidth*((float)height/(float)OriginalHeight));
             int HalfOW = (int) OriginalWidth / 2;
             int HalfWidth = (int) width / 2;
+            int Half = HalfOW-HalfWidth;
             ResizeWidth = width;
+            Rect rect = new Rect(Half, 0, Half+width, height);
+            resizedBitmap = Bitmap.createBitmap(rect.width(), rect.height(),
+                    Bitmap.Config.ARGB_8888);
 
-            resizedBitmap = Bitmap.createBitmap(bitmap, HalfOW - HalfWidth, 0, width, width);
 
             canvas = new Canvas(resizedBitmap);
 
-            float rate = (float)width/(float)OriginalWidth;
+            rate_width = (float)width/(float)OriginalWidth;
+            rate_height = (float)height/(float)OriginalHeight;
 
             for(int i=0;i<pathList.size();i++){
 
@@ -258,10 +295,10 @@ public class DrawLine extends View
 
                 Log.d("비트맵1",Oldx+"###"+Oldy+"###"+x+"###"+y+"###");
 
-                float NOldx = Oldx*rate;
-                float NOldy = Oldy*rate;
-                float Nx = x*rate;
-                float Ny = y*rate;
+                float NOldx = Oldx*rate_width;
+                float NOldy = Oldy*rate_height;
+                float Nx = x*rate_width;
+                float Ny = y*rate_height;
 
                 Log.d("비트맵2",NOldx+"###"+NOldy+"###"+Nx+"###"+Ny+"###");
 
@@ -269,16 +306,37 @@ public class DrawLine extends View
                 path.moveTo(NOldx,NOldy);
                 path.quadTo(NOldx,NOldy,Nx,Ny);
                 canvas.drawPath(path,paint);
-            }
-                invalidate();
-            Log.d("디버깅",width+"###"+HalfOW+"###"+HalfWidth);
 
+            }
             invalidate();
+            Log.d("디버깅스몰",width+"###"+HalfOW+"###"+HalfWidth);
+
 
         }else{
-            canvas = new Canvas(bitmap);
+            Resized = false;
             resizedBitmap = null;
-            Log.d("디버깅",width+"###");
+            bitmap = Bitmap.createBitmap(OriginalRect.width(), OriginalRect.height(),
+                    Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(bitmap);
+            Log.d("디버깅오리지널",height+"###");
+
+            for(int i=0;i<pathList.size();i++){
+
+                float Oldx = pathList.get(i).oldX;
+                float Oldy = pathList.get(i).oldY;
+                float x = pathList.get(i).X;
+                float y = pathList.get(i).Y;
+
+
+                Log.d("비트맵O",Oldx+"###"+Oldy+"###"+x+"###"+y);
+
+                path.reset();
+                path.moveTo(Oldx,Oldy);
+                path.quadTo(Oldx,Oldy,x,y);
+                canvas.drawPath(path,paint);
+
+            }
+
 
             invalidate();
 
