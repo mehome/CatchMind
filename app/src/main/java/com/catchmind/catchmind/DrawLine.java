@@ -15,6 +15,10 @@ import android.widget.ScrollView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class DrawLine extends View
 {
     //현재 그리기 조건(색상, 굵기, 등등.)을 기억 하는 변수.
@@ -22,6 +26,7 @@ public class DrawLine extends View
 
     //그리기를 할 bitmap 객체. -- 도화지라고 생각하면됨.
     private Bitmap  bitmap = null;
+    private Bitmap resizedBitmap = null;
 
     //bitmap 객체의 canvas 객체. 실제로 그리기를 하기 위한 객체.. -- 붓이라고 생각하면됨.
     private Canvas  canvas = null;
@@ -39,14 +44,24 @@ public class DrawLine extends View
     public ChatRoomActivity cra;
 
     sendToActivity STA;
+
+    public ArrayList<Coordinate> pathList = new ArrayList<>();
+
+    public int OriginalWidth;
+
+    public int ResizeWidth;
+
+    public Context mContext;
+
     /**
      * 생성자.. new DrawLine(this, rect) 하면 여기가 호출됨.
      * @param context   Context객체
      * @param rect      그리기 범위 화면 사이즈
      */
-    public DrawLine(Context context, Rect rect,ChatRoomActivity CRA)
+    public DrawLine(Context context, Rect rect,ChatRoomActivity CRA,int originalWidth)
     {
         this(context);
+        this.mContext = context;
 
         cra = CRA;
         STA = (sendToActivity) cra;
@@ -60,6 +75,8 @@ public class DrawLine extends View
         //경로 초기화.
         path = new Path();
         Rpath = new Path();
+
+        this.OriginalWidth = originalWidth;
 
         setLineColor();
     }
@@ -79,8 +96,12 @@ public class DrawLine extends View
     {
         //그리기 bitmap이 있으면 현재 화면에 bitmap을 그린다.
         //자바의 view는 onDraw할때 마다 화면을 싹 지우고 다시 그리게 됨.
-        if(bitmap != null)
+        if(resizedBitmap != null)
         {
+            int Half = (OriginalWidth - ResizeWidth)/2;
+
+            canvas.drawBitmap(resizedBitmap, Half, 0, null);
+        }else if( bitmap != null){
             canvas.drawBitmap(bitmap, 0, 0, null);
         }
 
@@ -146,6 +167,9 @@ public class DrawLine extends View
                         e.printStackTrace();
                     }
 
+                    Coordinate tmpCD = new Coordinate(oldX,oldY,x,y);
+                    pathList.add(tmpCD);
+
                     //포인터의 마지막 위치값을 기억한다.
                     oldX = x;
                     oldY = y;
@@ -164,6 +188,7 @@ public class DrawLine extends View
                 return true;
             }
         }
+
 
         //더이상 이벤트 처리를 하지 않겠다는 의미.
         return false;
@@ -200,6 +225,7 @@ public class DrawLine extends View
             float b = (float) jarray.getDouble(1);
             float c = (float) jarray.getDouble(2);
             float d = (float) jarray.getDouble(3);
+
             Log.d("되냐",a+"####"+b+"####"+c+"####"+d);
             Rpath.moveTo(a,b);
             Rpath.quadTo(a,b,c,d);
@@ -207,6 +233,55 @@ public class DrawLine extends View
             invalidate();
         }catch (JSONException e){
             e.printStackTrace();
+        }
+
+    }
+
+    public void changeBitmap(int width){
+        if(width < OriginalWidth) {
+            int HalfOW = (int) OriginalWidth / 2;
+            int HalfWidth = (int) width / 2;
+            ResizeWidth = width;
+
+            resizedBitmap = Bitmap.createBitmap(bitmap, HalfOW - HalfWidth, 0, width, width);
+
+            canvas = new Canvas(resizedBitmap);
+
+            float rate = (float)width/(float)OriginalWidth;
+
+            for(int i=0;i<pathList.size();i++){
+
+                float Oldx = pathList.get(i).oldX;
+                float Oldy = pathList.get(i).oldY;
+                float x = pathList.get(i).X;
+                float y = pathList.get(i).Y;
+
+                Log.d("비트맵1",Oldx+"###"+Oldy+"###"+x+"###"+y+"###");
+
+                float NOldx = Oldx*rate;
+                float NOldy = Oldy*rate;
+                float Nx = x*rate;
+                float Ny = y*rate;
+
+                Log.d("비트맵2",NOldx+"###"+NOldy+"###"+Nx+"###"+Ny+"###");
+
+                path.reset();
+                path.moveTo(NOldx,NOldy);
+                path.quadTo(NOldx,NOldy,Nx,Ny);
+                canvas.drawPath(path,paint);
+            }
+                invalidate();
+            Log.d("디버깅",width+"###"+HalfOW+"###"+HalfWidth);
+
+            invalidate();
+
+        }else{
+            canvas = new Canvas(bitmap);
+            resizedBitmap = null;
+            Log.d("디버깅",width+"###");
+
+            invalidate();
+
         }
 
     }

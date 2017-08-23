@@ -1,5 +1,6 @@
 package com.catchmind.catchmind;
 
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -42,27 +43,6 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
         cra = (ChatRoomActivity)getActivity();
 
         sketchBook = (RelativeLayout) rootView.findViewById(R.id.SketchBook);
-        sketchBook.setEnabled(false);
-
-        if(sketchBook != null) //그리기 뷰가 보여질 레이아웃이 있으면...
-        {
-
-
-            //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
-            Rect rect = new Rect(0, 0,
-                    500, 1200);
-
-            //그리기 뷰 초기화..
-            drawLine = new DrawLine(getContext(), rect, cra );
-
-
-            //그리기 뷰를 그리기 뷰 레이아웃에 넣기 -- 이렇게 하면 그리기 뷰가 화면에 보여지게 됨.
-            sketchBook.addView(drawLine);
-
-        }
-
-
-
 
         return rootView;
 
@@ -72,6 +52,36 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        ViewTreeObserver vto = sketchBook.getViewTreeObserver();
+
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                width  = sketchBook.getWidth();
+                height = sketchBook.getHeight();
+                sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Log.d("체크사이즈OAC",width+"###"+height);
+                if(sketchBook != null) //그리기 뷰가 보여질 레이아웃이 있으면...
+                {
+
+
+                    //그리기 뷰 레이아웃의 넓이와 높이를 찾아서 Rect 변수 생성.
+                    Rect rect = new Rect(0, 0, width, width);
+
+                    //그리기 뷰 초기화..
+                    drawLine = new DrawLine(getContext(), rect, cra ,width);
+
+
+                    //그리기 뷰를 그리기 뷰 레이아웃에 넣기 -- 이렇게 하면 그리기 뷰가 화면에 보여지게 됨.
+                    sketchBook.addView(drawLine);
+
+                }
+
+            }
+        });
+
+
 
     }
 
@@ -85,6 +95,17 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
     @Override
     public void onResume() {
         super.onResume();
+
+    }
+
+    @Override
+    public void receivePath(String PATH) {
+        drawLine.receiveLine(PATH);
+    }
+
+
+    @Override
+    public void resizeSketchBook() {
         ViewTreeObserver vto = sketchBook.getViewTreeObserver();
 
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -94,17 +115,9 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
                 width  = sketchBook.getWidth();
                 height = sketchBook.getHeight();
                 sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Log.d("담배zz",width+"###"+height);
+                Log.d("체크사이즈",width+"###"+height);
+                drawLine.changeBitmap(height);
             }
         });
     }
-
-    @Override
-    public void receivePath(String PATH) {
-        drawLine.receiveLine(PATH);
-    }
-
-
-
-
 }

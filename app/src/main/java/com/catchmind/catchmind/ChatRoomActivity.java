@@ -230,12 +230,14 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     protected void onShowKeyboard(int keyboardHeight) {
         // do things when keyboard is shown
         Toast.makeText(this,"show",Toast.LENGTH_SHORT).show();
+        drawCommunicator.resizeSketchBook();
     }
 
     @Override
     protected void onHideKeyboard() {
         // do things when keyboard is hidden
         Toast.makeText(this,"hide",Toast.LENGTH_SHORT).show();
+        drawCommunicator.resizeSketchBook();
     }
 
 
@@ -296,6 +298,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public interface DrawCommunicator {
 
         void receivePath(String PATH);
+        void resizeSketchBook();
 
     }
 
@@ -403,6 +406,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         mService.boundedFriendId ="";
         unbindService(mConnection);
         unregisterReceiver(NetworkChangeUpdater);
+        ChatRoomViewPager.DrawMode = false;
     }
 
     @Override

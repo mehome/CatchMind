@@ -175,6 +175,10 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         while(cursor.moveToNext()){
         Log.d("getfriend메시CRL",cursor.getString(0)+"###"+cursor.getString(1));
         }
+
+
+
+
     }
 
     @Override
