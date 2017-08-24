@@ -353,8 +353,8 @@ public class LoginActivity extends AppCompatActivity{
 
                 editor.commit();
 
-//                Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
-//                startService(serviceIntent);
+                Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
+                startService(serviceIntent);
 
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);

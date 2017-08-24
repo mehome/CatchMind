@@ -28,12 +28,15 @@ import java.util.ArrayList;
 public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawCommunicator{
 
     RelativeLayout sketchBook;
-
+    LinearLayout widthContainer;
+    View widthState;
 
     private DrawLine drawLine = null;
     ChatRoomActivity cra;
     int width = 0;
     int height = 0;
+    WidthView WV ;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
         cra = (ChatRoomActivity)getActivity();
 
         sketchBook = (RelativeLayout) rootView.findViewById(R.id.SketchBook);
+        widthContainer = (LinearLayout) rootView.findViewById(R.id.widthContainer);
 
         return rootView;
 
@@ -72,9 +76,12 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
                     //그리기 뷰 초기화..
                     drawLine = new DrawLine(getContext(), rect, cra );
 
-
                     //그리기 뷰를 그리기 뷰 레이아웃에 넣기 -- 이렇게 하면 그리기 뷰가 화면에 보여지게 됨.
                     sketchBook.addView(drawLine);
+
+                    WV = new WidthView(getContext(),(float)width);
+
+                    widthContainer.addView(WV);
 
                 }
 
@@ -106,18 +113,24 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
     @Override
     public void resizeSketchBook() {
-        ViewTreeObserver vto = sketchBook.getViewTreeObserver();
+        try {
+            ViewTreeObserver vto = sketchBook.getViewTreeObserver();
 
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
 
-                width  = sketchBook.getWidth();
-                height = sketchBook.getHeight();
-                sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Log.d("체크사이즈",width+"###"+height);
-                drawLine.changeBitmap(height);
-            }
-        });
+                    width = sketchBook.getWidth();
+                    height = sketchBook.getHeight();
+                    sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    Log.d("체크사이즈", width + "###" + height);
+                    drawLine.changeBitmap(height);
+                }
+            });
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
+
+
 }

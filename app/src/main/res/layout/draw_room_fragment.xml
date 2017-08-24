@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:id="@+id/SketchConatiner">
 
     <!--<FrameLayout-->
@@ -20,15 +21,48 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp">
+            android:layout_height="50dp"
+            android:layout_weight="1">
 
-            <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
+            <ImageButton
+                android:id="@+id/leftArrowBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/left_arrow"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:layout_centerVertical="true"/>
+
+            <LinearLayout
+                android:id="@+id/widthContainer"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/leftArrowBtn"
+                android:foregroundGravity="center"
+                android:gravity="center">
+
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/rightArrowBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_toEndOf="@id/widthContainer"
+                android:src="@drawable/right_arrow"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:layout_centerVertical="true"/>
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_weight="1"
             android:id="@+id/SketchBook"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

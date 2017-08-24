@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 
-        Intent serviceIntentMain = new Intent(getApplicationContext(),ChatService.class);
-        startService(serviceIntentMain);
+//        Intent serviceIntentMain = new Intent(getApplicationContext(),ChatService.class);
+//        startService(serviceIntentMain);
 
 
 //        Bundle bundle = new Bundle();

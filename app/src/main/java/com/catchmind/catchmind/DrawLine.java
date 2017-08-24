@@ -52,6 +52,8 @@ public class DrawLine extends View
     public int OriginalWidth;
     public int OriginalHeight;
 
+    public float DefaultWidth;
+
     public int ResizeWidth;
 
     public Context mContext;
@@ -89,6 +91,7 @@ public class DrawLine extends View
 
         this.OriginalWidth = rect.width();
         this.OriginalHeight = rect.height();
+        this.DefaultWidth = 10 * OriginalWidth / 1080 ;
 
         setLineColor();
     }
@@ -164,7 +167,7 @@ public class DrawLine extends View
                 int Color = paint.getColor();
 
                 //두 좌표간의 간격이 4px이상이면 (가로든, 세로든) 그리기 bitmap에 선을 그린다.
-                if (dx >= 2 || dy >= 2)
+                if (dx >= 1 || dy >= 1)
                 {
                     //path에 좌표의 이동 상황을 넣는다. 이전 좌표에서 신규 좌표로..
                     //lineTo를 쓸수 있지만.. 좀더 부드럽게 보이기 위해서 quadTo를 사용함.
@@ -217,11 +220,12 @@ public class DrawLine extends View
     public void setLineColor()
     {
         paint = new Paint();
+
         paint.setColor(Color.BLACK);
 
         paint.setAlpha(255);
         paint.setDither(true);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(DefaultWidth);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -234,7 +238,7 @@ public class DrawLine extends View
 
         receivePaint.setAlpha(255);
         receivePaint.setDither(true);
-        receivePaint.setStrokeWidth(10);
+        receivePaint.setStrokeWidth(DefaultWidth);
         receivePaint.setStrokeJoin(Paint.Join.ROUND);
         receivePaint.setStyle(Paint.Style.STROKE);
         receivePaint.setStrokeCap(Paint.Cap.ROUND);
@@ -247,7 +251,7 @@ public class DrawLine extends View
 
         restorePaint.setAlpha(255);
         restorePaint.setDither(true);
-        restorePaint.setStrokeWidth(10);
+        restorePaint.setStrokeWidth(DefaultWidth);
         restorePaint.setStrokeJoin(Paint.Join.ROUND);
         restorePaint.setStyle(Paint.Style.STROKE);
         restorePaint.setStrokeCap(Paint.Cap.ROUND);
