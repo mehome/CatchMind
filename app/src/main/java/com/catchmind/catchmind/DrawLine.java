@@ -23,6 +23,8 @@ public class DrawLine extends View
 {
     //현재 그리기 조건(색상, 굵기, 등등.)을 기억 하는 변수.
     private Paint paint = null;
+    private Paint receivePaint = null;
+    private Paint restorePaint = null;
 
     //그리기를 할 bitmap 객체. -- 도화지라고 생각하면됨.
     private Bitmap  bitmap = null;
@@ -158,8 +160,11 @@ public class DrawLine extends View
                 float dx = Math.abs(x - oldX);
                 float dy = Math.abs(y - oldY);
 
+                float SW = paint.getStrokeWidth();
+                int Color = paint.getColor();
+
                 //두 좌표간의 간격이 4px이상이면 (가로든, 세로든) 그리기 bitmap에 선을 그린다.
-                if (dx >= 1 || dy >= 1)
+                if (dx >= 2 || dy >= 2)
                 {
                     //path에 좌표의 이동 상황을 넣는다. 이전 좌표에서 신규 좌표로..
                     //lineTo를 쓸수 있지만.. 좀더 부드럽게 보이기 위해서 quadTo를 사용함.
@@ -172,6 +177,8 @@ public class DrawLine extends View
                         jarray.put(oldY);
                         jarray.put(x);
                         jarray.put(y);
+                        jarray.put(SW);
+                        jarray.put(Color);
                         jarray.put(OriginalWidth);
                         jarray.put(OriginalHeight);
                         sendPath = jarray.toString();
@@ -179,7 +186,7 @@ public class DrawLine extends View
                         e.printStackTrace();
                     }
 
-                    Coordinate tmpCD = new Coordinate(oldX,oldY,x,y);
+                    Coordinate tmpCD = new Coordinate(oldX,oldY,x,y,paint.getStrokeWidth(),paint.getColor());
                     pathList.add(tmpCD);
 
                     //포인터의 마지막 위치값을 기억한다.
@@ -219,6 +226,33 @@ public class DrawLine extends View
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAntiAlias(true);
+
+
+
+        receivePaint = new Paint();
+        receivePaint.setColor(Color.BLACK);
+
+        receivePaint.setAlpha(255);
+        receivePaint.setDither(true);
+        receivePaint.setStrokeWidth(10);
+        receivePaint.setStrokeJoin(Paint.Join.ROUND);
+        receivePaint.setStyle(Paint.Style.STROKE);
+        receivePaint.setStrokeCap(Paint.Cap.ROUND);
+        receivePaint.setAntiAlias(true);
+
+
+
+        restorePaint = new Paint();
+        restorePaint.setColor(Color.BLACK);
+
+        restorePaint.setAlpha(255);
+        restorePaint.setDither(true);
+        restorePaint.setStrokeWidth(10);
+        restorePaint.setStrokeJoin(Paint.Join.ROUND);
+        restorePaint.setStyle(Paint.Style.STROKE);
+        restorePaint.setStrokeCap(Paint.Cap.ROUND);
+        restorePaint.setAntiAlias(true);
+
     }
 
 
@@ -233,31 +267,38 @@ public class DrawLine extends View
 
             JSONArray jarray = new JSONArray(PATH);
 
-            float opt_rate_width = (float)OriginalWidth / (float)jarray.getDouble(4);
-            float opt_rate_height = (float)OriginalHeight / (float)jarray.getDouble(5);
+            float opt_rate_width = (float)OriginalWidth / (float)jarray.getDouble(6);
+            float opt_rate_height = (float)OriginalHeight / (float)jarray.getDouble(7);
             float Oldx = (float) jarray.getDouble(0) * opt_rate_width;
             float Oldy = (float) jarray.getDouble(1) * opt_rate_height;
             float x = (float) jarray.getDouble(2) * opt_rate_width;
             float y = (float) jarray.getDouble(3) * opt_rate_height;
+            float SW = (float) jarray.getDouble(4) * opt_rate_width;
+            int Color = jarray.getInt(5) ;
 
-            Coordinate tmpCD = new Coordinate(Oldx,Oldy,x,y);
+            Coordinate tmpCD = new Coordinate(Oldx,Oldy,x,y,SW,Color);
             pathList.add(tmpCD);
+
 
             Log.d("되냐비율",rate_width+"");
 
             if(Resized) {
+                receivePaint.setStrokeWidth(SW * rate_width);
+                receivePaint.setColor(Color);
                 float NOldx = Oldx * rate_width;
                 float NOldy = Oldy * rate_height;
                 float Nx = x * rate_width;
                 float Ny = y * rate_height;
                 Rpath.moveTo(NOldx,NOldy);
                 Rpath.quadTo(NOldx,NOldy,Nx,Ny);
-                canvas.drawPath(Rpath, paint);
+                canvas.drawPath(Rpath, receivePaint);
             }else {
                 Log.d("되냐", Oldx + "####" + Oldy + "####" + x + "####" + y);
+                receivePaint.setStrokeWidth(SW);
+                receivePaint.setColor(Color);
                 Rpath.moveTo(Oldx, Oldy);
                 Rpath.quadTo(Oldx, Oldy, x, y);
-                canvas.drawPath(Rpath, paint);
+                canvas.drawPath(Rpath, receivePaint);
             }
             invalidate();
         }catch (JSONException e){
@@ -292,6 +333,11 @@ public class DrawLine extends View
                 float Oldy = pathList.get(i).oldY;
                 float x = pathList.get(i).X;
                 float y = pathList.get(i).Y;
+                float SW = pathList.get(i).strokeWidth;
+                int Color= pathList.get(i).color;
+
+                restorePaint.setStrokeWidth(SW*rate_width);
+                restorePaint.setColor(Color);
 
                 Log.d("비트맵1",Oldx+"###"+Oldy+"###"+x+"###"+y+"###");
 
@@ -305,7 +351,7 @@ public class DrawLine extends View
                 path.reset();
                 path.moveTo(NOldx,NOldy);
                 path.quadTo(NOldx,NOldy,Nx,Ny);
-                canvas.drawPath(path,paint);
+                canvas.drawPath(path,restorePaint);
 
             }
             invalidate();
@@ -326,6 +372,11 @@ public class DrawLine extends View
                 float Oldy = pathList.get(i).oldY;
                 float x = pathList.get(i).X;
                 float y = pathList.get(i).Y;
+                float SW = pathList.get(i).strokeWidth;
+                int Color= pathList.get(i).color;
+
+                restorePaint.setStrokeWidth(SW);
+                restorePaint.setColor(Color);
 
 
                 Log.d("비트맵O",Oldx+"###"+Oldy+"###"+x+"###"+y);
@@ -333,7 +384,7 @@ public class DrawLine extends View
                 path.reset();
                 path.moveTo(Oldx,Oldy);
                 path.quadTo(Oldx,Oldy,x,y);
-                canvas.drawPath(path,paint);
+                canvas.drawPath(path,restorePaint);
 
             }
 

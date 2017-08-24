@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         };
 
 
+
+
         Intent serviceIntent = new Intent(this, ChatService.class);
         bindService(serviceIntent, mConnection, this.BIND_AUTO_CREATE);
 
