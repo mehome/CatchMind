@@ -472,6 +472,8 @@ public class ChatService extends Service {
                     obj.put("time", time);
                     obj.put("kind", kind);
 
+                    Log.d("getFriendId여긴",friendId+"###"+sendmsg);
+
                 this.sendmsg = obj.toString();
 
                 output.writeUTF(sendmsg);
@@ -481,6 +483,7 @@ public class ChatService extends Service {
                 }
 
             }catch (IOException e){
+                Log.d("getFriendId_IOException",friendId+"###"+sendmsg);
                 e.printStackTrace();
             }catch (JSONException e){
                 e.printStackTrace();

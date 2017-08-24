@@ -253,6 +253,7 @@ public class DrawLine extends View
         restorePaint.setStrokeCap(Paint.Cap.ROUND);
         restorePaint.setAntiAlias(true);
 
+
     }
 
 

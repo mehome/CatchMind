@@ -72,6 +72,11 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         registerReceiver(mNCR,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
+
+        Intent serviceIntentMain = new Intent(getApplicationContext(),ChatService.class);
+        startService(serviceIntentMain);
+
+
 //        Bundle bundle = new Bundle();
 //        bundle.putString("nickname",userId);
 //        bundle.putString("message",nickname);
@@ -155,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         };
 
 
-
+//        Intent youtubeIntent = getIntent();
+//
+//        Log.d("유튜브",youtubeIntent.toString());
 
         Intent serviceIntent = new Intent(this, ChatService.class);
         bindService(serviceIntent, mConnection, this.BIND_AUTO_CREATE);
