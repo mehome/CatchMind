@@ -79,6 +79,10 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
                     //그리기 뷰를 그리기 뷰 레이아웃에 넣기 -- 이렇게 하면 그리기 뷰가 화면에 보여지게 됨.
                     sketchBook.addView(drawLine);
 
+                    float lineLength = width * 100 / 1080;
+
+                    widthContainer.getLayoutParams().width = ((int)lineLength);
+
                     WV = new WidthView(getContext(),(float)width);
 
                     widthContainer.addView(WV);
@@ -133,4 +137,17 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
     }
 
 
+    @Override
+    public void MinusWidth() {
+        if(drawLine.MinusLineWidth()){
+            WV.MinusLineWidth();
+        }
+    }
+
+    @Override
+    public void PlusWidth() {
+        if(drawLine.PlusLineWidth()){
+            WV.PlusLineWidth();
+        }
+    }
 }

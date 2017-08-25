@@ -52,7 +52,7 @@ public class DrawLine extends View
     public int OriginalWidth;
     public int OriginalHeight;
 
-    public float DefaultWidth;
+    public float LineWidth;
 
     public int ResizeWidth;
 
@@ -85,13 +85,14 @@ public class DrawLine extends View
         //그리기 bitmap에서 canvas를 알아옴.
         canvas = new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
+
         //경로 초기화.
         path = new Path();
         Rpath = new Path();
 
-        this.OriginalWidth = rect.width();
-        this.OriginalHeight = rect.height();
-        this.DefaultWidth = 10 * OriginalWidth / 1080 ;
+        this.OriginalWidth = rect.width() ;
+        this.OriginalHeight = rect.height() ;
+        this.LineWidth = 11 ;
 
         setLineColor();
     }
@@ -225,7 +226,7 @@ public class DrawLine extends View
 
         paint.setAlpha(255);
         paint.setDither(true);
-        paint.setStrokeWidth(DefaultWidth);
+        paint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -238,7 +239,7 @@ public class DrawLine extends View
 
         receivePaint.setAlpha(255);
         receivePaint.setDither(true);
-        receivePaint.setStrokeWidth(DefaultWidth);
+        receivePaint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
         receivePaint.setStrokeJoin(Paint.Join.ROUND);
         receivePaint.setStyle(Paint.Style.STROKE);
         receivePaint.setStrokeCap(Paint.Cap.ROUND);
@@ -251,7 +252,7 @@ public class DrawLine extends View
 
         restorePaint.setAlpha(255);
         restorePaint.setDither(true);
-        restorePaint.setStrokeWidth(DefaultWidth);
+        restorePaint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
         restorePaint.setStrokeJoin(Paint.Join.ROUND);
         restorePaint.setStyle(Paint.Style.STROKE);
         restorePaint.setStrokeCap(Paint.Cap.ROUND);
@@ -259,6 +260,9 @@ public class DrawLine extends View
 
 
     }
+
+
+
 
 
     public DrawLine(Context context)
@@ -403,4 +407,28 @@ public class DrawLine extends View
     public interface sendToActivity{
         void sendPath(String PATH);
     }
+
+
+    public boolean MinusLineWidth(){
+        if(LineWidth <= 3){
+            return false;
+        }
+
+        LineWidth = LineWidth - 4;
+        paint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
+
+        return true;
+    }
+
+    public boolean PlusLineWidth(){
+        if(LineWidth >= 31 ){
+            return false;
+        }
+
+        LineWidth = LineWidth + 4;
+        paint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
+
+        return true;
+    }
+
 }

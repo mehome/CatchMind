@@ -299,6 +299,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         void receivePath(String PATH);
         void resizeSketchBook();
+        void MinusWidth();
+        void PlusWidth();
 
     }
 
@@ -475,5 +477,15 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             ChatRoomViewPager.DrawMode = true;
         }
     }
+
+
+    public void minusWidth(View v){
+        drawCommunicator.MinusWidth();
+    }
+
+    public void plusWidth(View v){
+        drawCommunicator.PlusWidth();
+    }
+
 
 }

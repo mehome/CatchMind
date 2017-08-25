@@ -25,6 +25,8 @@ public class WidthView extends View {
 
     private Path path = null;
 
+    private float LineWidth;
+    float lineLength;
 
     public WidthView(Context context)
     {
@@ -34,7 +36,8 @@ public class WidthView extends View {
     public WidthView(Context context, float DW){
         super(context);
         this.DefaultWidth = DW ;
-        float startWidth = DW * 10 / 1080;
+        this.LineWidth = 11;
+
 
         Rect rect = new Rect(0, 0, 150, 60);
 
@@ -48,21 +51,24 @@ public class WidthView extends View {
 
         paint.setAlpha(255);
         paint.setDither(true);
-        paint.setStrokeWidth(startWidth);
+        paint.setStrokeWidth(DefaultWidth * LineWidth / 1080);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAntiAlias(true);
 
         canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.YELLOW);
+        canvas.drawColor(Color.WHITE);
+
+        lineLength = DW * 100 / 1080;
 
         path = new Path();
-        path.moveTo(5,25);
-        path.quadTo(5,25,75,25);
+        path.moveTo(0,25);
+        path.quadTo(0,25,(int)lineLength,25);
+
         canvas.drawPath(path,paint);
         invalidate();
-
+s
     }
 
     @Override
@@ -70,4 +76,29 @@ public class WidthView extends View {
         super.onDraw(canvas);
         canvas.drawBitmap(bitmap, 0, 0, null);
     }
+
+    public void PlusLineWidth(){
+        LineWidth = LineWidth + 4;
+        canvas.drawColor(Color.WHITE);
+        paint.setStrokeWidth(DefaultWidth * LineWidth / 1080);
+        path.reset();
+        path.moveTo(0,25);
+        path.quadTo(0,25,(int)lineLength,25);
+
+        canvas.drawPath(path,paint);
+        invalidate();
+    }
+
+    public void MinusLineWidth(){
+        LineWidth = LineWidth - 4;
+        canvas.drawColor(Color.WHITE);
+        paint.setStrokeWidth(DefaultWidth * LineWidth / 1080);
+        path.reset();
+        path.moveTo(0,25);
+        path.quadTo(0,25,(int)lineLength,25);
+
+        canvas.drawPath(path,paint);
+        invalidate();
+    }
+
 }
