@@ -140,6 +140,7 @@ public class ChatService extends Service {
         public String getFriendId();
         public void resetToolbar();
         public void receivePath(String PATH);
+        public void receiveClear();
     }
 
     public interface ICallback_2{
@@ -161,6 +162,16 @@ public class ChatService extends Service {
 
     //액티비티에서 읽음 전송
 
+
+    public void sendClear(int no,String friendId, String content, long time){
+        if (no < 0){
+            return;
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, content, time , 11);
+        st.start();
+
+    }
 
     public void sendPATH(int no,String friendId, String content, long time){
         if (no < 0){
@@ -349,6 +360,7 @@ public class ChatService extends Service {
         public void run() {
 
             while(true) {
+
                 if(!userId.equals(checkId)){
                     Log.d("checkId바껴서","checkId: "+checkId+", userId: "+userId);
                     if(socket != null) {
@@ -1057,8 +1069,24 @@ public class ChatService extends Service {
                         }
                     }
 
+                }
+
+
+            }else if(sKind == 11){
+
+                if(boundCheck) {
+                    if(sNo == 0 ) {
+                        if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
+                            mCallback.receiveClear();
+                        }
+                    }else{
+                        if(boundedNo == sNo) {
+                            mCallback.receiveClear();
+                        }
+                    }
 
                 }
+
             }
 
 

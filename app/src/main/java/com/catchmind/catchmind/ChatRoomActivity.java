@@ -213,6 +213,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                 }else if(msg.what==10){
                     String path = msg.getData().getString("path");
                     drawCommunicator.receivePath(path);
+                }else if(msg.what==11){
+                    drawCommunicator.receiveClear();
                 }
 
 
@@ -301,6 +303,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         void resizeSketchBook();
         void MinusWidth();
         void PlusWidth();
+        void receiveClear();
 
     }
 
@@ -393,6 +396,13 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             handler.sendMessage(message);
         }
 
+        @Override
+        public void receiveClear() {
+            Message message= Message.obtain();
+            message.what = 11;
+
+            handler.sendMessage(message);
+        }
     };
 
     public void resetTitle(){
@@ -417,6 +427,11 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         mService.sendPATH(no,friendId,PATH,now);
     }
 
+    @Override
+    public void sendClear() {
+        long now = System.currentTimeMillis();
+        mService.sendClear(no,friendId,"just Clear",now);
+    }
 
     public void sendMessage(View v){
 

@@ -68,7 +68,7 @@ public class WidthView extends View {
 
         canvas.drawPath(path,paint);
         invalidate();
-s
+
     }
 
     @Override
@@ -78,7 +78,11 @@ s
     }
 
     public void PlusLineWidth(){
-        LineWidth = LineWidth + 4;
+        if(LineWidth >= 19){
+            LineWidth = LineWidth + 6;
+        }else {
+            LineWidth = LineWidth + 4;
+        }
         canvas.drawColor(Color.WHITE);
         paint.setStrokeWidth(DefaultWidth * LineWidth / 1080);
         path.reset();
@@ -90,7 +94,11 @@ s
     }
 
     public void MinusLineWidth(){
-        LineWidth = LineWidth - 4;
+        if(LineWidth <= 19) {
+            LineWidth = LineWidth - 4;
+        }else{
+            LineWidth = LineWidth - 6;
+        }
         canvas.drawColor(Color.WHITE);
         paint.setStrokeWidth(DefaultWidth * LineWidth / 1080);
         path.reset();

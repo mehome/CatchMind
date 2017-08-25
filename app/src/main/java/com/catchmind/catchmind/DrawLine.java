@@ -406,6 +406,7 @@ public class DrawLine extends View
 
     public interface sendToActivity{
         void sendPath(String PATH);
+        void sendClear();
     }
 
 
@@ -413,22 +414,47 @@ public class DrawLine extends View
         if(LineWidth <= 3){
             return false;
         }
-
-        LineWidth = LineWidth - 4;
+        if(LineWidth <= 19) {
+            LineWidth = LineWidth - 4;
+        }else{
+            LineWidth = LineWidth - 6;
+        }
         paint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
 
         return true;
     }
 
     public boolean PlusLineWidth(){
-        if(LineWidth >= 31 ){
+        if(LineWidth >= 37 ){
             return false;
         }
 
-        LineWidth = LineWidth + 4;
+        if(LineWidth >= 19){
+            LineWidth = LineWidth + 6;
+        }else {
+            LineWidth = LineWidth + 4;
+        }
+
         paint.setStrokeWidth(LineWidth * OriginalWidth / 1080);
 
         return true;
+    }
+
+    public void setPaintColor(int color){
+        paint.setColor(color);
+    }
+
+    public void clearSketch(){
+        canvas.drawColor(Color.WHITE);
+        pathList.clear();
+        invalidate();
+        STA.sendClear();
+    }
+
+    public void receiveClearSketch(){
+        canvas.drawColor(Color.WHITE);
+        pathList.clear();
+        invalidate();
     }
 
 }
