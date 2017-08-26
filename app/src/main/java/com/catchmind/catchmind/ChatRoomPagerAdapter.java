@@ -27,6 +27,7 @@ public class ChatRoomPagerAdapter extends FragmentPagerAdapter {
         this.bundle.putString("friendId",friendId);
         this.bundle.putInt("no",no);
         mf.setArguments(bundle);
+        df.setArguments(bundle);
     }
 
     @Override

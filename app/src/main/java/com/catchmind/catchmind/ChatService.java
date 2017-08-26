@@ -712,6 +712,7 @@ public class ChatService extends Service {
 
         @Override
         public void run() {
+
             String data="";
 
             /* 인풋 파라메터값 생성 */
@@ -759,6 +760,7 @@ public class ChatService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
 
@@ -1072,6 +1074,7 @@ public class ChatService extends Service {
 
             }else if(sKind == 11){
 
+
                 if(boundCheck) {
                     if(sNo == 0 ) {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
@@ -1084,6 +1087,7 @@ public class ChatService extends Service {
                     }
 
                 }
+
 
             }
 

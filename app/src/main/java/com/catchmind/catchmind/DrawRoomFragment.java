@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -24,6 +26,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -48,11 +61,24 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
     final static int colorRequest = 9876;
 
+
+    String userId;
+    String friendId;
+    int no;
+
+    public Handler handler;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.draw_room_fragment, container, false);
 
+        userId = getArguments().getString("userId");
+        friendId = getArguments().getString("friendId");
+        no = getArguments().getInt("no");
+
+        Log.d("DF_argument",userId+"###"+friendId+"###"+no);
 
         cra = (ChatRoomActivity)getActivity();
 
@@ -80,7 +106,26 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
         colorPickerBtn.setBackgroundColor(Color.BLACK);
 
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
 
+
+                if(msg.what == 44) {
+                    try {
+                        String content = msg.getData().getString("content");
+                        JSONArray jarray = new JSONArray(content);
+                        for(int i=0;i<jarray.length();i++){
+                            drawLine.receiveLine(jarray.get(i).toString());
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+        };
 
         return rootView;
 
@@ -121,12 +166,14 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
                     widthContainer.addView(WV);
 
+
                 }
 
             }
         });
 
-
+        getSketchThread gst = new getSketchThread(userId,no,friendId);
+        gst.start();
 
     }
 
@@ -182,6 +229,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
                     sketchBook.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     Log.d("체크사이즈", width + "###" + height);
                     drawLine.changeBitmap(height);
+
                 }
             });
         }catch (NullPointerException e){
@@ -203,4 +251,88 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
             WV.PlusLineWidth();
         }
     }
+
+
+
+    public class getSketchThread extends Thread{
+
+
+
+
+        public getSketchThread(String userId, int no, String friendId){
+
+
+
+        }
+
+
+
+        @Override
+        public void run(){
+
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "userId="+userId+"&no="+no+"&friendId="+friendId;
+
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/getSketch.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+
+            /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 1024 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.e("getSketch.data",data);
+
+                Message message= Message.obtain();
+                message.what = 44;
+
+                Bundle bundle = new Bundle();
+                bundle.putString("content",data);
+
+                message.setData(bundle);
+
+                handler.sendMessage(message);
+
+
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                Log.d("getSketch","MalformendURLException");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("getSketch","IOException");
+            }
+
+        }
+
+
+
+
+    }
+
 }
