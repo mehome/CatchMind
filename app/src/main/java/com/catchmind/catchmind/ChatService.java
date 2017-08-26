@@ -428,8 +428,6 @@ public class ChatService extends Service {
     }
 
 
-
-
     public class SendThread extends Thread {
 
         String sendmsg;

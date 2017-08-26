@@ -503,4 +503,5 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     }
 
 
+
 }

@@ -81,6 +81,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
         colorPickerBtn.setBackgroundColor(Color.BLACK);
 
 
+
         return rootView;
 
     }
