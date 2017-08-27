@@ -231,7 +231,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     @Override
     protected void onShowKeyboard(int keyboardHeight) {
         // do things when keyboard is shown
-        Toast.makeText(this,"show",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,"show",Toast.LENGTH_SHORT).show();
+        Log.d("키보드","show"+keyboardHeight);
         drawCommunicator.resizeSketchBook();
     }
 
@@ -239,6 +240,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     protected void onHideKeyboard() {
         // do things when keyboard is hidden
         Toast.makeText(this,"hide",Toast.LENGTH_SHORT).show();
+        Log.d("키보드","hide");
         drawCommunicator.resizeSketchBook();
     }
 

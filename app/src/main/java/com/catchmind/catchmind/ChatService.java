@@ -458,6 +458,7 @@ public class ChatService extends Service {
                 e.printStackTrace();
             }
 
+            Log.d("SendThread.Socket: ",threadSocket.toString());
             Log.d("내용물sendThread",sendmsg);
 
         }
@@ -466,7 +467,7 @@ public class ChatService extends Service {
 
         @Override
         public void run() {
-            Log.d("getFriendId",friendId);
+            Log.d("sendThreadId",friendId);
 
 
             try {
@@ -482,11 +483,13 @@ public class ChatService extends Service {
                     obj.put("time", time);
                     obj.put("kind", kind);
 
-                    Log.d("getFriendId여긴",friendId+"###"+sendmsg);
+                    Log.d("SendThread여긴",friendId+"###"+sendmsg);
 
                 this.sendmsg = obj.toString();
 
                 output.writeUTF(sendmsg);
+
+                Log.d("SendThread.Output: ",output.toString());
 
                 if(boundCheck_2 == true) {
                     mCallback_2.recvData();

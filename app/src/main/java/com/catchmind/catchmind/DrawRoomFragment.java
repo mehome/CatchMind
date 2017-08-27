@@ -172,7 +172,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
             }
         });
 
-        getSketchThread gst = new getSketchThread(userId,no,friendId);
+        getSketchThread gst = new getSketchThread();
         gst.start();
 
     }
@@ -259,7 +259,7 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
 
 
-        public getSketchThread(String userId, int no, String friendId){
+        public getSketchThread(){
 
 
 
