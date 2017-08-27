@@ -69,6 +69,8 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         lv.setAdapter(chatListAdapter);
 
+        lv.setSelection(ListData.size()-1);
+
         return rootView;
 
     }

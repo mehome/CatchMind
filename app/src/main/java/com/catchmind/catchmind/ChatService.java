@@ -1,6 +1,10 @@
 package com.catchmind.catchmind;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.IntDef;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -1023,12 +1028,19 @@ public class ChatService extends Service {
                                 mCallback.recvData(sFriendId, sContent, sTime);
                                 Log.d("mCallback.recvData2",sFriendId+"###"+sContent+"####"+sNo);
                             }
+
+
+
                         }else{
                             if(boundedNo == sNo) {
                                 mCallback.recvData(sFriendId, sContent, sTime);
                                 Log.d("mCallback.recvData",sFriendId+"###"+sContent+"####"+sNo);
                             }
                         }
+
+                    }else{
+
+                        NotificationAlarm(sFriendId,sNo,"#없음",sContent);
 
                     }
 
@@ -1096,6 +1108,42 @@ public class ChatService extends Service {
 
 
         }
+
+
+    }
+
+
+
+    public void NotificationAlarm(String friendId, int no, String nickname, String content){
+
+        Intent mAlarmIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);
+
+        mAlarmIntent.putExtra("no",no);
+        mAlarmIntent.putExtra("friendId",friendId);
+
+        if(no == 0){
+            mAlarmIntent.putExtra("nickname", nickname);
+        }else {
+            mAlarmIntent.putExtra("nickname", "그룹채팅 "+no);
+        }
+
+
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(),1,mAlarmIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(mPendingIntent)
+                        .setContentTitle("캐치마인드메신저")
+                        .setContentText(content);
+
+
+        NotificationManager mNotificationManager =
+
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        mNotificationManager.notify(001, mBuilder.build());
 
 
     }

@@ -111,14 +111,28 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         Log.d("chatroomId2",friendId);
         String nickname = GI.getStringExtra("nickname");
 
+
         if(no == 0) {
             Cursor cursor = db.getFriendData(friendId);
-            friendNickname = nickname;
+            Cursor cursor2 = db.getChatFriendData(friendId);
+
+            if(cursor2.getCount() != 0) {
+                cursor2.moveToNext();
+                if (nickname.equals("#없음")) {
+                    nickname = cursor2.getString(2);
+                }
+            }
+
             friendProfile = "";
             if(cursor.getCount() != 0) {
                 cursor.moveToNext();
                 friendProfile = cursor.getString(2);
+
             }
+
+            friendNickname = nickname;
+
+
         }else {
             ResetHash();
         }
