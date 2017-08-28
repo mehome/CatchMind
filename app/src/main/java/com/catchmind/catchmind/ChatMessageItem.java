@@ -13,6 +13,8 @@ public class ChatMessageItem {
     public String Content;
     public long Time;
 
+
+
     public ChatMessageItem(int type,String userId, String nickname, String profile, String content, long time){
 
         this.Type = type;

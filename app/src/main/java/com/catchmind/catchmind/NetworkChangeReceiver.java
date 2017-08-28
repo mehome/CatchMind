@@ -33,8 +33,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 local.putExtra("wifi","wifi");
                 context.sendBroadcast(local);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
-                Intent serviceIntent = new Intent(context,ChatService.class);
-                context.startService(serviceIntent);
+//                Intent serviceIntent = new Intent(context,ChatService.class);
+//                context.startService(serviceIntent);
                 Log.d("담배Net","Receiver wifi##");
 
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
@@ -46,8 +46,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 context.sendBroadcast(local);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
 
-                Intent serviceIntent = new Intent(context,ChatService.class);
-                context.startService(serviceIntent);
+//                Intent serviceIntent = new Intent(context,ChatService.class);
+//                serviceIntent.putExtra("MobileChange",true);
+//                context.startService(serviceIntent);
+
                 Log.d("담배Net","Receiver mobile##");
 
             }

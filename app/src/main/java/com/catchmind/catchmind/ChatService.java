@@ -75,6 +75,10 @@ public class ChatService extends Service {
 
                 if(msg.what == 3) {
                     postConnect();
+                }else if(msg.what == 4){
+                    ConnectThread ct = new ConnectThread();
+                    ct.start();
+                    Log.d("잃고난뒤4로 재연결","4로재연결");
                 }
 
             }
@@ -107,9 +111,23 @@ public class ChatService extends Service {
         Log.d("ChatServiceOnStart",userId);
         Log.d("담배Net","ChatService mobile##");
 
+//        if(intent != null){
+//            if(intent.getBooleanExtra("MobileChange",false)){
+//                socket = null;
+//                Log.d("zzzz","어이없다");
+//            }
+//        }
+
+        if(socket != null) {
+            try {
+                socket.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            socket = null;
+        }
         ConnectThread ct = new ConnectThread();
         ct.start();
-
         chatRoomList = new ArrayList<String>();
 
         Cursor cursor = db.getChatRoomList();
@@ -311,7 +329,7 @@ public class ChatService extends Service {
         public void run() {
 
             try {
-
+                socket = null;
                 socket = new Socket(dstAddress, 5000);
 
             } catch (UnknownHostException e) {
@@ -331,9 +349,13 @@ public class ChatService extends Service {
                 Message message= Message.obtain();
                 message.what = 3;
                 handler.sendMessage(message);
-
+                Log.d("생성자","끝마침"+sendData);
             }catch (IOException e){
                 e.printStackTrace();
+                Log.d("생성자","IOE예외");
+            }catch (NullPointerException e){
+                e.printStackTrace();
+                Log.d("생성자","Null에외");
             }
 
         }
@@ -416,7 +438,13 @@ public class ChatService extends Service {
 //                    }
 
                 } catch (IOException e) {
-                    Log.d("리시브소켓exception?","힘들어");
+                    Log.d("리시브소켓exception?","힘들어IOE로");
+                    justReconnect();
+                    e.printStackTrace();
+                    break;
+                } catch (NullPointerException e){
+                    Log.d("리시브소켓exception?","힘들어Null로");
+                    loseReceive();
                     e.printStackTrace();
                     break;
                 }
@@ -432,6 +460,48 @@ public class ChatService extends Service {
         }
     }
 
+
+    public void loseReceive(){
+
+        if(socket.isConnected()) {
+            SendThread st = new SendThread(socket,0,"해제자","해체",0,33 );
+            st.start();
+            try {
+                st.join();
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+
+        }
+
+        try {
+            socket.close();
+            socket = null ;
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Message message= Message.obtain();
+        message.what = 4;
+        handler.sendMessage(message);
+    }
+
+    public void justReconnect(){
+        try {
+            socket.close();
+            socket = null ;
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Message message= Message.obtain();
+        message.what = 4;
+        handler.sendMessage(message);
+    }
 
     public class SendThread extends Thread {
 
@@ -504,6 +574,9 @@ public class ChatService extends Service {
                 Log.d("getFriendId_IOException",friendId+"###"+sendmsg);
                 e.printStackTrace();
             }catch (JSONException e){
+                e.printStackTrace();
+            }catch (NullPointerException e){
+                Log.d("wifi_Null","lte변경좆같네");
                 e.printStackTrace();
             }
 
@@ -1104,6 +1177,8 @@ public class ChatService extends Service {
                 }
 
 
+            }else if(sKind == 22){
+//                loseReceive();
             }
 
 
