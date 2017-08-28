@@ -329,13 +329,28 @@ public class ChatService extends Service {
         public void run() {
 
             try {
-                socket = null;
+                Log.d("여긴지낫니1","보고싶다");
+                if(socket != null) {
+                    Log.d("여긴지낫니2","보고싶다");
+                    socket.close();
+                    socket = null;
+                }
                 socket = new Socket(dstAddress, 5000);
-
             } catch (UnknownHostException e) {
+                Log.d("UnknwonHostE","여기?");
                 e.printStackTrace();
             } catch (IOException e) {
+                Log.d("IOE","여기?");
+
+//                Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
+//                startService(serviceIntent);
+
+
+                ConnectThread ct = new ConnectThread();
+                ct.start();
+
                 e.printStackTrace();
+                return;
             }
 
 
@@ -350,6 +365,7 @@ public class ChatService extends Service {
                 message.what = 3;
                 handler.sendMessage(message);
                 Log.d("생성자","끝마침"+sendData);
+
             }catch (IOException e){
                 e.printStackTrace();
                 Log.d("생성자","IOE예외");
@@ -441,6 +457,10 @@ public class ChatService extends Service {
                     Log.d("리시브소켓exception?","힘들어IOE로");
                     justReconnect();
                     e.printStackTrace();
+
+
+
+
                     break;
                 } catch (NullPointerException e){
                     Log.d("리시브소켓exception?","힘들어Null로");
@@ -463,7 +483,8 @@ public class ChatService extends Service {
 
     public void loseReceive(){
 
-        if(socket.isConnected()) {
+        if(!socket.isClosed()) {
+            Log.d("loseReceive해제","여긴지나나");
             SendThread st = new SendThread(socket,0,"해제자","해체",0,33 );
             st.start();
             try {
