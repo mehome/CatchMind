@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_groupChat"
+            android:icon="@drawable/group_icon"
+            android:title="그룹채팅" />
+
+        <item
+            android:id="@+id/nav_p2pChat"
+            android:icon="@drawable/profile_icon_act"
+            android:title="일대일채팅" />
+
+    </group>
+
+    <item android:title="대화상대"
+        >
+        <menu>
+            <item
+                android:id="@+id/nav_friend1"
+                android:icon="@drawable/profile_icon_act"
+                android:title="친구1" />
+            <item
+                android:id="@+id/nav_friend2"
+                android:icon="@drawable/profile_icon_act"
+                android:title="친구2" />
+        </menu>
+    </item>
+
+</menu>

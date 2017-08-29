@@ -13,14 +13,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.internal.NavigationMenuView;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -51,7 +61,8 @@ import java.util.HashMap;
  * Created by sonsch94 on 2017-07-19.
  */
 
-public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToActivity{
+public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToActivity,NavigationView.OnNavigationItemSelectedListener{
+
 
 
 //    private ViewPager viewPager;
@@ -81,11 +92,12 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     BroadcastReceiver NetworkChangeUpdater;
     public ImageButton plusBtn;
     public Button drawModeBtn;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatroom);
+        setContentView(R.layout.activity_chatroom_nav);
 
         sendcontent = (EditText)findViewById(R.id.messageContent);
 
@@ -238,8 +250,51 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         attachKeyboardListeners();
 
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        Menu menu = navigationView.getMenu();
+        Log.d("미쳐씨발",menu.size()+"");
+        if(no == 0) {
+            MenuItem GroupChat = menu.getItem(0);
+            GroupChat.setVisible(false);
+
+        }else{
+            MenuItem P2PChat = menu.getItem(1);
+            P2PChat.setVisible(false);
+        }
+
     }
 
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, R.string.open_drawer, R.string.close_drawer);
+
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.drawer_menu, menu);
+        return true;
+    }
+
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
+    }
 
     @Override
     protected void onShowKeyboard(int keyboardHeight) {
@@ -489,6 +544,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
             finish(); // close this activity and return to preview activity (if there is any)
+        }else if(item.getItemId() == R.id.drawer_menu_icon){
+            drawer.openDrawer(GravityCompat.END);
         }
 
         return super.onOptionsItemSelected(item);
@@ -516,6 +573,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public void plusWidth(View v){
         drawCommunicator.PlusWidth();
     }
+
 
 
 
