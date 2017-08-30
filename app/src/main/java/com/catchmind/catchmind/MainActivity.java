@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             case R.id.add_chatroom:
 
                 Intent intentMakeGroup = new Intent(this,MakeGroupActivity.class);
+                intentMakeGroup.putExtra("FCR",false);
                 startActivityForResult(intentMakeGroup,MakeGroupActivity);
                 break;
 

@@ -1,6 +1,10 @@
 package com.catchmind.catchmind;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +30,7 @@ public class InviteListViewAdapter extends BaseAdapter{
 
     public ArrayList<ListViewItemCheck> listViewItemList = new ArrayList<ListViewItemCheck>() ;
     public ArrayList<ListViewItemCheck> FlistViewItemList = new ArrayList<ListViewItemCheck>() ;
+    public ArrayList<String> alreadyList = new ArrayList<>() ;
     public Context mContext;
     public LayoutInflater inflater ;
     public int FlistSize;
@@ -33,13 +38,14 @@ public class InviteListViewAdapter extends BaseAdapter{
 
 
     // ListViewAdapter의 생성자
-    public InviteListViewAdapter(Context context,ArrayList<ListViewItemCheck> FListData,ArrayList<ListViewItemCheck> ListData ,HashMap<String,Boolean> IC) {
+    public InviteListViewAdapter(Context context,ArrayList<ListViewItemCheck> FListData,ArrayList<ListViewItemCheck> ListData ,HashMap<String,Boolean> IC , ArrayList<String> AlreadyList) {
         this.mContext = context;
         this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.listViewItemList = ListData;
         this.FlistViewItemList = FListData;
         this.FlistSize = FlistViewItemList.size();
         this.isChecked = IC;
+        this.alreadyList = AlreadyList;
     }
 
     public void changeIsChecked(String userId){
@@ -101,6 +107,9 @@ public class InviteListViewAdapter extends BaseAdapter{
             viewHolder = (nameViewHolder) convertView.getTag();
 
         }
+
+            convertView.setClickable(false);
+            convertView.setForeground(null);
 
             viewHolder.check.setImageResource(R.drawable.check_icon_inact);
 
@@ -199,6 +208,12 @@ public class InviteListViewAdapter extends BaseAdapter{
 
                 }
 
+            }
+
+            if(alreadyList.contains(userId)){
+                convertView.setClickable(true);
+                convertView.setForeground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.unClickable)));
+                Log.d("원피스안",userId+"#####"+alreadyList.toString());
             }
 
         convertView.setTag(R.id.userId,userId);

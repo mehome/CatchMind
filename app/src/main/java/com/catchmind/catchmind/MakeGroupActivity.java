@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class MakeGroupActivity extends AppCompatActivity {
     TextView groupNumTV;
     int groupNum;
     ArrayList<String> inviteList = new ArrayList<>();
+    ArrayList<String> alreadyList = new ArrayList<>();
     String myId;
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
@@ -79,10 +81,27 @@ public class MakeGroupActivity extends AppCompatActivity {
             Log.d("MakeGroupActivity", cursor.getString(0)+"#####"+cursor.getString(1) + "###" +cursor.getString(2));
         }
 
+        Intent GI = getIntent();
+
+        if(GI.getBooleanExtra("FCR",false)){
+            try {
+
+                JSONArray jarray = new JSONArray(GI.getStringExtra("friendId"));
+                for(int i=0; i < jarray.length() ; i++) {
+                    Log.d("원피스밖",jarray.get(i).toString());
+                    alreadyList.add(jarray.get(i).toString());
+                }
+
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
 
         friendList = (ListView) findViewById(R.id.inviteFriendList);
 
-        friendListAdapter = (new InviteListViewAdapter(this,FListData,ListData,isChecked));
+        friendListAdapter = new InviteListViewAdapter(this,FListData,ListData,isChecked , alreadyList);
 
         friendList.setAdapter(friendListAdapter);
 

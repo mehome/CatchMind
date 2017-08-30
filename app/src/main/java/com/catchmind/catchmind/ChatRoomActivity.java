@@ -97,6 +97,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public Button drawModeBtn;
     DrawerLayout drawer;
 
+    public static final int MakeGroupActivity = 6839;
+
     MemberListAdapter memberListAdapter;
     ArrayList<MemberListItem> ListData;
 
@@ -286,6 +288,9 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
 //        Menu menu = navigationView.getMenu();
 //        Log.d("미쳐씨발",menu.size()+"");
 //        if(no == 0) {
@@ -304,12 +309,25 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         @Override
         public void onClick(View v) {
 
-           Log.d("아이템초대","초대");
+            Intent intentMakeGroup = new Intent(getApplicationContext(),MakeGroupActivity.class);
+            intentMakeGroup.putExtra("FCR",true);
+            intentMakeGroup.putExtra("friendId",friendId);
+            Log.d("설마",friendId);
+            startActivityForResult(intentMakeGroup,MakeGroupActivity);
+
 
         }
     };
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            if(requestCode == MakeGroupActivity){
+                Log.d("원피스",data.getExtras().getString("friendId"));
+            }
+        }
+    }
 
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
