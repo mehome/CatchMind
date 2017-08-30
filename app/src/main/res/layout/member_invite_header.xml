@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="42dp"  android:id="@+id/profile_container_check" >
+
+        <ImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:id="@+id/profile_image_memberList"
+            android:src="@drawable/plus_icon"
+            android:layout_alignParentStart="true"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="대화상대초대"
+            android:id="@+id/nickname_memberList"
+            android:textSize="17sp"
+            android:textColor="#00FFFF"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/profile_image_memberList"
+            android:layout_marginStart="10dp"/>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -65,7 +65,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListView lv = (ListView) rootView.findViewById(R.id.messageList);
 
-        chatListAdapter = (new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no,friendId));
+        chatListAdapter = new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no,friendId);
 
         lv.setAdapter(chatListAdapter);
 

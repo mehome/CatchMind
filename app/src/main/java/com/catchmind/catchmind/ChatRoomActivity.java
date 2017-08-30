@@ -33,9 +33,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -53,6 +55,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -94,10 +97,14 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public Button drawModeBtn;
     DrawerLayout drawer;
 
+    MemberListAdapter memberListAdapter;
+    ArrayList<MemberListItem> ListData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom_nav);
+
 
         sendcontent = (EditText)findViewById(R.id.messageContent);
 
@@ -251,21 +258,58 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         attachKeyboardListeners();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView lv = (ListView) findViewById(R.id.memberList);
+
+        View header = getLayoutInflater().inflate(R.layout.member_invite_header,null,false);
+
+        header.setOnClickListener(mClickListener);
+
+        lv.addHeaderView(header);
+
+        MemberListItem addItem1 = new MemberListItem("nova","손순철" , "0", "피곤하다");
+        MemberListItem addItem2 = new MemberListItem("thdwndrl","송중기" , "0", "행복하자");
+
+        ListData = new ArrayList<>();
+
+        ListData.add(addItem1);
+        ListData.add(addItem2);
+        memberListAdapter = new MemberListAdapter(this,ListData);
+
+        lv.setAdapter(memberListAdapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("아이템",""+position);
+            }
+        });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Menu menu = navigationView.getMenu();
-        Log.d("미쳐씨발",menu.size()+"");
-        if(no == 0) {
-            MenuItem GroupChat = menu.getItem(0);
-            GroupChat.setVisible(false);
-
-        }else{
-            MenuItem P2PChat = menu.getItem(1);
-            P2PChat.setVisible(false);
-        }
+//        Menu menu = navigationView.getMenu();
+//        Log.d("미쳐씨발",menu.size()+"");
+//        if(no == 0) {
+//            MenuItem GroupChat = menu.getItem(0);
+//            GroupChat.setVisible(false);
+//
+//        }else{
+//            MenuItem P2PChat = menu.getItem(1);
+//            P2PChat.setVisible(false);
+//        }
 
     }
+
+    private View.OnClickListener mClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+           Log.d("아이템초대","초대");
+
+        }
+    };
+
+
 
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
