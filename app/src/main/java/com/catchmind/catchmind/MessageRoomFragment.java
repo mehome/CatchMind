@@ -45,8 +45,8 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
         ListData = new ArrayList<ChatMessageItem>();
 
-        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 8월 27일 일요일",0);
-        ListData.add(defaultItem);
+//        ChatMessageItem defaultItem = new ChatMessageItem(0,"무쓸모ID","무쓸모닉", "무쓸모프로필","2017년 8월 27일 일요일",0);
+//        ListData.add(defaultItem);
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
         Cursor cursor = db.getMessageListJoinChatFriendList(userId,friendId,no);
@@ -87,8 +87,12 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
             ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
-        }else{
+        }else if(type ==2){
             ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, now);
+            ListData.add(addItem);
+            chatListAdapter.notifyDataSetChanged();
+        }else if(type == 3){
+            ChatMessageItem addItem = new ChatMessageItem(3, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
         }

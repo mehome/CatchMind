@@ -243,7 +243,11 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     String content = msg.getData().getString("content");
                     long time = msg.getData().getLong("time");
                     fragmentCommunicator.passData("내아아이디","내닉네임","내프로필", content, time, 2);
-                }else if(msg.what==3){
+                }else if(msg.what ==3){
+                    String content = msg.getData().getString("content");
+                    long time = msg.getData().getLong("time");
+                    fragmentCommunicator.passData("내아아이디","내닉네임","내프로필", content, time, 3);
+                }else if(msg.what==77){
                     fragmentCommunicator.alertChange();
                 }else if(msg.what==10){
                     String path = msg.getData().getString("path");
@@ -309,6 +313,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         @Override
         public void onClick(View v) {
 
+
             Intent intentMakeGroup = new Intent(getApplicationContext(),MakeGroupActivity.class);
             intentMakeGroup.putExtra("FCR",true);
             intentMakeGroup.putExtra("friendId",friendId);
@@ -322,9 +327,24 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == MakeGroupActivity){
+                long now = System.currentTimeMillis();
+                String content = data.getExtras().getString("content");
+
                 Log.d("원피스",data.getExtras().getString("friendId"));
+                Log.d("원피스2", content);
+                Message message= Message.obtain();
+                message.what = 3;
+
+                Bundle bundle = new Bundle();
+                bundle.putString("content",content);
+                bundle.putLong("time",now);
+
+                message.setData(bundle);
+
+                handler.sendMessage(message);
             }
         }
     }
@@ -483,7 +503,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         public void recvUpdate(){
             Message message= Message.obtain();
-            message.what = 3;
+            message.what =77;
             handler.sendMessage(message);
         }
 
@@ -495,6 +515,19 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         public void sendMessageMark(String content,long time){
             Message message= Message.obtain();
             message.what = 2;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("content",content);
+            bundle.putLong("time",time);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+        }
+
+        public void sendInviteMark(String content,long time){
+            Message message= Message.obtain();
+            message.what = 3;
 
             Bundle bundle = new Bundle();
             bundle.putString("content",content);

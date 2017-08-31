@@ -158,12 +158,14 @@ public class ChatService extends Service {
         public void recvData(String friendId,String content,long time); //액티비티에서 선언한 콜백 함수.
         public void changeNo(int no);
         public void sendMessageMark(String content,long time);
+        public void sendInviteMark(String content,long time);
         public void resetHash();
         public void recvUpdate();
         public String getFriendId();
         public void resetToolbar();
         public void receivePath(String PATH);
         public void receiveClear();
+
     }
 
     public interface ICallback_2{
@@ -208,12 +210,49 @@ public class ChatService extends Service {
 
 
     public void sendRead(int no, String friendId, long time){
+
         if (no < 0){
             return;
         }
 
         SendThread st = new SendThread(socket, no, friendId, "justUpdate", time , 2);
         st.start();
+
+    }
+
+
+    public void sendInvite(int no, String friendId, String content, long time, String inviteId ){
+
+        if(no < 0){
+            return;
+        }
+
+        db.insertChatFriendDataMultipleByJoin(content, no);
+
+        JSONObject jobject = new JSONObject();
+        try {
+            jobject.put("content", content);
+            jobject.put("inviteId", inviteId);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, jobject.toString(), time, 3);
+        st.start();
+
+        try {
+
+
+            JSONArray jarray = new JSONArray(content);
+
+
+            db.insertMessageData(userId, no, userId, content, time, 3);
+            mCallback.sendInviteMark(content,time);
+
+
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -296,12 +335,14 @@ public class ChatService extends Service {
             }else{
                 db.insertMessageData(userId, no, userId, content, time, 2);
             }
+
             mCallback.sendMessageMark(content,time);
+
         }else{
             if(no ==0) {
-                db.insertMessageData(userId, no, friendId, content, time, 3);
+                db.insertMessageData(userId, no, friendId, content, time, 44);
             }else{
-                db.insertMessageData(userId, no, userId, content, time, 3);
+                db.insertMessageData(userId, no, userId, content, time, 44);
             }
         }
 
@@ -612,6 +653,7 @@ public class ChatService extends Service {
     }
 
     public class getFriendThread extends Thread{
+
 
         public String sFriendId;
         public String sContent;

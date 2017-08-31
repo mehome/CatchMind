@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Stetho.initializeWithDefaults(this);
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         tabPosition = 0;

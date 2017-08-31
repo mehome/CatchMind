@@ -37,9 +37,12 @@ public class MakeGroupActivity extends AppCompatActivity {
     int groupNum;
     ArrayList<String> inviteList = new ArrayList<>();
     ArrayList<String> alreadyList = new ArrayList<>();
+    ArrayList<String> inviteNicknameList = new ArrayList<>();
     String myId;
+    String myNickname;
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
+    public boolean FCR;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,8 +61,8 @@ public class MakeGroupActivity extends AppCompatActivity {
 
         mPref = getSharedPreferences("login",MODE_PRIVATE);
         myId = mPref.getString("userId","닉없음");
+        myNickname = mPref.getString("nickname", "누구세요");
         editor = mPref.edit();
-
 
         final ArrayList<ListViewItemCheck> ListData = new ArrayList<ListViewItemCheck>();
         ArrayList<ListViewItemCheck> FListData = new ArrayList<ListViewItemCheck>();
@@ -82,8 +85,8 @@ public class MakeGroupActivity extends AppCompatActivity {
         }
 
         Intent GI = getIntent();
-
-        if(GI.getBooleanExtra("FCR",false)){
+        FCR = GI.getBooleanExtra("FCR",false);
+        if(FCR){
             try {
 
                 JSONArray jarray = new JSONArray(GI.getStringExtra("friendId"));
@@ -110,6 +113,7 @@ public class MakeGroupActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String userId = (String)view.getTag(R.id.userId);
+                String nickname = (String)view.getTag(R.id.nickname);
 //                ImageView IV = (ImageView)view.getTag(R.id.checkIcon);
 //                if(friendListAdapter.isChecked.get(userId)) {
 //                    IV.setImageResource(R.drawable.check_icon_inact);
@@ -121,10 +125,12 @@ public class MakeGroupActivity extends AppCompatActivity {
                     groupNum = groupNum -1;
                     groupNumTV.setText(groupNum+"");
                     inviteList.remove(userId);
+                    inviteNicknameList.remove(nickname);
                 }else{
                     groupNum = groupNum +1;
                     groupNumTV.setText(groupNum+"");
                     inviteList.add(userId);
+                    inviteNicknameList.add(nickname);
                 }
 
                 friendListAdapter.changeIsChecked(userId);
@@ -148,15 +154,27 @@ public class MakeGroupActivity extends AppCompatActivity {
         }else if(id == R.id.invite_check_button){
 
             JSONArray jsonArray = new JSONArray();
+            String content = myNickname + "님이 ";
+
 
             for (int i=0; i < inviteList.size(); i++) {
                 jsonArray.put(inviteList.get(i));
             }
 
+            for (int i=0; i < inviteNicknameList.size();i++){
+                if(i != 0){
+                    content = content +",";
+                }
+                content = content + inviteNicknameList.get(i) + "님";
+            }
+                content = content + "을 초대했습니다";
+
             Intent intent = new Intent();
             intent.putExtra("no",db.getMinNo());
             intent.putExtra("friendId",jsonArray.toString());
             intent.putExtra("nickname","임시 방제");
+            intent.putExtra("content",content);
+
             setResult(RESULT_OK, intent);
             finish();
 

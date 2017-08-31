@@ -1,6 +1,7 @@
 package com.catchmind.catchmind;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ public class ChatMessageAdapter extends BaseAdapter {
     public String zeroFriendId;
     public int no;
     public SimpleDateFormat sdfNow ;
+    public SimpleDateFormat sdfDate ;
     // ListViewAdapter의 생성자
     public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no, String friendId) {
         this.mContext = context;
@@ -41,6 +43,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         this.myId = myId;
         this.no = no;
         this.sdfNow = new SimpleDateFormat("HH:mm");
+        this.sdfDate = new SimpleDateFormat("yyyy년 MM월 dd일 E요일");
         this.zeroFriendId = friendId;
         db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
     }
@@ -72,8 +75,11 @@ public class ChatMessageAdapter extends BaseAdapter {
 
             viewHolder = new MessageViewHolder();
             viewHolder.layout = (LinearLayout) convertView.findViewById(R.id.layout);
+            viewHolder.profileContainer = (LinearLayout)convertView.findViewById(R.id.profile_container);
             viewHolder.leftLayout = (LinearLayout) convertView.findViewById(R.id.leftTextContainer);
             viewHolder.rightLayout = (LinearLayout) convertView.findViewById(R.id.rightTextContainer);
+            viewHolder.dayLayout = (LinearLayout) convertView.findViewById(R.id.dayPresenter);
+            viewHolder.dayText = (TextView) convertView.findViewById(R.id.dayPresenterText);
             viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.messageProfileImage);
             viewHolder.nickName = (TextView) convertView.findViewById(R.id.messageNickname);
             viewHolder.leftText = (TextView) convertView.findViewById(R.id.leftText);
@@ -90,27 +96,55 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder = (MessageViewHolder) convertView.getTag();
         }
 
-        if(chatMessageList.get(position).Type == 0) {
+//        if(chatMessageList.get(position).Type == 0) {
+//
+//            viewHolder.layout.setGravity(Gravity.CENTER);
+//            String dateline = "------------------";
+//            dateline = dateline + chatMessageList.get(position).getContent() + "------------------";
+//            viewHolder.chatContent.setText(dateline);
+//            viewHolder.chatContent.setBackgroundResource(0);
+//            viewHolder.profileImage.setVisibility(View.GONE);
+//            viewHolder.nickName.setVisibility(View.GONE);
+//            viewHolder.chatContent.setVisibility(View.VISIBLE);
+//            viewHolder.leftLayout.setVisibility(View.GONE);
+//            viewHolder.rightLayout.setVisibility(View.GONE);
+//
+//
+//
+//        }else
 
-            viewHolder.layout.setGravity(Gravity.CENTER);
-            String dateline = "------------------";
-            dateline = dateline + chatMessageList.get(position).getContent() + "------------------";
-            viewHolder.chatContent.setText(dateline);
-            viewHolder.chatContent.setBackgroundResource(0);
-            viewHolder.profileImage.setVisibility(View.GONE);
-            viewHolder.nickName.setVisibility(View.GONE);
-            viewHolder.chatContent.setVisibility(View.VISIBLE);
-            viewHolder.leftLayout.setVisibility(View.GONE);
-            viewHolder.rightLayout.setVisibility(View.GONE);
+        if(chatMessageList.get(position).Type == 1){
 
-
-
-        }else if(chatMessageList.get(position).Type == 1){
             long now = chatMessageList.get(position).getTime();
             Date when = new Date(now);
             String time = sdfNow.format(when);
 
+            if(position == 0){
+
+                viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                String day = sdfDate.format(when);
+                viewHolder.dayText.setText(day);
+
+            }else{
+
+                long pre = chatMessageList.get(position-1).getTime();
+                Date preWhen = new Date(pre);
+                String preTime = sdfDate.format(pre);
+
+                String day = sdfDate.format(when);
+
+                if(!day.equals(preTime)) {
+                    Log.d("뭐시발?",preWhen+"###"+when);
+                    viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                    viewHolder.dayText.setText(day);
+                }else{
+                    viewHolder.dayLayout.setVisibility(View.GONE);
+                }
+
+            }
+
             viewHolder.layout.setGravity(Gravity.LEFT);
+            viewHolder.profileContainer.setVisibility(View.VISIBLE);
             viewHolder.chatContent.setText(chatMessageList.get(position).getContent());
             viewHolder.chatContent.setBackgroundResource(R.drawable.inchat);
             viewHolder.nickName.setGravity(Gravity.LEFT);
@@ -141,7 +175,30 @@ public class ChatMessageAdapter extends BaseAdapter {
             Date when = new Date(now);
             String time = sdfNow.format(when);
 
+            if(position == 0){
+                viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                String day = sdfDate.format(when);
+                viewHolder.dayText.setText(day);
+            }else{
+
+                long pre = chatMessageList.get(position-1).getTime();
+                Date preWhen = new Date(pre);
+                String preTime = sdfDate.format(pre);
+
+                String day = sdfDate.format(when);
+
+                if(!day.equals(preTime)) {
+                    Log.d("뭐시발?",preWhen+"###"+when);
+                    viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                    viewHolder.dayText.setText(day);
+                }else{
+                    viewHolder.dayLayout.setVisibility(View.GONE);
+                }
+
+            }
+
             viewHolder.layout.setGravity(Gravity.RIGHT);
+            viewHolder.profileContainer.setVisibility(View.VISIBLE);
             viewHolder.chatContent.setText(chatMessageList.get(position).getContent());
             viewHolder.chatContent.setBackgroundResource(R.drawable.outchat);
             viewHolder.nickName.setGravity(Gravity.RIGHT);
@@ -166,7 +223,21 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.leftUnread.setText(tmpUnread+"");
             }
 
+        }else if(chatMessageList.get(position).Type == 3) {
+
+            viewHolder.layout.setGravity(Gravity.CENTER);
+            viewHolder.profileContainer.setVisibility(View.GONE);
+
+            viewHolder.dayLayout.setVisibility(View.VISIBLE);
+            viewHolder.dayText.setText(chatMessageList.get(position).getContent());
+
+            viewHolder.profileImage.setVisibility(View.GONE);
+            viewHolder.nickName.setVisibility(View.GONE);
+            viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.rightLayout.setVisibility(View.GONE);
+
         }
+
 
         return convertView;
 

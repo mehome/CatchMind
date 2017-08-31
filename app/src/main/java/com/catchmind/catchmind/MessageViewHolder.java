@@ -16,6 +16,9 @@ public class MessageViewHolder {
     public LinearLayout layout;
     public LinearLayout leftLayout;
     public LinearLayout rightLayout;
+    public LinearLayout dayLayout;
+    public LinearLayout profileContainer;
+    public TextView dayText;
     public ImageView profileImage;
     public TextView nickName;
     public View leftLine;
