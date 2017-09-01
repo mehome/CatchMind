@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         tabPosition = 0;
 
+        Stetho.initializeWithDefaults(this);
+
         // Adding Toolbar to the activity
        toolbar = (Toolbar) findViewById(R.id.toolbar);
        setSupportActionBar(toolbar);
@@ -328,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         if(requestCode == MakeGroupActivity){
             if(resultCode == RESULT_OK){
                 int no = data.getExtras().getInt("no");
-                String fId = data.getExtras().getString("friendId");
+                String fId = data.getExtras().getString("inviteId");
                 Log.d("Main.onactresult",fId);
                 String nick = data.getExtras().getString("nickname");
                 fragmentCommunicator.startChatRoomActivity(no,fId,nick);

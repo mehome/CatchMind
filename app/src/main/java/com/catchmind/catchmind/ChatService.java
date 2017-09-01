@@ -19,6 +19,8 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -64,7 +66,9 @@ public class ChatService extends Service {
 
     @Override
     public void onCreate() {
+
         super.onCreate();
+
         Log.d("ChatServiceOnCreate","크리에이트");
 
 
@@ -158,7 +162,7 @@ public class ChatService extends Service {
         public void recvData(String friendId,String content,long time); //액티비티에서 선언한 콜백 함수.
         public void changeNo(int no);
         public void sendMessageMark(String content,long time);
-        public void sendInviteMark(String content,long time);
+        public void sendInviteMark(String inviteId,String content,long time,boolean resetMemberList);
         public void resetHash();
         public void recvUpdate();
         public String getFriendId();
@@ -223,13 +227,18 @@ public class ChatService extends Service {
 
     public void sendInvite(int no, String friendId, String content, long time, String inviteId ){
 
+
         if(no < 0){
             return;
         }
 
-        db.insertChatFriendDataMultipleByJoin(content, no);
+
+        db.insertChatFriendDataMultipleByJoinInvite(inviteId, no);
+
 
         JSONObject jobject = new JSONObject();
+
+
         try {
             jobject.put("content", content);
             jobject.put("inviteId", inviteId);
@@ -237,22 +246,14 @@ public class ChatService extends Service {
             e.printStackTrace();
         }
 
+
         SendThread st = new SendThread(socket, no, friendId, jobject.toString(), time, 3);
         st.start();
 
-        try {
 
+        db.insertMessageData(userId, no, userId, content, time, 3);
+        mCallback.sendInviteMark(inviteId,content,time,true);
 
-            JSONArray jarray = new JSONArray(content);
-
-
-            db.insertMessageData(userId, no, userId, content, time, 3);
-            mCallback.sendInviteMark(content,time);
-
-
-        }catch(JSONException e){
-            e.printStackTrace();
-        }
 
     }
 
@@ -329,6 +330,7 @@ public class ChatService extends Service {
 
 
         if(st.isSuccess()){
+
             Log.d("st.isSucess",content+"####"+time);
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 2);
@@ -1009,84 +1011,182 @@ public class ChatService extends Service {
 
 
 
-//    public class ReceiveMessageThread extends Thread{
-//
-//        public int sNo;
-//        public String sFriendId;
-//        public String sContent;
-//        public long sTime;
-//
-//        public ReceiveMessageThread(int no,String friendId,String content,long time){
-//
-//            this.sNo = no;
-//            this.sFriendId = friendId;
-//            this.sContent = content;
-//            this.sTime = time;
-//            Log.d("ReceiveMessageThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId + ", content: "+sContent);
-//
-//        }
-//
-//        @Override
-//        public void run() {
-//            db.insertMessageData(userId,sNo,sFriendId, sContent, sTime, 1);
-//            if(boundStart) {
-//                if(sNo == 0 ) {
-//                    if(boundedNo == 0 && boundedFriendId == sFriendId) {
-//                        db.updateChatRoomData(sNo, sFriendId, sTime);
-//                        sendRead(sNo,mCallback.getFriendId(),sTime);
-//                    }
-//                }else{
-//                    if(boundedNo == sNo) {
-//                        db.updateChatRoomData(sNo, sFriendId, sTime);
-//                        sendRead(sNo,mCallback.getFriendId(),sTime);
-//                    }
-//                }
-//            }
-//        }
-//
-//
-//    }
 
 
-//    public class ReceiveUpdateThread extends Thread{
-//
-//        public int sNo;
-//        public String sFriendId;
-//        public String sContent;
-//        public long sTime;
-//
-//        public ReceiveUpdateThread(int no,String friendId,long time){
-//
-//            this.sNo = no;
-//            this.sFriendId = friendId;
-//            this.sTime = time;
-//            Log.d("ReceiveUpdateThread","Constructor 안,no: "+sNo +", sFriend: "+sFriendId);
-//
-//        }
-//
-//        @Override
-//        public void run() {
-//
-//            db.updateChatFriendData(sNo,sFriendId,sTime);
-//
-//            if(boundStart) {
-//
-//                if(sNo == 0 ) {
-//                    if(boundedNo == 0 && boundedFriendId == sFriendId) {
-//                        mCallback.recvUpdate();
-//                    }
-//                }else{
-//                    if(boundedNo == sNo) {
-//                        mCallback.recvUpdate();
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//
-//
-//    }
+
+    public class getGroupInviteThread extends Thread{
+
+        public int sNo;
+        public String sFriendId;
+        public String sContent;
+        public long sTime;
+
+        public getGroupInviteThread(int no,String friendId,String content,long time){
+
+            this.sNo = no;
+            this.sFriendId = friendId;
+            this.sContent = content;
+            this.sTime = time;
+            Log.d("getGroupInviteThread","Constructor 안,no: "+sNo);
+
+        }
+
+        @Override
+        public void run() {
+
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "userId="+userId+"&no="+this.sNo;
+
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/getGroup.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+
+            /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.e("getGift.data",data);
+                JSONArray chatArray = new JSONArray(data);
+                db.insertMessageData(userId,sNo,sFriendId,sContent, sTime, 3);
+                db.insertChatFriendDataMultiple(data);
+                db.insertChatRoomData(sNo,"group",0);
+                chatRoomList.add(this.sNo+"");
+                if(boundCheck_2 == true){
+                    mCallback_2.changeRoomList();
+                }
+
+
+                if(boundCheck == true) {
+                    if(boundedNo == sNo ) {
+                        mCallback.sendInviteMark("useless",sContent,sTime,false);
+                    }
+                }
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e){
+                e.printStackTrace();
+                Log.d("getGroupInvite","JSONException");
+            }
+        }
+
+
+
+
+    }
+
+
+
+
+
+    public class getInviteFriendThread extends Thread{
+
+
+        public int sNo;
+        public String sFriendId;
+        public String sContent;
+        public long sTime;
+
+
+        public getInviteFriendThread(int no, String friendId, String content, long time){
+
+            this.sNo = no;
+            this.sFriendId = friendId;
+            this.sContent = content;
+            this.sTime = time;
+            Log.d("getInviteFriend",sFriendId);
+
+        }
+
+        @Override
+        public void run() {
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "friendId=" + this.sFriendId + "&no=" + this.sNo + "&time=" + this.sTime ;
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/getInviteFriend.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+
+            /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.e("getInviteFriend",data);
+
+
+                db.insertChatFriendDataMultiple(data);
+
+
+                Log.d("db.ICFDM",userId+"###"+sFriendId);
+
+                db.insertMessageData(userId,sNo,sFriendId,sContent,sTime,3);
+
+                if(boundCheck == true) {
+                    if(boundedNo == sNo) {
+                        mCallback.sendInviteMark(sFriendId,sContent,sTime,true);
+                    }
+                }
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 
 
 
@@ -1242,6 +1342,30 @@ public class ChatService extends Service {
 
             }else if(sKind == 22){
 //                loseReceive();
+            }else if(sKind == 3){
+
+                if(chatRoomList.contains(sNo + "")){
+                    try {
+                        JSONObject jobject = new JSONObject(sContent);
+                        String inviteId = jobject.getString("inviteId");
+                        String realContent = jobject.getString("content");
+                        getInviteFriendThread gift = new getInviteFriendThread(sNo,inviteId,realContent,sTime);
+                        gift.start();
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        JSONObject jobject = new JSONObject(sContent);
+                        String inviteId = jobject.getString("inviteId");
+                        String realContent = jobject.getString("content");
+                        getGroupInviteThread ggit = new getGroupInviteThread(sNo,inviteId,realContent,sTime);
+                        ggit.start();
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
             }
 
 

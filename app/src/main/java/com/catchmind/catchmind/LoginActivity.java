@@ -257,13 +257,13 @@ public class LoginActivity extends AppCompatActivity{
                 org.json.simple.JSONArray dataArray = (org.json.simple.JSONArray)parser.parse(data);
                 Log.d("dataArray", dataArray.toString());
                 org.json.simple.JSONArray friendArray = (org.json.simple.JSONArray)parser.parse(dataArray.get(0).toString());
-                Log.d("dataArray", friendArray.toString());
+                Log.d("friendArray", friendArray.toString());
                 org.json.simple.JSONArray chatArray = (org.json.simple.JSONArray)parser.parse(dataArray.get(1).toString());
-                Log.d("dataArray", chatArray.toString());
+                Log.d("chatArray", chatArray.toString());
                 org.json.simple.JSONArray roomArray = (org.json.simple.JSONArray)parser.parse(dataArray.get(2).toString());
-                Log.d("dataArray", roomArray.toString());
+                Log.d("roomArray", roomArray.toString());
                 org.json.simple.JSONArray timeArray = (org.json.simple.JSONArray)parser.parse(dataArray.get(3).toString());
-                Log.d("dataArray", timeArray.toString());
+                Log.d("timeArray", timeArray.toString());
 //                JSONArray friendArray = new JSONArray(dataArray.get(0));
 //                JSONArray chatArray = new JSONArray(dataArray.get(1));
 //                JSONArray roomArray = new JSONArray(dataArray.get(2));

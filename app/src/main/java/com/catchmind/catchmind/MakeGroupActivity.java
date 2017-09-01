@@ -171,7 +171,7 @@ public class MakeGroupActivity extends AppCompatActivity {
 
             Intent intent = new Intent();
             intent.putExtra("no",db.getMinNo());
-            intent.putExtra("friendId",jsonArray.toString());
+            intent.putExtra("inviteId",jsonArray.toString());
             intent.putExtra("nickname","임시 방제");
             intent.putExtra("content",content);
 

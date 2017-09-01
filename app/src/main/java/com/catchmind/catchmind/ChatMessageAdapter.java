@@ -157,11 +157,14 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.rightLayout.setVisibility(View.VISIBLE);
             friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
-                    .error(R.drawable.default_profile_image)
-                    .signature(new StringSignature(profile))
-                    .into(viewHolder.profileImage);
-
+            try {
+                Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + friendId + ".png")
+                        .error(R.drawable.default_profile_image)
+                        .signature(new StringSignature(profile))
+                        .into(viewHolder.profileImage);
+            }catch (NullPointerException e){
+                Log.d("널널",friendId);
+            }
             int tmpUnread = db.getUnReadWithRight(myId,friendId,no,now) ;
             if(tmpUnread <=0) {
                 viewHolder.rightUnread.setText("");

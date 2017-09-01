@@ -366,6 +366,55 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
 
+    public void insertChatFriendDataMultipleByJoinInvite(String friendId, int no){
+        try {
+            JSONArray jarray = new JSONArray(friendId);
+            String sql = "SELECT * FROM friendList WHERE friendId='"+jarray.getString(0)+"'";
+            Log.d("ICFDMBJI",sql);
+            for(int i=1; i<jarray.length();i++){
+                sql = sql + " OR friendId='"+jarray.getString(i)+"'";
+            }
+
+//            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = dbr.rawQuery(sql,null);
+
+            dbr.beginTransaction();
+
+            String sql_2="INSERT INTO chatFriendList VALUES ";
+
+            cursor.moveToNext();
+
+            sql_2 = sql_2 + "('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            while(cursor.moveToNext()){
+                sql_2 = sql_2 + ",('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            }
+
+            Log.d("ICFDMI",sql_2);
+
+            try
+            {
+                dbr.execSQL(sql_2);
+                dbr.setTransactionSuccessful();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                dbr.endTransaction();
+            }
+//            db.close();
+
+        }catch(JSONException e){
+            Log.d("ICFDM.JSONException",friendId);
+            e.printStackTrace();
+
+        }
+    }
+
+
+
     public void insertChatFriendDataMultiple(String jarray){
         try {
 //            SQLiteDatabase db = getWritableDatabase();
@@ -561,9 +610,9 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 //        SQLiteDatabase db = this.getReadableDatabase();
         String sql;
         if(no == 0) {
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no AND messageData_" + userId + ".friendId = chatRoomList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='"+no+"' ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no AND messageData_" + userId + ".friendId = chatRoomList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='"+no+"' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
         }else{
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no WHERE messageData_" + userId + ".no='" + no + "' ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no WHERE messageData_" + userId + ".no='" + no + "' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
         }
         Log.d("getLastRow",sql);
         Cursor cursor = dbr.rawQuery(sql,null);

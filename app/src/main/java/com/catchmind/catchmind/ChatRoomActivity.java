@@ -40,6 +40,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -254,6 +255,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     drawCommunicator.receivePath(path);
                 }else if(msg.what==11){
                     drawCommunicator.receiveClear();
+                }else if(msg.what==99){
+                    memberListAdapter.notifyDataSetChanged();
                 }
 
 
@@ -272,13 +275,16 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         lv.addHeaderView(header);
 
-        MemberListItem addItem1 = new MemberListItem("nova","손순철" , "0", "피곤하다");
-        MemberListItem addItem2 = new MemberListItem("thdwndrl","송중기" , "0", "행복하자");
-
         ListData = new ArrayList<>();
 
-        ListData.add(addItem1);
-        ListData.add(addItem2);
+        Cursor cursor = db.getChatFriendListByNo(no);
+
+        while(cursor.moveToNext()){
+            MemberListItem addItem = new MemberListItem(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+            ListData.add(addItem);
+        }
+
+
         memberListAdapter = new MemberListAdapter(this,ListData);
 
         lv.setAdapter(memberListAdapter);
@@ -324,6 +330,23 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         }
     };
 
+    public void ResetMemberList(){
+        memberListAdapter.MemberListItemList = new ArrayList<>();
+
+        Cursor cursor = db.getChatFriendListByNo(no);
+
+        while(cursor.moveToNext()){
+            MemberListItem addItem = new MemberListItem(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+            memberListAdapter.MemberListItemList.add(addItem);
+            Log.d("귀여워",cursor.getString(1));
+        }
+
+        Message message= Message.obtain();
+        message.what = 99;
+
+        handler.sendMessage(message);
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -332,19 +355,9 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             if(requestCode == MakeGroupActivity){
                 long now = System.currentTimeMillis();
                 String content = data.getExtras().getString("content");
+                String inviteId = data.getExtras().getString("inviteId");
 
-                Log.d("원피스",data.getExtras().getString("friendId"));
-                Log.d("원피스2", content);
-                Message message= Message.obtain();
-                message.what = 3;
-
-                Bundle bundle = new Bundle();
-                bundle.putString("content",content);
-                bundle.putLong("time",now);
-
-                message.setData(bundle);
-
-                handler.sendMessage(message);
+                mService.sendInvite(no,friendId,content,now,inviteId);
             }
         }
     }
@@ -525,7 +538,24 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             handler.sendMessage(message);
         }
 
-        public void sendInviteMark(String content,long time){
+        public void sendInviteMark(String inviteId,String content,long time,boolean resetMemberList){
+
+            if(resetMemberList) {
+                ResetMemberList();
+                try {
+                    JSONArray jsonArray = new JSONArray(friendId);
+                    JSONArray addArray = new JSONArray(inviteId);
+                    for(int i=0;i<addArray.length();i++){
+                        jsonArray.put(addArray.getString(i));
+                    }
+                    friendId = jsonArray.toString();
+                    Log.d("집중",friendId);
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                ResetHash();
+            }
+
             Message message= Message.obtain();
             message.what = 3;
 
@@ -540,6 +570,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         public void resetHash(){
             ResetHash();
+            ResetMemberList();
         }
 
         public String getFriendId(){
