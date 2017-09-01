@@ -38,6 +38,13 @@ public class MemberListAdapter extends BaseAdapter {
 
     }
 
+    public void clearList(){
+        this.MemberListItemList = new ArrayList<>();
+    }
+
+    public void addMemberItem(MemberListItem addItem){
+        this.MemberListItemList.add(addItem);
+    }
 
     @Override
     public int getCount() {

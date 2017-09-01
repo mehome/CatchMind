@@ -103,6 +103,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     MemberListAdapter memberListAdapter;
     ArrayList<MemberListItem> ListData;
 
+    NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -267,6 +269,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         attachKeyboardListeners();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ListView lv = (ListView) findViewById(R.id.memberList);
 
         View header = getLayoutInflater().inflate(R.layout.member_invite_header,null,false);
@@ -296,7 +299,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -331,13 +334,13 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     };
 
     public void ResetMemberList(){
-        memberListAdapter.MemberListItemList = new ArrayList<>();
+        memberListAdapter.clearList();
 
         Cursor cursor = db.getChatFriendListByNo(no);
 
         while(cursor.moveToNext()){
             MemberListItem addItem = new MemberListItem(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
-            memberListAdapter.MemberListItemList.add(addItem);
+            memberListAdapter.addMemberItem(addItem);
             Log.d("귀여워",cursor.getString(1));
         }
 
@@ -669,9 +672,17 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
-            finish(); // close this activity and return to preview activity (if there is any)
+            if(drawer.isDrawerOpen(navigationView)){
+                drawer.closeDrawer(navigationView);
+            }else {
+                finish(); // close this activity and return to preview activity (if there is any)
+            }
         }else if(item.getItemId() == R.id.drawer_menu_icon){
-            drawer.openDrawer(GravityCompat.END);
+            if(drawer.isDrawerOpen(navigationView)){
+                drawer.closeDrawer(navigationView);
+            }else {
+                drawer.openDrawer(navigationView);
+            }
         }
 
         return super.onOptionsItemSelected(item);
