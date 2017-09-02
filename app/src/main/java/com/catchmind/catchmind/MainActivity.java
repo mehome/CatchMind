@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         tabPosition = 0;
 
-        Stetho.initializeWithDefaults(this);
+//        Stetho.initializeWithDefaults(this);
 
         // Adding Toolbar to the activity
        toolbar = (Toolbar) findViewById(R.id.toolbar);
