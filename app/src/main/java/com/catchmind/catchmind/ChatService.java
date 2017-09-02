@@ -169,6 +169,7 @@ public class ChatService extends Service {
         public void resetToolbar();
         public void receivePath(String PATH);
         public void receiveClear();
+        public void receiveDrawChat(String friendId,String content);
 
     }
 
@@ -190,6 +191,17 @@ public class ChatService extends Service {
     }
 
     //액티비티에서 읽음 전송
+
+
+    public void sendDrawChat(int no,String friendId, String content, long time){
+        if (no < 0){
+            return;
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, content, time , 88);
+        st.start();
+
+    }
 
 
     public void sendClear(int no,String friendId, String content, long time){
@@ -1364,6 +1376,21 @@ public class ChatService extends Service {
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
+                }
+
+            }else if(sKind == 88){
+
+                if(boundCheck) {
+                    if(sNo == 0 ) {
+                        if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
+                            mCallback.receiveDrawChat(sFriendId,sContent);
+                        }
+                    }else{
+                        if(boundedNo == sNo) {
+                            mCallback.receiveDrawChat(sFriendId,sContent);
+                        }
+                    }
+
                 }
 
             }

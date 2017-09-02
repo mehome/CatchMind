@@ -18,6 +18,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -38,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -68,6 +70,9 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
     public Handler handler;
 
+    public drawChatAdapter DrawChatAdapter;
+    ListView lv;
+    FrameLayout drawChatContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,6 +132,12 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
             }
         };
 
+        DrawChatAdapter = new drawChatAdapter(getContext(),userId);
+
+        lv = (ListView) rootView.findViewById(R.id.drawChat);
+        lv.setAdapter(DrawChatAdapter);
+        drawChatContainer = (FrameLayout) rootView.findViewById(R.id.drawChatContainer);
+
         return rootView;
 
     }
@@ -166,11 +177,17 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
                     widthContainer.addView(WV);
 
+                    drawChatContainer.bringToFront();
+                    drawChatContainer.invalidate();
+
+
 
                 }
 
             }
         });
+
+
 
         getSketchThread gst = new getSketchThread();
         gst.start();
@@ -202,6 +219,8 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
     @Override
     public void onResume() {
         super.onResume();
+
+
 
     }
 
@@ -335,4 +354,12 @@ public class DrawRoomFragment extends Fragment implements ChatRoomActivity.DrawC
 
     }
 
+
+    @Override
+    public void drawChat(String Nickname, String Content) {
+        drawChatItem addItem = new drawChatItem(Nickname+" :", Content);
+        DrawChatAdapter.addItem(addItem);
+        DrawChatAdapter.notifyDataSetChanged();
+
+    }
 }

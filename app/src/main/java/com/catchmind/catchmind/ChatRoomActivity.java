@@ -89,6 +89,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
     String userId;
+    String userNickname;
     public MyDatabaseOpenHelper db;
     public int no;
     public HashMap<String,String> NickHash = new HashMap<>();
@@ -96,6 +97,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     BroadcastReceiver NetworkChangeUpdater;
     public ImageButton plusBtn;
     public Button drawModeBtn;
+    public Button sendMsgBtn;
+    public Button drawChatBtn;
     DrawerLayout drawer;
 
     public static final int MakeGroupActivity = 6839;
@@ -117,6 +120,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         toolbar = (Toolbar) findViewById(R.id.toolbarChatRoom);
         plusBtn = (ImageButton) findViewById(R.id.plus_btn);
         drawModeBtn = (Button) findViewById(R.id.drawMode_btn);
+        sendMsgBtn = (Button) findViewById(R.id.SendMsgBtn);
+        drawChatBtn = (Button) findViewById(R.id.drawChatBtn);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true); //커스터마이징 하기 위해 필요
@@ -127,6 +132,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         editor = mPref.edit();
 
         userId = mPref.getString("userId","아이디없음");
+        userNickname = mPref.getString("nickname","닉없음");
         Log.d("chatroomId",userId);
         Intent GI = getIntent();
 
@@ -206,10 +212,15 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     ChatRoomViewPager.DrawMode = false;
                     drawModeBtn.setVisibility(View.GONE);
                     plusBtn.setVisibility(View.VISIBLE);
+                    drawChatBtn.setVisibility(View.GONE);
+                    sendMsgBtn.setVisibility(View.VISIBLE);
+
                 }else if(position == 1){
                     ChatRoomViewPager.DrawMode = false;
                     plusBtn.setVisibility(View.GONE);
                     drawModeBtn.setVisibility(View.VISIBLE);
+                    sendMsgBtn.setVisibility(View.GONE);
+                    drawChatBtn.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -259,6 +270,17 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     drawCommunicator.receiveClear();
                 }else if(msg.what==99){
                     memberListAdapter.notifyDataSetChanged();
+                }else if(msg.what==88){
+
+                    String friendId = msg.getData().getString("friendId");
+                    String content = msg.getData().getString("content");
+                    String nickname;
+                    if(no == 0) {
+                        nickname = friendNickname;
+                    }else{
+                        nickname = NickHash.get(friendId);
+                    }
+                    drawCommunicator.drawChat(nickname,content);
                 }
 
 
@@ -272,15 +294,25 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ListView lv = (ListView) findViewById(R.id.memberList);
 
-        View header = getLayoutInflater().inflate(R.layout.member_invite_header,null,false);
+        if(no != 0) {
 
-        header.setOnClickListener(mClickListener);
+            View header = getLayoutInflater().inflate(R.layout.member_invite_header, null, false);
 
-        lv.addHeaderView(header);
+            header.setOnClickListener(mClickListener);
+
+            lv.addHeaderView(header);
+
+        }
 
         ListData = new ArrayList<>();
 
-        Cursor cursor = db.getChatFriendListByNo(no);
+        Cursor cursor;
+
+        if(no == 0 ){
+            cursor = db.getChatFriendListDataWithMe(friendId);
+        }else {
+            cursor = db.getChatFriendListByNo(no);
+        }
 
         while(cursor.moveToNext()){
             MemberListItem addItem = new MemberListItem(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
@@ -472,6 +504,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         void MinusWidth();
         void PlusWidth();
         void receiveClear();
+        void drawChat(String Nickname,String Content);
 
     }
 
@@ -602,6 +635,20 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
             handler.sendMessage(message);
         }
+
+        @Override
+        public void receiveDrawChat(String friendId, String content) {
+            Message message= Message.obtain();
+            message.what = 88;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("content",content);
+            bundle.putString("friendId",friendId);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+        }
     };
 
     public void resetTitle(){
@@ -712,6 +759,11 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     }
 
 
-
+    public void drawChat(View v){
+        String et = sendcontent.getText().toString();
+        drawCommunicator.drawChat(userNickname,et);
+        sendcontent.setText("");
+        mService.sendDrawChat(no,friendId,et,0);
+    }
 
 }

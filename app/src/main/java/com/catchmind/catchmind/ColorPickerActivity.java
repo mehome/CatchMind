@@ -141,4 +141,14 @@ public class ColorPickerActivity extends Activity{
         finish();
     }
 
+    public void button_eraser(View v){
+        Intent resultIntent = new Intent();
+
+        resultIntent.putExtra("color","#44755b");
+        resultIntent.putExtra("textColor", "#FFFFFF");
+        setResult(RESULT_OK,resultIntent);
+
+        finish();
+    }
+
 }

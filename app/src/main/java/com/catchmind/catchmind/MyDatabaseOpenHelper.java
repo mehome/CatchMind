@@ -554,7 +554,13 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 //        db.close();
     }
 
+    public Cursor getChatFriendListDataWithMe(String friendId){
+        Log.d("db.getCFDWM",friendId);
+        String sql = "SELECT * FROM chatFriendList WHERE (friendId='"+friendId+"' AND no='0') OR (friendId='"+mPref.getString("userId","nono")+"' AND no='0')";
+        Cursor cursor = dbr.rawQuery(sql,null);
 
+        return cursor;
+    }
 
     public Cursor getChatFriendList(){
         Log.d("db.getCFL","noUserId");

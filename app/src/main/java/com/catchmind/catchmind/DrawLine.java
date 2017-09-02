@@ -65,6 +65,8 @@ public class DrawLine extends View
     public float rate_width;
     public float rate_height;
 
+    public int originalColor;
+
     /**
      * 생성자.. new DrawLine(this, rect) 하면 여기가 호출됨.
      * @param context   Context객체
@@ -75,6 +77,7 @@ public class DrawLine extends View
         this(context);
         this.mContext = context;
         this.OriginalRect = rect;
+        this.originalColor = Color.parseColor("#44755b");
 
         cra = CRA;
         STA = (sendToActivity) cra;
@@ -84,7 +87,7 @@ public class DrawLine extends View
                 Bitmap.Config.ARGB_8888);
         //그리기 bitmap에서 canvas를 알아옴.
         canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(originalColor);
 
         //경로 초기화.
         path = new Path();
@@ -332,6 +335,7 @@ public class DrawLine extends View
 
 
             canvas = new Canvas(resizedBitmap);
+            canvas.drawColor(originalColor);
 
             rate_width = (float)width/(float)OriginalWidth;
             rate_height = (float)height/(float)OriginalHeight;
@@ -373,6 +377,7 @@ public class DrawLine extends View
             bitmap = Bitmap.createBitmap(OriginalRect.width(), OriginalRect.height(),
                     Bitmap.Config.ARGB_8888);
             canvas = new Canvas(bitmap);
+            canvas.drawColor(originalColor);
             Log.d("디버깅오리지널",height+"###");
 
             for(int i=0;i<pathList.size();i++){
@@ -445,14 +450,14 @@ public class DrawLine extends View
     }
 
     public void clearSketch(){
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(originalColor);
         pathList.clear();
         invalidate();
         STA.sendClear();
     }
 
     public void receiveClearSketch(){
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(originalColor);
         pathList.clear();
         invalidate();
     }

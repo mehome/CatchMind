@@ -98,7 +98,7 @@
             </FrameLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_toEndOf="@+id/ButtonContainer">
@@ -108,17 +108,26 @@
                     android:id="@+id/messageContent"
                     android:inputType="textMultiLine"
                     android:maxLines="4"
-                    android:layout_width="240dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
 
                 <Button
-                    android:id="@+id/button1"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/SendMsgBtn"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="전 송"
                     android:onClick="sendMessage"/>
+
+                <Button
+                    android:id="@+id/drawChatBtn"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="전 송"
+                    android:onClick="drawChat"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
