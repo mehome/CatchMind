@@ -1,6 +1,7 @@
 package com.catchmind.catchmind;
 
 import android.graphics.drawable.Drawable;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,5 +20,6 @@ public class nameViewHolder {
     public TextView sectionTxt;
     public RelativeLayout profile_container;
     public ImageView check;
+    public FrameLayout api_frame;
 
 }

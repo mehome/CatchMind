@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -56,6 +57,7 @@ public class ChatService extends Service {
     public ArrayList<String> chatRoomList = new ArrayList<>();
     public int boundedNo;
     public String boundedFriendId;
+    public boolean connectable;
 
 
     public class ChatServiceBinder extends Binder {
@@ -99,6 +101,8 @@ public class ChatService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+
+
         if(socket != null) {
             try {
                 socket.close();
@@ -130,8 +134,20 @@ public class ChatService extends Service {
             }
             socket = null;
         }
-        ConnectThread ct = new ConnectThread();
-        ct.start();
+
+
+
+        if(intent != null){
+
+            Log.d("생성자","생성전");
+
+            ConnectThread ct = new ConnectThread();
+            ct.start();
+
+        }
+
+
+
         chatRoomList = new ArrayList<String>();
 
         Cursor cursor = db.getChatRoomList();
@@ -383,6 +399,12 @@ public class ChatService extends Service {
         @Override
         public void run() {
 
+            if(socket != null){
+                if(socket.isConnected()){
+                    return;
+                }
+            }
+
             try {
                 Log.d("여긴지낫니1","보고싶다");
                 if(socket != null) {
@@ -390,7 +412,9 @@ public class ChatService extends Service {
                     socket.close();
                     socket = null;
                 }
+
                 socket = new Socket(dstAddress, 5000);
+
             } catch (UnknownHostException e) {
                 Log.d("UnknwonHostE","여기?");
                 e.printStackTrace();

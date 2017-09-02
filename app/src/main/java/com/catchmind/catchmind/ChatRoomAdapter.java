@@ -128,6 +128,8 @@ public class ChatRoomAdapter extends BaseAdapter{
             }
             userCS.close();
 
+            Log.d("오호1",chatRoomList.get(position).getNo()+"###"+position);
+
             viewHolder.title.setText(nickname);
             viewHolder.content.setText(content);
             viewHolder.time.setText(time);
@@ -140,13 +142,14 @@ public class ChatRoomAdapter extends BaseAdapter{
             convertView.setTag(R.id.userId, chatRoomList.get(position).getFriendId());
             convertView.setTag(R.id.nickname, nickname);
             convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
+
         }else{
             viewHolder.title.setText("그룹채팅 "+chatRoomList.get(position).getNo());
             viewHolder.content.setText(content);
             viewHolder.time.setText(time);
 //            viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
             viewHolder.profileImage.setImageResource(R.drawable.group_icon);
-
+            Log.d("오호2",chatRoomList.get(position).getNo()+"###"+position);
             JSONArray jarray = new JSONArray();
             Cursor cs = db.getChatFriendListByNo(chatRoomList.get(position).getNo());
             while(cs.moveToNext()) {

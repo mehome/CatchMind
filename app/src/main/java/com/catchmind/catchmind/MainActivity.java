@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements TabFragment1.sendToActivity {
@@ -168,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 //        Log.d("유튜브",youtubeIntent.toString());
 
         Intent serviceIntent = new Intent(this, ChatService.class);
+        serviceIntent.putExtra("FromLogin",false);
         bindService(serviceIntent, mConnection, this.BIND_AUTO_CREATE);
 
 
@@ -176,18 +178,28 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 //        }
 
 
-        db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
-        Cursor cursor = db.getChatFriendList();
-        Log.d("getfriend메시CFL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2)+"####"+cursor.getColumnName(3)+"####"+cursor.getColumnName(4));
-        while(cursor.moveToNext()) {
-            Log.d("getfriendCFL", cursor.getString(0) + "###" + cursor.getString(1));
-        }
-        cursor = db.getChatRoomList();
-        Log.d("getfriend메시CRL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2));
-        while(cursor.moveToNext()){
-        Log.d("getfriend메시CRL",cursor.getString(0)+"###"+cursor.getString(1));
-        }
+//        db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
+//        Cursor cursor = db.getChatFriendList();
+//        Log.d("getfriend메시CFL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2)+"####"+cursor.getColumnName(3)+"####"+cursor.getColumnName(4));
+//        while(cursor.moveToNext()) {
+//            Log.d("getfriendCFL", cursor.getString(0) + "###" + cursor.getString(1));
+//        }
+//        cursor = db.getChatRoomList();
+//        Log.d("getfriend메시CRL",cursor.getColumnName(0)+"####"+cursor.getColumnName(1)+"####"+cursor.getColumnName(2));
+//        while(cursor.moveToNext()){
+//        Log.d("getfriend메시CRL",cursor.getString(0)+"###"+cursor.getString(1));
+//        }
 
+
+//        ArrayList<String> test = new ArrayList<>();
+//        test.add("zero");
+//        test.add("one");
+//
+//        test.add(1,"cute");
+//
+//        Log.d("아리0",test.get(0));
+//        Log.d("아리1",test.get(1));
+//        Log.d("아리2",test.get(2));
 
 
 

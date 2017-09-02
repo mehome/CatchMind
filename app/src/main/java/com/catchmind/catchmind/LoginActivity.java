@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity{
         if(mPref.getBoolean("autoLogin",false) == true){
 
             Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
+            serviceIntent.putExtra("FromLogin",true);
             startService(serviceIntent);
 
             Intent intent = new Intent(this, MainActivity.class);

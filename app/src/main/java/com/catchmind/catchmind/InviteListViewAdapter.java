@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -100,6 +101,7 @@ public class InviteListViewAdapter extends BaseAdapter{
             viewHolder.sectionTxt = (TextView) convertView.findViewById(R.id.sectionText_check);
             viewHolder.profile_container = (RelativeLayout) convertView.findViewById(R.id.profile_container_check);
             viewHolder.check = (ImageView) convertView.findViewById(R.id.check_image);
+            viewHolder.api_frame = (FrameLayout) convertView.findViewById(R.id.api_frame);
 
             convertView.setTag(viewHolder);
 
@@ -109,7 +111,8 @@ public class InviteListViewAdapter extends BaseAdapter{
         }
 
             convertView.setClickable(false);
-            convertView.setForeground(null);
+            viewHolder.api_frame.setForeground(null);
+
 
             viewHolder.check.setImageResource(R.drawable.check_icon_inact);
 
@@ -119,6 +122,7 @@ public class InviteListViewAdapter extends BaseAdapter{
                     viewHolder.sectionTxt.setText("즐겨찾기");
                     viewHolder.section.setVisibility(View.VISIBLE);
                     viewHolder.profile_container.setVisibility(View.GONE);
+                    viewHolder.api_frame.setVisibility(View.GONE);
                     viewHolder.check.setVisibility(View.GONE);
 
                 } else if (position < (1 + FlistSize)) {
@@ -126,6 +130,7 @@ public class InviteListViewAdapter extends BaseAdapter{
                     viewHolder.name.setText(FlistViewItemList.get(position - 1).getName());
                     viewHolder.section.setVisibility(View.GONE);
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
+                    viewHolder.api_frame.setVisibility(View.VISIBLE);
                     viewHolder.check.setVisibility(View.VISIBLE);
                     userId = FlistViewItemList.get(position-1).getId();
                     nickname = FlistViewItemList.get(position-1).getName();
@@ -147,12 +152,14 @@ public class InviteListViewAdapter extends BaseAdapter{
                     viewHolder.sectionTxt.setText("친구");
                     viewHolder.section.setVisibility(View.VISIBLE);
                     viewHolder.profile_container.setVisibility(View.GONE);
+                    viewHolder.api_frame.setVisibility(View.GONE);
                     viewHolder.check.setVisibility(View.GONE);
 
                 } else {
                     viewHolder.name.setText(listViewItemList.get(position - 2 - FlistSize).getName());
                     viewHolder.section.setVisibility(View.GONE);
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
+                    viewHolder.api_frame.setVisibility(View.VISIBLE);
                     viewHolder.check.setVisibility(View.VISIBLE);
                     userId = listViewItemList.get(position-2-FlistSize).getId();
                     nickname = listViewItemList.get(position-2-FlistSize).getName();
@@ -179,6 +186,7 @@ public class InviteListViewAdapter extends BaseAdapter{
                     viewHolder.sectionTxt.setText("친구");
                     viewHolder.section.setVisibility(View.VISIBLE);
                     viewHolder.profile_container.setVisibility(View.GONE);
+                    viewHolder.api_frame.setVisibility(View.GONE);
                     viewHolder.check.setVisibility(View.GONE);
                     Log.d("inviteAdapter친구",userId);
 
@@ -187,6 +195,7 @@ public class InviteListViewAdapter extends BaseAdapter{
                     viewHolder.name.setText(listViewItemList.get(position - 1).getName());
                     viewHolder.section.setVisibility(View.GONE);
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
+                    viewHolder.api_frame.setVisibility(View.VISIBLE);
                     viewHolder.check.setVisibility(View.VISIBLE);
                     userId = listViewItemList.get(position-1).getId();
                     nickname = listViewItemList.get(position-1).getName();
@@ -212,7 +221,7 @@ public class InviteListViewAdapter extends BaseAdapter{
 
             if(alreadyList.contains(userId)){
                 convertView.setClickable(true);
-                convertView.setForeground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.unClickable)));
+                viewHolder.api_frame.setForeground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.unClickable)));
                 Log.d("원피스안",userId+"#####"+alreadyList.toString());
             }
 

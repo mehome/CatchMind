@@ -44,6 +44,9 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
         Cursor cursor = db.getChatRoomList();
+//        Cursor cursor = db.getChatRoomListUnread();
+
+
 //        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 //        Date recvTime = new Date(cursor.getLong(2));
 //        String time = sdfNow.format(recvTime);
@@ -93,6 +96,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
     public void changeRoomListFC() {
 //        Log.d("진짜로?",myId);
         Cursor cursor = db.getChatRoomList();
+//        Cursor cursor = db.getChatRoomListUnread();
         ArrayList<ChatRoomItem> ListData = new ArrayList<>();
 
         while(cursor.moveToNext()) {

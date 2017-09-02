@@ -64,7 +64,7 @@ public class WidthView extends View {
 
         path = new Path();
         path.moveTo(0,25);
-        path.quadTo(0,25,(int)lineLength,25);
+        path.quadTo(0,25,(int)lineLength, 25);
 
         canvas.drawPath(path,paint);
         invalidate();

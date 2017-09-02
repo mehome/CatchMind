@@ -32,37 +32,37 @@ public class MakeGroupActivity extends AppCompatActivity {
     public MyDatabaseOpenHelper db;
     ListView friendList;
     InviteListViewAdapter friendListAdapter;
-    Toolbar toolbar;
-    TextView groupNumTV;
-    int groupNum;
-    ArrayList<String> inviteList = new ArrayList<>();
-    ArrayList<String> alreadyList = new ArrayList<>();
-    ArrayList<String> inviteNicknameList = new ArrayList<>();
-    String myId;
-    String myNickname;
-    public SharedPreferences mPref;
-    public SharedPreferences.Editor editor;
-    public boolean FCR;
+        Toolbar toolbar;
+        TextView groupNumTV;
+        int groupNum;
+        ArrayList<String> inviteList = new ArrayList<>();
+        ArrayList<String> alreadyList = new ArrayList<>();
+        ArrayList<String> inviteNicknameList = new ArrayList<>();
+        String myId;
+        String myNickname;
+        public SharedPreferences mPref;
+        public SharedPreferences.Editor editor;
+        public boolean FCR;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_make_group);
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_make_group);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarInviteFriend);
-        groupNumTV = (TextView) toolbar.findViewById(R.id.groupNum);
-        groupNum = 0;
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setTitle("대화상대초대");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar = (Toolbar) findViewById(R.id.toolbarInviteFriend);
+            groupNumTV = (TextView) toolbar.findViewById(R.id.groupNum);
+            groupNum = 0;
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayShowCustomEnabled(true);
+            getSupportActionBar().setTitle("대화상대초대");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        mPref = getSharedPreferences("login",MODE_PRIVATE);
-        myId = mPref.getString("userId","닉없음");
-        myNickname = mPref.getString("nickname", "누구세요");
-        editor = mPref.edit();
+            mPref = getSharedPreferences("login",MODE_PRIVATE);
+            myId = mPref.getString("userId","닉없음");
+            myNickname = mPref.getString("nickname", "누구세요");
+            editor = mPref.edit();
 
         final ArrayList<ListViewItemCheck> ListData = new ArrayList<ListViewItemCheck>();
         ArrayList<ListViewItemCheck> FListData = new ArrayList<ListViewItemCheck>();

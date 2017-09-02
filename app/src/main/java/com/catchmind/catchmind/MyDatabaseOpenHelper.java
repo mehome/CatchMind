@@ -601,6 +601,16 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         return cursor;
     }
 
+
+    public Cursor getChatRoomListUnread(){
+        Log.d("db.getCRL","noUserId");
+//        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM chatRoomList ORDER BY time ASC";
+        Cursor cursor = dbr.rawQuery(sql,null);
+
+        return cursor;
+    }
+
     public Cursor getChatRoomListJoinChatFriendList(){
         Log.d("db.getCRLJCFL","noUserId");
 //        SQLiteDatabase db = this.getReadableDatabase();
