@@ -157,6 +157,7 @@ public class ChatService extends Service {
         chatRoomList = new ArrayList<String>();
 
         Cursor cursor = db.getChatRoomList();
+
         while(cursor.moveToNext()) {
 
             if(cursor.getInt(0)==0) {
@@ -165,7 +166,7 @@ public class ChatService extends Service {
                 chatRoomList.add(cursor.getInt(0)+"");
             }
 
-            Log.d("커서야ChatServiceOnStart",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2));
+            Log.d("커서야챗스타트",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2));
         }
 
 
@@ -189,6 +190,7 @@ public class ChatService extends Service {
         public void changeNo(int no);
         public void sendMessageMark(String content,long time);
         public void sendInviteMark(String inviteId,String content,long time,boolean resetMemberList);
+        public void sendExitMark(String friendId,String content,long time);
         public void resetHash();
         public void recvUpdate();
         public String getFriendId();
@@ -217,6 +219,17 @@ public class ChatService extends Service {
     }
 
     //액티비티에서 읽음 전송
+
+
+    public void sendExit(int no,String friendId, String content, long time){
+        if (no < 0){
+            return;
+        }
+
+        SendThread st = new SendThread(socket, no, friendId, content, time, 4);
+        st.start();
+
+    }
 
 
     public void sendDrawChat(int no,String friendId, String content, long time){
@@ -379,11 +392,13 @@ public class ChatService extends Service {
             mCallback.sendMessageMark(content,time);
 
         }else{
+
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 44);
             }else{
                 db.insertMessageData(userId, no, userId, content, time, 44);
             }
+
         }
 
     }
@@ -558,13 +573,16 @@ public class ChatService extends Service {
                     break;
                 }
 
-                Log.d("리시브 죽었당",userId +"####"+response);
+
 //                try {
 //                    tmp_socket.close();
 //                }catch (IOException e){
 //                    e.printStackTrace();
 //                }
             }
+
+
+            Log.d("리시브 죽었당",userId +"####"+response);
 
         }
     }
@@ -649,7 +667,7 @@ public class ChatService extends Service {
             }
 
             Log.d("SendThread.Socket: ",threadSocket.toString());
-            Log.d("내용물sendThread",sendmsg);
+            Log.d("내용물sendThread",sendmsg + "###" + no);
 
         }
 
@@ -678,6 +696,10 @@ public class ChatService extends Service {
                 this.sendmsg = obj.toString();
 
                 output.writeUTF(sendmsg);
+
+                if(kind == 4){
+                    chatRoomList.remove(no+"");
+                }
 
                 Log.d("SendThread.Output: ",output.toString());
 
@@ -1419,7 +1441,11 @@ public class ChatService extends Service {
 
             }else if(sKind == 88){
 
+
+
                 if(boundCheck) {
+
+
                     if(sNo == 0 ) {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
                             mCallback.receiveDrawChat(sFriendId,sContent);
@@ -1427,6 +1453,24 @@ public class ChatService extends Service {
                     }else{
                         if(boundedNo == sNo) {
                             mCallback.receiveDrawChat(sFriendId,sContent);
+                        }
+                    }
+
+
+                }
+
+
+
+            }else if(sKind == 4){
+
+                if(sNo != 0) {
+
+                    db.deleteChatFriend(sNo,sFriendId);
+                    db.insertMessageData(userId, sNo, sFriendId, sContent, sTime, 3);
+
+                    if (boundCheck == true) {
+                        if (boundedNo == sNo) {
+                            mCallback.sendExitMark(sFriendId, sContent, sTime);
                         }
                     }
 

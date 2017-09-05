@@ -737,7 +737,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
 
-    public void deleteChatFriend(int no, String friendId){
+    public void deleteChatFriendAll(int no, String friendId){
 
 
         dbw.beginTransaction();
@@ -747,7 +747,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }else{
             sql = "DELETE FROM chatFriendList WHERE no='" + no + "'";
         }
-        Log.d("deleteChatFriend안",sql);
+        Log.d("deleteChatFriendAll안",sql);
         try
         {
             dbw.execSQL(sql);
@@ -794,6 +794,31 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
 
+
+    public void deleteChatFriend(int no, String friendId){
+
+
+        dbw.beginTransaction();
+
+        String sql = "DELETE FROM chatFriendList WHERE no='" + no + "' AND friendId='" + friendId +"'";
+
+        Log.d("deleteChatFriend안",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+
+    }
 
 }
 

@@ -46,6 +46,8 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -607,6 +609,34 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             handler.sendMessage(message);
         }
 
+        @Override
+        public void sendExitMark(String sFriendId, String content, long time) {
+
+            ResetMemberList();
+
+            try {
+                JSONParser parser = new JSONParser();
+                org.json.simple.JSONArray jarray = (org.json.simple.JSONArray) parser.parse(friendId);
+                jarray.remove(sFriendId);
+                friendId = jarray.toString();
+            }catch (ParseException e){
+                e.printStackTrace();
+            }
+
+            ResetHash();
+
+            Message message= Message.obtain();
+            message.what = 3;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("content",content);
+            bundle.putLong("time",time);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+        }
+
         public void resetHash(){
             ResetHash();
             ResetMemberList();
@@ -816,8 +846,11 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public void exitRoom(){
 
         db.deleteRoom(no,friendId);
-        db.deleteChatFriend(no,friendId);
+        db.deleteChatFriendAll(no,friendId);
         db.deleteMessageData(no,friendId);
+        String content = userNickname + "님이 나갔습니다";
+        long now = System.currentTimeMillis();
+        mService.sendExit(no,friendId,content,now);
         finish();
 
     }
