@@ -126,6 +126,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
     @Override
     public void onResume() {
         super.onResume();
-        myListAdapter.notifyDataSetChanged();
+        changeRoomListFC();
+//        myListAdapter.notifyDataSetChanged();
     }
 }

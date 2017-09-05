@@ -710,5 +710,90 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
 
+    public void deleteRoom(int no, String friendId){
+
+        dbw.beginTransaction();
+        String sql;
+        if(no ==0) {
+            sql = "DELETE FROM chatRoomList WHERE no='0' AND friendId='"+friendId+"'";
+        }else{
+            sql = "DELETE FROM chatRoomList WHERE no='" + no + "'";
+        }
+        Log.d("deleteRoom안",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+    }
+
+
+    public void deleteChatFriend(int no, String friendId){
+
+
+        dbw.beginTransaction();
+        String sql;
+        if(no ==0) {
+            sql = "DELETE FROM chatFriendList WHERE no='0' AND friendId='"+friendId+"'";
+        }else{
+            sql = "DELETE FROM chatFriendList WHERE no='" + no + "'";
+        }
+        Log.d("deleteChatFriend안",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+
+    }
+
+    public void deleteMessageData(int no, String friendId){
+
+
+        dbw.beginTransaction();
+        String sql;
+        if(no ==0) {
+            sql = "DELETE FROM messageData_"+mPref.getString("userId","noId")+" WHERE no='0' AND friendId='"+friendId+"'";
+        }else{
+            sql = "DELETE FROM messageData_"+mPref.getString("userId","noId")+" WHERE no='"+no+"'";
+        }
+        Log.d("deleteMessageData안",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+
+    }
+
+
+
 }
 

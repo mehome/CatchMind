@@ -73,6 +73,7 @@ public class ChatService extends Service {
 
         Log.d("ChatServiceOnCreate","크리에이트");
 
+        connectable = true;
 
 
         handler = new Handler(){
@@ -103,13 +104,14 @@ public class ChatService extends Service {
 
 
 
-        if(socket != null) {
-            try {
-                socket.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
+//        if(socket != null) {
+//            try {
+//                socket.close();
+//            }catch(IOException e){
+//                e.printStackTrace();
+//            }
+//        }
+
         db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
 
         mPref = getSharedPreferences("login",MODE_PRIVATE);
@@ -126,25 +128,29 @@ public class ChatService extends Service {
 //            }
 //        }
 
-        if(socket != null) {
-            try {
-                socket.close();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-            socket = null;
-        }
+//        if(socket != null) {
+//            try {
+//                socket.close();
+//            }catch (IOException e){
+//                e.printStackTrace();
+//            }
+//            socket = null;
+//        }
 
 
 
-        if(intent != null){
+//        if(intent != null || connectable){
+//
+//            connectable = false;
 
             Log.d("생성자","생성전");
 
-            ConnectThread ct = new ConnectThread();
-            ct.start();
+            if(socket == null) {
+                ConnectThread ct = new ConnectThread();
+                ct.start();
 
-        }
+            }
+//        }
 
 
 
@@ -161,7 +167,11 @@ public class ChatService extends Service {
 
             Log.d("커서야ChatServiceOnStart",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2));
         }
-        return super.onStartCommand(intent, flags, startId);
+
+
+//        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+
     }
 
     private final IBinder mBinder = new ChatServiceBinder();
@@ -413,7 +423,7 @@ public class ChatService extends Service {
                     socket = null;
                 }
 
-                socket = new Socket(dstAddress, 5000);
+                    socket = new Socket(dstAddress, 5000);
 
             } catch (UnknownHostException e) {
                 Log.d("UnknwonHostE","여기?");
@@ -562,6 +572,8 @@ public class ChatService extends Service {
 
     public void loseReceive(){
 
+        Log.d("자살","loseReceive");
+
         if(!socket.isClosed()) {
             Log.d("loseReceive해제","여긴지나나");
             SendThread st = new SendThread(socket,0,"해제자","해체",0,33 );
@@ -589,6 +601,9 @@ public class ChatService extends Service {
     }
 
     public void justReconnect(){
+
+        Log.d("자살","justReconnect");
+
         try {
             socket.close();
             socket = null ;
@@ -1460,6 +1475,8 @@ public class ChatService extends Service {
 
 
     }
+
+
 
 
 }

@@ -3,11 +3,13 @@ package com.catchmind.catchmind;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +29,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -764,6 +767,59 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         drawCommunicator.drawChat(userNickname,et);
         sendcontent.setText("");
         mService.sendDrawChat(no,friendId,et,0);
+    }
+
+    public void exitRoom(View v){
+
+        DialogInterface.OnClickListener exitListener = new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                exitRoom();
+            }
+
+        };
+
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+            @Override public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+
+        };
+
+//        new AlertDialog.Builder(this)
+//                .setTitle("업로드할 이미지 선택")
+//                .setPositiveButton("사진촬영", cameraListener)
+//                .setNegativeButton("앨범선택", albumListener)
+//                .setNeutralButton("취소", cancelListener)
+//                .show();
+
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage("채팅방에서 나가기를 하면 대화 내용 및 채팅목록에서 모두 삭제됩니다.\n채팅방에서 나가시겠습니까?")
+                .setPositiveButton("확인", exitListener)
+                .setNegativeButton("취소", cancelListener)
+                .create();
+
+        dialog.show();
+
+        Button exitBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        exitBtn.setTextColor(Color.BLACK);
+
+        Button cancelBtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        cancelBtn.setTextColor(Color.BLACK);
+
+    }
+
+    public void exitRoom(){
+
+        db.deleteRoom(no,friendId);
+        db.deleteChatFriend(no,friendId);
+        db.deleteMessageData(no,friendId);
+        finish();
+
     }
 
 }

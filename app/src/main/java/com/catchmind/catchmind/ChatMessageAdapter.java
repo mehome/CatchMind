@@ -179,9 +179,11 @@ public class ChatMessageAdapter extends BaseAdapter {
             String time = sdfNow.format(when);
 
             if(position == 0){
+
                 viewHolder.dayLayout.setVisibility(View.VISIBLE);
                 String day = sdfDate.format(when);
                 viewHolder.dayText.setText(day);
+
             }else{
 
                 long pre = chatMessageList.get(position-1).getTime();

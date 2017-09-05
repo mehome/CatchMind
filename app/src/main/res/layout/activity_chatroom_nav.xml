@@ -142,17 +142,38 @@
             android:layout_height="match_parent"
             android:layout_gravity="end">
 
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
             <ListView
 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/memberList">
+                android:id="@+id/memberList"
+                android:layout_weight="1">
 
             </ListView>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom">
 
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/exit_icon"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:background="#FFFFFFFF"
+                    android:onClick="exitRoom"/>
+
+
+            </RelativeLayout>
+
+            </LinearLayout>
 
         </android.support.design.widget.NavigationView>
 
