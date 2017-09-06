@@ -1357,7 +1357,8 @@ public class ChatService extends Service {
                     }
 
                     if (boundCheck_2 == true) {
-                        mCallback_2.recvData();
+//                        mCallback_2.recvData();
+                          mCallback_2.changeRoomList();
                     }
 
 

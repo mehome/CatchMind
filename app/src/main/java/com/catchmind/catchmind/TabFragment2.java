@@ -43,9 +43,9 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
 
         db = new MyDatabaseOpenHelper(getContext(),"catchMind",null,1);
-        Cursor cursor = db.getChatRoomList();
+//        Cursor cursor = db.getChatRoomList();
 //        Cursor cursor = db.getChatRoomListUnread();
-
+          Cursor cursor = db.getChatRoomListJoinWithMessage();
 
 //        SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
 //        Date recvTime = new Date(cursor.getLong(2));
@@ -53,8 +53,20 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
         while(cursor.moveToNext()) {
 
-            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1));
-            ListData.add(addItem);
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1),cursor.getLong(7));
+            if(ListData.size() == 0) {
+                ListData.add(addItem);
+            }else{
+
+                int addPosition = 0;
+                for(int i = 0 ; i < ListData.size() ; i++){
+                    if(addItem.recentMessageTime >= ListData.get(i).recentMessageTime){
+                        addPosition = i;
+                        break;
+                    }
+                }
+                ListData.add(addPosition,addItem);
+            }
 
             Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1));
         }
@@ -85,7 +97,14 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
         //test
 
         Cursor tc = db.getChatRoomListJoinWithMessage();
-        Log.d("설마아",tc.getCount()+"");
+
+        Log.d("별이",tc.getColumnName(0)+"####"+tc.getColumnName(1)+"####"+tc.getColumnName(2)+"####"+tc.getColumnName(3));
+        int i=0;
+//        while(tc.moveToNext()){
+//
+//            Log.d("별이"+i,tc.getInt(0)+"###"+tc.getString(1)+"###"+tc.getLong(2)+"###"+tc.getInt(3)+"###"+tc.getInt(4)+"###"+tc.getString(5)+"###"+tc.getString(6)+"####"+tc.getLong(7));
+//            i++;
+//        }
 
 
         return rootView;
@@ -102,16 +121,29 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
     @Override
     public void changeRoomListFC() {
 //        Log.d("진짜로?",myId);
-        Cursor cursor = db.getChatRoomList();
+//        Cursor cursor = db.getChatRoomList();
 //        Cursor cursor = db.getChatRoomListUnread();
+        Cursor cursor = db.getChatRoomListJoinWithMessage();
         ArrayList<ChatRoomItem> ListData = new ArrayList<>();
 
         while(cursor.moveToNext()) {
 
-            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1));
-            ListData.add(addItem);
+            ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1),cursor.getLong(7));
+            if(ListData.size() == 0) {
+                ListData.add(addItem);
+            }else{
 
-            Log.d("커서야ChatRoomItem","changeRoomListFC");
+                int addPosition = 0;
+                for(int i = 0 ; i < ListData.size() ; i++){
+                    if(addItem.recentMessageTime >= ListData.get(i).recentMessageTime){
+                        addPosition = i;
+                        break;
+                    }
+                }
+                ListData.add(addPosition,addItem);
+            }
+
+            Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1));
         }
 
         myListAdapter.ChangeList(ListData);
