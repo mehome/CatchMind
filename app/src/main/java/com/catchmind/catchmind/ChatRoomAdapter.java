@@ -62,6 +62,7 @@ public class ChatRoomAdapter extends BaseAdapter{
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
+
             convertView = this.inflater.inflate(R.layout.chatroom_item, parent, false);
 
             viewHolder = new chatViewHolder();

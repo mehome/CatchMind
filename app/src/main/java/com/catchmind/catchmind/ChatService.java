@@ -386,7 +386,7 @@ public class ChatService extends Service {
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 2);
             }else{
-                db.insertMessageData(userId, no, userId, content, time, 2);
+                db.insertMessageData(userId, no, "group", content, time, 2);
             }
 
             mCallback.sendMessageMark(content,time);
@@ -396,7 +396,7 @@ public class ChatService extends Service {
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 44);
             }else{
-                db.insertMessageData(userId, no, userId, content, time, 44);
+                db.insertMessageData(userId, no, "group", content, time, 44);
             }
 
         }
@@ -1292,8 +1292,11 @@ public class ChatService extends Service {
 
 
             if(sKind == 1) {
-
-                db.insertMessageData(userId,sNo,sFriendId, sContent, sTime, 1);
+                if(sNo ==0) {
+                    db.insertMessageData(userId, sNo, sFriendId, sContent, sTime, 1);
+                }else{
+                    db.insertMessageData(userId, sNo, "group", sContent, sTime, 1);
+                }
 
                 if(boundStart) {
                     if(sNo == 0 ) {

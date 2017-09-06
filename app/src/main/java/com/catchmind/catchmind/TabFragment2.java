@@ -81,6 +81,13 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
             }
         });
 
+
+        //test
+
+        Cursor tc = db.getChatRoomListJoinWithMessage();
+        Log.d("설마아",tc.getCount()+"");
+
+
         return rootView;
     }
 

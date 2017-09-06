@@ -820,5 +820,18 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
+
+    public Cursor getChatRoomListJoinWithMessage(){
+
+        Log.d("db.getCRLJWM","noUserId");
+        String userId = mPref.getString("userId","null");
+//        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM chatRoomList AS cr LEFT JOIN messageData_"+userId+" AS md ON md.friendId = (SELECT md1.friendId FROM messageData_"+userId+" AS md1 WHERE cr.no = md1.no AND cr.friendId = md1.friendId AND (md1.type = 1 OR md1.type = 2) ORDER BY md1.time DESC LIMIT 1)";
+        Cursor cursor = dbr.rawQuery(sql,null);
+
+        return cursor;
+
+    }
+
 }
 
