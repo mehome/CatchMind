@@ -98,13 +98,13 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
         Cursor tc = db.getChatRoomListJoinWithMessage();
 
-        Log.d("별이",tc.getColumnName(0)+"####"+tc.getColumnName(1)+"####"+tc.getColumnName(2)+"####"+tc.getColumnName(3));
+//        Log.d("별이",tc.getColumnName(0)+"####"+tc.getColumnName(1)+"####"+tc.getColumnName(2)+"####"+tc.getColumnName(3));
         int i=0;
-//        while(tc.moveToNext()){
-//
-//            Log.d("별이"+i,tc.getInt(0)+"###"+tc.getString(1)+"###"+tc.getLong(2)+"###"+tc.getInt(3)+"###"+tc.getInt(4)+"###"+tc.getString(5)+"###"+tc.getString(6)+"####"+tc.getLong(7));
-//            i++;
-//        }
+        while(tc.moveToNext()){
+
+            Log.d("별이"+i,tc.getInt(0)+"###"+tc.getString(1)+"###"+tc.getLong(2)+"###"+tc.getInt(3)+"###"+tc.getInt(4)+"###"+tc.getString(5)+"###"+tc.getString(6)+"####"+tc.getLong(7));
+            i++;
+        }
 
 
         return rootView;
@@ -133,14 +133,24 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
                 ListData.add(addItem);
             }else{
 
-                int addPosition = 0;
+                int addPosition = -1;
                 for(int i = 0 ; i < ListData.size() ; i++){
                     if(addItem.recentMessageTime >= ListData.get(i).recentMessageTime){
+                        Log.d("산이",addItem.recentMessageTime+"###"+ListData.get(i).recentMessageTime+"###"+i+"###"+ListData.get(i).getFriendId());
                         addPosition = i;
                         break;
                     }
                 }
-                ListData.add(addPosition,addItem);
+                Log.d("아리",addPosition+"###"+ListData.get(0).getFriendId());
+                if(addPosition != -1) {
+                    ListData.add(addPosition, addItem);
+                }else{
+                    ListData.add(addItem);
+                }
+            }
+
+            for(int i = 0; i < ListData.size();i++) {
+                Log.d("달이"+i,ListData.get(i).getFriendId() );
             }
 
             Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1));

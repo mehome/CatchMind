@@ -91,6 +91,9 @@ public class ChatService extends Service {
             }
         };
 
+//        ConnectCheckThread cct = new ConnectCheckThread();
+//        cct.start();
+
 //        db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
 
 //        ConnectThread ct = new ConnectThread();
@@ -386,7 +389,7 @@ public class ChatService extends Service {
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 2);
             }else{
-                db.insertMessageData(userId, no, "group", content, time, 2);
+                db.insertMessageData(userId, no, userId, content, time, 2);
             }
 
             mCallback.sendMessageMark(content,time);
@@ -396,7 +399,7 @@ public class ChatService extends Service {
             if(no ==0) {
                 db.insertMessageData(userId, no, friendId, content, time, 44);
             }else{
-                db.insertMessageData(userId, no, "group", content, time, 44);
+                db.insertMessageData(userId, no, userId, content, time, 44);
             }
 
         }
@@ -802,12 +805,17 @@ public class ChatService extends Service {
                     if(boundCheck == true) {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
                             mCallback.recvData(sFriendId, sContent, sTime);
+                        }else{
+                            NotificationAlarm(sFriendId,0,"#없음",sContent);
                         }
+                    }else{
+                        NotificationAlarm(sFriendId,0,"#없음",sContent);
                     }
 
                     if(boundCheck_2 == true) {
                         mCallback_2.recvData();
                     }
+
 
 
                 }catch (JSONException e){
@@ -1056,7 +1064,11 @@ public class ChatService extends Service {
                 if(boundCheck == true) {
                     if(boundedNo == sNo ) {
                         mCallback.recvData(sFriendId, sContent, sTime);
+                    }else{
+                        NotificationAlarm(sFriendId,sNo,"#없음",sContent);
                     }
+                }else{
+                    NotificationAlarm(sFriendId,sNo,"#없음",sContent);
                 }
 
                 if(boundCheck_2 == true) {
@@ -1292,11 +1304,9 @@ public class ChatService extends Service {
 
 
             if(sKind == 1) {
-                if(sNo ==0) {
-                    db.insertMessageData(userId, sNo, sFriendId, sContent, sTime, 1);
-                }else{
-                    db.insertMessageData(userId, sNo, "group", sContent, sTime, 1);
-                }
+
+                db.insertMessageData(userId, sNo, sFriendId, sContent, sTime, 1);
+
 
                 if(boundStart) {
                     if(sNo == 0 ) {
@@ -1339,6 +1349,8 @@ public class ChatService extends Service {
                                 Log.d("mCallback.recvData1",sFriendId+"###"+sContent+"####"+sNo);
                                 mCallback.recvData(sFriendId, sContent, sTime);
                                 Log.d("mCallback.recvData2",sFriendId+"###"+sContent+"####"+sNo);
+                            }else{
+                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
                             }
 
 
@@ -1347,6 +1359,8 @@ public class ChatService extends Service {
                             if(boundedNo == sNo) {
                                 mCallback.recvData(sFriendId, sContent, sTime);
                                 Log.d("mCallback.recvData",sFriendId+"###"+sContent+"####"+sNo);
+                            }else{
+                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
                             }
                         }
 
@@ -1495,12 +1509,14 @@ public class ChatService extends Service {
         Intent mAlarmIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);
 
         mAlarmIntent.putExtra("no",no);
-        mAlarmIntent.putExtra("friendId",friendId);
+
 
         if(no == 0){
             mAlarmIntent.putExtra("nickname", nickname);
+            mAlarmIntent.putExtra("friendId",friendId);
         }else {
             mAlarmIntent.putExtra("nickname", "그룹채팅 "+no);
+            mAlarmIntent.putExtra("friendId","noti");
         }
 
 
@@ -1525,6 +1541,46 @@ public class ChatService extends Service {
     }
 
 
+    public class ConnectCheckThread extends Thread{
+
+        public ConnectCheckThread(){
+
+        }
+
+        @Override
+        public void run() {
+
+            while(true) {
+                try {
+                    Thread.sleep(1000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                if(socket == null ) {
+                    Log.d("체크커넥트","null연결!");
+                    Message message = Message.obtain();
+                    message.what = 4;
+                    handler.sendMessage(message);
+                }
+
+                if(socket != null){
+
+                     if(socket.isClosed()){
+
+                         Log.d("체크커넥트","notConnectred");
+                         Message message = Message.obtain();
+                         message.what = 4;
+                         handler.sendMessage(message);
+                     }
+
+
+                }
+                Log.d("체크커넥트","살아는있나");
+            }
+
+
+        }
+    }
 
 
 }

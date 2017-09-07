@@ -143,6 +143,11 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         friendId = GI.getStringExtra("friendId");
         no = GI.getIntExtra("no",0);
+        if(friendId.equals("noti")){
+            getFriendId(no);
+        }
+
+
         Log.d("chatroomId2",friendId);
         String nickname = GI.getStringExtra("nickname");
 
@@ -467,13 +472,19 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     }
 
     public void ResetHash(){
+
+
         NickHash = new HashMap<>();
         ProfileHash = new HashMap<>();
         Cursor cursor = db.getChatFriendListByNo(no);
+
         while(cursor.moveToNext()){
+
             NickHash.put(cursor.getString(1),cursor.getString(2));
             ProfileHash.put(cursor.getString(1),cursor.getString(3));
         }
+
+
 
     }
 
@@ -853,6 +864,17 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         mService.sendExit(no,friendId,content,now);
         finish();
 
+    }
+
+    public void getFriendId(int no){
+        Cursor cursor = db.getChatFriendListByNo(no);
+        JSONArray idArray = new JSONArray();
+
+        while(cursor.moveToNext()){
+            idArray.put(cursor.getString(1));
+        }
+
+        friendId = idArray.toString();
     }
 
 }
