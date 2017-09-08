@@ -316,6 +316,12 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
                 startActivityForResult(intentMakeGroup,MakeGroupActivity);
                 break;
 
+            case R.id.edit_chatroom:
+                Intent openCVIntent = new Intent(this,OpenCVActivity.class);
+                startActivity(openCVIntent);
+                break;
+
+
         }
 
 

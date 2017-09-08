@@ -701,7 +701,11 @@ public class ChatService extends Service {
                 output.writeUTF(sendmsg);
 
                 if(kind == 4){
-                    chatRoomList.remove(no+"");
+                    if(no != 0) {
+                        chatRoomList.remove(no + "");
+                    }else{
+                        chatRoomList.remove(friendId);
+                    }
                 }
 
                 Log.d("SendThread.Output: ",output.toString());

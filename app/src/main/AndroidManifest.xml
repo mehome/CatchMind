@@ -55,6 +55,11 @@
 
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ColorPickerActivity"/>
 
+        <activity android:name=".OpenCVActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation"/>
+
         <provider android:name="android.support.v4.content.FileProvider" android:exported="false" android:grantUriPermissions="true" android:authorities="${applicationId}.provider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
         </provider>
@@ -76,6 +81,20 @@
 
 
 
+
+
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.front.autofocus"  android:required="false"/>
+
+    <supports-screens android:resizeable="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:anyDensity="true" />
 
 
 </manifest>

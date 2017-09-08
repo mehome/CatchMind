@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/CatchMind.iml" filepath="$PROJECT_DIR$/CatchMind.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/json_simple/json_simple.iml" filepath="$PROJECT_DIR$/json_simple/json_simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openCVLibrary330/openCVLibrary330.iml" filepath="$PROJECT_DIR$/openCVLibrary330/openCVLibrary330.iml" />
     </modules>
   </component>
 </project>
