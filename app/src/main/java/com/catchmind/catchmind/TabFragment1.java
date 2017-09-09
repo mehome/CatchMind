@@ -141,7 +141,7 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode == RESULT_OK) {
-            Toast.makeText(getContext(), requestCode + "###" + resultCode, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), requestCode + "###" + resultCode, Toast.LENGTH_SHORT).show();
             String friendId = data.getExtras().getString("friendId");
             String nickname = data.getExtras().getString("nickname");
             STA.sendToActivity(friendId,nickname);
