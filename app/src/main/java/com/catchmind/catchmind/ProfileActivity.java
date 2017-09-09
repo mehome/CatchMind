@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,11 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.signature.StringSignature;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -56,9 +62,10 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
+    private static final String TAG = "ProfileActivity_openCV";
     private Uri mImageCaptureUri;
     private String absolutePath;
-    ProgressDialog dialog = null;
+//    ProgressDialog dialog = null;
     int serverResponseCode = 0;
     final String upLoadServerUri = "http://vnschat.vps.phps.kr/UploadToServer.php";
 
@@ -75,6 +82,21 @@ public class ProfileActivity extends AppCompatActivity {
 
     public String userId;
     public String nickname;
+    private Mat matResult;
+
+
+    public static native long loadCascade(String cascadeFileName );
+    public static native int detect(long cascadeClassifier_face,
+                                     long cascadeClassifier_eye, long matAddrInput, long matAddrResult);
+    public long cascadeClassifier_face = 0;
+    public long cascadeClassifier_eye = 0;
+
+
+    static {
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("native-lib");
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,6 +139,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
         profileIV.setBackgroundResource(R.drawable.profile_border);
+
+
+
+        read_cascade_file();
+
+
     }
 
     public void imageDefault(View v){
@@ -231,17 +259,40 @@ public class ProfileActivity extends AppCompatActivity {
 
                     Log.d("이미지경로",imgpath);
 
-                    dialog = ProgressDialog.show(this, "", "Uploading file...", true);
-                    ImageSendThread ist = new ImageSendThread(imgpath);
-                    ist.start();
+//                    dialog = ProgressDialog.show(this, "", "Uploading file...", true);
 
-                    ist.join();
 
-                    Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
-                            .error(R.drawable.default_profile_image)
-                            .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-                            .into(profileIV);
+                    Bitmap bitmap = BitmapFactory.decodeFile(imgpath);
 
+                    Mat matInput = new Mat (bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1);
+                    Utils.bitmapToMat(bitmap, matInput);
+
+                    if ( matResult != null ) matResult.release();
+                    matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+
+
+                    int faceNum = detect(cascadeClassifier_face,cascadeClassifier_eye, matInput.getNativeObjAddr(),
+                            matResult.getNativeObjAddr());
+
+                    Log.d("found","디텍트결과###"+faceNum);
+
+                    if(faceNum >0) {
+
+
+                        ImageSendThread ist = new ImageSendThread(imgpath);
+                        ist.start();
+
+                        ist.join();
+
+                        Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                                .error(R.drawable.default_profile_image)
+                                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                                .into(profileIV);
+                    }else{
+
+                        Toast.makeText(this,"얼굴 사진만 등록할 수 있습니다",Toast.LENGTH_SHORT).show();
+
+                    }
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -284,24 +335,49 @@ public class ProfileActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                }
                 Log.d("이미지픽프롬앨범",getPath(data.getData()));
-                dialog = ProgressDialog.show(this, "", "Uploading file...", true);
-                ImageSendThread ist = new ImageSendThread(getPath(data.getData()));
-                ist.start();
-                try {
+//                dialog = ProgressDialog.show(this, "", "Uploading file...", true);
 
-                    ist.join();
 
-                }catch(InterruptedException e){
-                    e.printStackTrace();
+
+
+                Bitmap bitmap = BitmapFactory.decodeFile(getPath(data.getData()));
+
+                Mat matInput = new Mat (bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1);
+                Utils.bitmapToMat(bitmap, matInput);
+
+                if ( matResult != null ) matResult.release();
+                matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+
+
+                int faceNum = detect(cascadeClassifier_face,cascadeClassifier_eye, matInput.getNativeObjAddr(),
+                        matResult.getNativeObjAddr());
+
+                Log.d("found","디텍트결과###"+faceNum);
+
+                if(faceNum >0) {
+
+
+                    ImageSendThread ist = new ImageSendThread(getPath(data.getData()));
+                    ist.start();
+                    try {
+
+                        ist.join();
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/" + userId + ".png")
+                            .error(R.drawable.default_profile_image)
+                            .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                            .into(profileIV);
+
+                    mImageCaptureUri = data.getData();
+                    Log.d("이미지앨범onactivityresult", mImageCaptureUri.toString());
+
+                }else{
+                    Toast.makeText(this,"얼굴 사진만 등록할 수 있습니다",Toast.LENGTH_SHORT).show();
                 }
-
-                Glide.with(this).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
-                        .error(R.drawable.default_profile_image)
-                        .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-                        .into(profileIV);
-
-                mImageCaptureUri = data.getData();
-                Log.d("이미지앨범onactivityresult", mImageCaptureUri.toString());
 
 //                Intent intent = new Intent ("com.android.camera.action.CROP");
 //                intent.setDataAndType(mImageCaptureUri, "image/*");
@@ -386,6 +462,7 @@ public class ProfileActivity extends AppCompatActivity {
         Bitmap b= BitmapFactory.decodeFile(sourceFileUri);
         Bitmap out = Bitmap.createScaledBitmap(b, 400, 400, false);
 
+
         sourceFile = new File(path);
 
         try {
@@ -406,7 +483,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (!sourceFile.isFile()) {
 
             Log.d("이미지경로에없음","경로에없나?");
-            dialog.dismiss();
+//            dialog.dismiss();
 
             return 0;
 
@@ -501,7 +578,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             } catch (MalformedURLException ex) {
 
-                dialog.dismiss();
+//                dialog.dismiss();
                 ex.printStackTrace();
 
 //                runOnUiThread(new Runnable() {
@@ -515,7 +592,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
             } catch (Exception e) {
 
-                dialog.dismiss();
+//                dialog.dismiss();
                 e.printStackTrace();
 
 //                runOnUiThread(new Runnable() {
@@ -529,7 +606,7 @@ public class ProfileActivity extends AppCompatActivity {
 //                        + e.getMessage(), e);
             }
 
-            dialog.dismiss();
+//            dialog.dismiss();
             return serverResponseCode;
 
         } // End else block
@@ -546,6 +623,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         public void run() {
+
             uploadFile(filePath);
 
         }
@@ -616,6 +694,54 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    //////////////////////////////////////
+
+
+
+
+    private void copyFile(String filename) {
+        String baseDir = Environment.getExternalStorageDirectory().getPath();
+        String pathDir = baseDir + File.separator + filename;
+
+        AssetManager assetManager = this.getAssets();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            Log.d( TAG, "copyFile :: 다음 경로로 파일복사 "+ pathDir);
+            inputStream = assetManager.open(filename);
+            outputStream = new FileOutputStream(pathDir);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            inputStream.close();
+            inputStream = null;
+            outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+        } catch (Exception e) {
+            Log.d(TAG, "copyFile :: 파일 복사 중 예외 발생 "+e.toString() );
+        }
+
+    }
+
+    private void read_cascade_file(){
+
+        copyFile("haarcascade_frontalface_alt.xml");
+        copyFile("haarcascade_eye_tree_eyeglasses.xml");
+
+        Log.d(TAG, "read_cascade_file:");
+
+        cascadeClassifier_face = loadCascade( "haarcascade_frontalface_alt.xml");
+        Log.d(TAG, "read_cascade_file:");
+
+        cascadeClassifier_eye = loadCascade( "haarcascade_eye_tree_eyeglasses.xml");
+
+    }
 
 
 }

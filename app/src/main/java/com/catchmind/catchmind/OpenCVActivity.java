@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +26,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -267,6 +269,7 @@ public class OpenCVActivity extends AppCompatActivity implements CameraBridgeVie
     }
 
     private void read_cascade_file(){
+
         copyFile("haarcascade_frontalface_alt.xml");
         copyFile("haarcascade_eye_tree_eyeglasses.xml");
 
@@ -276,6 +279,7 @@ public class OpenCVActivity extends AppCompatActivity implements CameraBridgeVie
         Log.d(TAG, "read_cascade_file:");
 
         cascadeClassifier_eye = loadCascade( "haarcascade_eye_tree_eyeglasses.xml");
+
     }
 
 
