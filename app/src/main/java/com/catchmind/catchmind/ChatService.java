@@ -194,6 +194,7 @@ public class ChatService extends Service {
         public void sendMessageMark(String content,long time);
         public void sendInviteMark(String inviteId,String content,long time,boolean resetMemberList);
         public void sendExitMark(String friendId,String content,long time);
+        public void sendImageMark(String friendId,String content, long time , int kind);
         public void resetHash();
         public void recvUpdate();
         public String getFriendId();
@@ -223,6 +224,22 @@ public class ChatService extends Service {
 
     //액티비티에서 읽음 전송
 
+
+    public void sendImage(int no,String friendId, String content, long time){
+
+        if (no < 0){
+            return;
+        }
+
+
+
+        SendThread st = new SendThread(socket, no, friendId, content, time, 55);
+        st.start();
+
+        db.insertMessageData(userId, no, friendId, content, time, 52);
+        mCallback.sendImageMark(userId,content,time,52);
+
+    }
 
     public void sendExit(int no,String friendId, String content, long time){
         if (no < 0){
@@ -740,14 +757,16 @@ public class ChatService extends Service {
         public String sFriendId;
         public String sContent;
         public long sTime;
+        public int sKind;
 
 //        public long sTime;
 
-        public getFriendThread(String friendId,String content,long time){
+        public getFriendThread(String friendId,String content,long time, int kind){
 
             this.sFriendId = friendId;
             this.sContent = content;
             this.sTime = time;
+            this.sKind = kind;
             Log.d("getFriend",sFriendId);
         }
 
@@ -1328,7 +1347,7 @@ public class ChatService extends Service {
 
                 if (sNo == 0 && !chatRoomList.contains(sFriendId)) {
 
-                    getFriendThread gft = new getFriendThread(sFriendId, sContent, sTime);
+                    getFriendThread gft = new getFriendThread(sFriendId, sContent, sTime ,1);
                     Log.d("gft.start전", chatRoomList.contains(sFriendId) + "");
                     gft.start();
 
@@ -1497,6 +1516,85 @@ public class ChatService extends Service {
                     }
 
                 }
+
+            }else if(sKind == 55){
+
+
+                db.insertMessageData(userId, sNo, sFriendId, sContent, sTime, 51);
+
+
+                if(boundStart) {
+                    if(sNo == 0 ) {
+                        if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
+                            db.updateChatRoomData(sNo, sFriendId, sTime);
+                            sendRead(sNo,mCallback.getFriendId(),sTime);
+                        }
+                    }else{
+                        if(boundedNo == sNo) {
+                            db.updateChatRoomData(sNo, sFriendId, sTime);
+                            sendRead(sNo,mCallback.getFriendId(),sTime);
+                        }
+                    }
+                }
+
+                if (sNo == 0 && !chatRoomList.contains(sFriendId)) {
+
+                    getFriendThread gft = new getFriendThread(sFriendId, sContent, sTime ,55);
+                    Log.d("gft.start전", chatRoomList.contains(sFriendId) + "");
+                    gft.start();
+
+
+                    Log.d("gft.start후", chatRoomList.contains(sFriendId) + "");
+
+
+                } else if (sNo > 0 && !chatRoomList.contains(sNo + "")) {
+
+                    getGroupThread ggt = new getGroupThread(sNo, sFriendId, sContent, sTime);
+                    ggt.start();
+
+                } else {
+
+
+
+                    if (boundCheck == true) {
+
+                        if(sNo == 0 ) {
+
+                            if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
+                                Log.d("mCallback.recvData1",sFriendId+"###"+sContent+"####"+sNo);
+                                mCallback.sendImageMark(sFriendId,sContent,sTime,51);
+                                Log.d("mCallback.recvData2",sFriendId+"###"+sContent+"####"+sNo);
+                            }else{
+                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                            }
+
+
+
+                        }else{
+                            if(boundedNo == sNo) {
+                                mCallback.sendImageMark(sFriendId,sContent,sTime,51);
+                                Log.d("mCallback.recvData",sFriendId+"###"+sContent+"####"+sNo);
+                            }else{
+                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                            }
+                        }
+
+                    }else{
+
+                        NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+
+                    }
+
+                    if (boundCheck_2 == true) {
+//                        mCallback_2.recvData();
+                        mCallback_2.changeRoomList();
+                    }
+
+
+                }
+
+
+
 
             }
 

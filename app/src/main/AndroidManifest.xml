@@ -60,6 +60,8 @@
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation"/>
 
+        <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:name=".ProfileChangeActivity"/>
+
         <provider android:name="android.support.v4.content.FileProvider" android:exported="false" android:grantUriPermissions="true" android:authorities="${applicationId}.provider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
         </provider>

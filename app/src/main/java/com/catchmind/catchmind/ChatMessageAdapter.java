@@ -71,6 +71,7 @@ public class ChatMessageAdapter extends BaseAdapter {
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
+
             convertView = this.inflater.inflate(R.layout.chatmessage_item, parent, false);
 
             viewHolder = new MessageViewHolder();
@@ -87,7 +88,7 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent = (TextView) convertView.findViewById(R.id.chatContent);
             viewHolder.rightText = (TextView) convertView.findViewById(R.id.rightText);
             viewHolder.rightUnread = (TextView) convertView.findViewById(R.id.rightUnread);
-
+            viewHolder.sendImage= (ImageView) convertView.findViewById(R.id.sendImageView);
 
 
             convertView.setTag(viewHolder);
@@ -112,6 +113,8 @@ public class ChatMessageAdapter extends BaseAdapter {
 //
 //
 //        }else
+
+
 
         if(chatMessageList.get(position).Type == 1){
 
@@ -155,6 +158,7 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftLayout.setVisibility(View.GONE);
             viewHolder.rightLayout.setVisibility(View.VISIBLE);
+            viewHolder.sendImage.setVisibility(View.GONE);
             friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
             try {
@@ -214,12 +218,13 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.chatContent.setVisibility(View.VISIBLE);
             viewHolder.leftLayout.setVisibility(View.VISIBLE);
             viewHolder.rightLayout.setVisibility(View.GONE);
+            viewHolder.sendImage.setVisibility(View.GONE);
             friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
-                    .error(R.drawable.default_profile_image)
-                    .signature(new StringSignature(profile))
-                    .into(viewHolder.profileImage);
+//            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
+//                    .error(R.drawable.default_profile_image)
+//                    .signature(new StringSignature(profile))
+//                    .into(viewHolder.profileImage);
 
             int tmpUnread = db.getUnReadWithLeft(myId,zeroFriendId,no,now) ;
             if(tmpUnread <=0) {
@@ -240,6 +245,137 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.nickName.setVisibility(View.GONE);
             viewHolder.leftLayout.setVisibility(View.GONE);
             viewHolder.rightLayout.setVisibility(View.GONE);
+
+        }else if(chatMessageList.get(position).Type == 51){
+
+            long now = chatMessageList.get(position).getTime();
+            Date when = new Date(now);
+            String time = sdfNow.format(when);
+
+
+            if(position == 0){
+
+                viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                String day = sdfDate.format(when);
+                viewHolder.dayText.setText(day);
+
+            }else{
+
+                long pre = chatMessageList.get(position-1).getTime();
+                Date preWhen = new Date(pre);
+                String preTime = sdfDate.format(pre);
+
+                String day = sdfDate.format(when);
+
+                if(!day.equals(preTime)) {
+
+                    viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                    viewHolder.dayText.setText(day);
+                }else{
+                    viewHolder.dayLayout.setVisibility(View.GONE);
+                }
+
+            }
+
+
+            viewHolder.layout.setGravity(Gravity.LEFT);
+            viewHolder.profileContainer.setVisibility(View.VISIBLE);
+            viewHolder.nickName.setGravity(Gravity.LEFT);
+            viewHolder.nickName.setText(chatMessageList.get(position).getNickname());
+            viewHolder.rightText.setText(time);
+            viewHolder.profileImage.setVisibility(View.VISIBLE);
+            viewHolder.nickName.setVisibility(View.VISIBLE);
+            viewHolder.chatContent.setVisibility(View.GONE);
+            viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.rightLayout.setVisibility(View.VISIBLE);
+            viewHolder.sendImage.setVisibility(View.VISIBLE);
+
+            friendId = chatMessageList.get(position).getUserId();
+            profile = chatMessageList.get(position).getProfile();
+            try {
+                Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + friendId + ".png")
+                        .error(R.drawable.default_profile_image)
+                        .signature(new StringSignature(profile))
+                        .into(viewHolder.profileImage);
+
+                Glide.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent())
+                        .error(R.drawable.default_profile_image)
+                        .signature(new StringSignature(chatMessageList.get(position).getContent()))
+                        .into(viewHolder.sendImage);
+            }catch (NullPointerException e){
+                Log.d("널널",friendId);
+            }
+            int tmpUnread = db.getUnReadWithRight(myId,friendId,no,now) ;
+            if(tmpUnread <=0) {
+                viewHolder.rightUnread.setText("");
+            }else{
+                viewHolder.rightUnread.setText(tmpUnread+"");
+            }
+
+
+
+        }else if(chatMessageList.get(position).Type == 52){
+
+
+
+            long now = chatMessageList.get(position).getTime();
+            Date when = new Date(now);
+            String time = sdfNow.format(when);
+
+            if(position == 0){
+
+                viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                String day = sdfDate.format(when);
+                viewHolder.dayText.setText(day);
+
+            }else{
+
+                long pre = chatMessageList.get(position-1).getTime();
+                Date preWhen = new Date(pre);
+                String preTime = sdfDate.format(pre);
+
+                String day = sdfDate.format(when);
+
+                if(!day.equals(preTime)) {
+
+                    viewHolder.dayLayout.setVisibility(View.VISIBLE);
+                    viewHolder.dayText.setText(day);
+                }else{
+                    viewHolder.dayLayout.setVisibility(View.GONE);
+                }
+
+            }
+
+            viewHolder.layout.setGravity(Gravity.RIGHT);
+            viewHolder.profileContainer.setVisibility(View.VISIBLE);
+            viewHolder.nickName.setGravity(Gravity.RIGHT);
+            viewHolder.leftLayout.setGravity(Gravity.RIGHT);
+            viewHolder.leftText.setText(time);
+            viewHolder.profileImage.setVisibility(View.GONE);
+            viewHolder.nickName.setVisibility(View.GONE);
+            viewHolder.chatContent.setVisibility(View.GONE);
+            viewHolder.leftLayout.setVisibility(View.VISIBLE);
+            viewHolder.rightLayout.setVisibility(View.GONE);
+            viewHolder.sendImage.setVisibility(View.VISIBLE);
+            friendId = chatMessageList.get(position).getUserId();
+            profile = chatMessageList.get(position).getProfile();
+//            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+friendId+".png")
+//                    .error(R.drawable.default_profile_image)
+//                    .signature(new StringSignature(profile))
+//                    .into(viewHolder.profileImage);
+
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent())
+                    .error(R.drawable.default_profile_image)
+                    .signature(new StringSignature(chatMessageList.get(position).getContent()))
+                    .into(viewHolder.sendImage);
+
+            int tmpUnread = db.getUnReadWithLeft(myId,zeroFriendId,no,now) ;
+            if(tmpUnread <=0) {
+                viewHolder.leftUnread.setText("");
+            }else{
+                viewHolder.leftUnread.setText(tmpUnread+"");
+            }
+
 
         }
 

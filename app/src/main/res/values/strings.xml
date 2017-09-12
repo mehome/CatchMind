@@ -12,4 +12,7 @@
     <item type="id" name="checkIcon" />
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
+    <string name="pickFromAlbum">앨범에서 선택</string>
+    <string name="takePhoto">사진 촬영</string>
+    <string name="defaultImage">기본 이미지로 변경</string>
 </resources>

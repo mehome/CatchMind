@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
+    private static final int Profile_Change = 4292;
     private static final String TAG = "ProfileActivity_openCV";
     private Uri mImageCaptureUri;
     private String absolutePath;
@@ -72,7 +73,6 @@ public class ProfileActivity extends AppCompatActivity {
     public TextView profileTitle;
     public Button profilebtn;
     public Button talkbtn;
-    public Button defaultbtn;
     public ImageView profileIV;
     public Bitmap photo;
     public File sourceFile ;
@@ -106,12 +106,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileIV = (ImageView)findViewById(R.id.ProfileImage);
         profilebtn = (Button)findViewById(R.id.profilebtn);
         talkbtn = (Button)findViewById(R.id.talkbtn);
-        defaultbtn = (Button)findViewById(R.id.profileDefaultImageBtn);
         Intent intent = getIntent();
         int position = intent.getIntExtra("position",0);
         if(position == 1){
             profilebtn.setVisibility(View.VISIBLE);
-            defaultbtn.setVisibility(View.VISIBLE);
             talkbtn.setVisibility(View.GONE);
         }
         nickname = intent.getStringExtra("nickname");
@@ -147,65 +145,63 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    public void imageDefault(View v){
-        profileIV.setImageResource(R.drawable.default_profile_image);
-        ImageDefaultThread idt = new ImageDefaultThread(userId);
-        idt.start();
-    }
+//    public void imageDefault(View v){
+//        profileIV.setImageResource(R.drawable.default_profile_image);
+//        ImageDefaultThread idt = new ImageDefaultThread(userId);
+//        idt.start();
+//    }
 
     public void imageSend(View v){
 
-        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener(){
-
-            @Override
-            public void onClick(DialogInterface dialog, int which){
-                doTakePhotoAction();
-            }
-
-        };
-
-        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
-
-            @Override
-            public void onClick(DialogInterface dialog, int which){
-                doTakeAlbumAction();
-
-            }
-
-        };
-
-
-        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
-
-            @Override public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-
-        };
-
-//        new AlertDialog.Builder(this)
+//        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener(){
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which){
+//                doTakePhotoAction();
+//            }
+//
+//        };
+//
+//        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which){
+//                doTakeAlbumAction();
+//
+//            }
+//
+//        };
+//
+//
+//        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+//
+//            @Override public void onClick(DialogInterface dialog, int which){
+//                dialog.dismiss();
+//            }
+//
+//        };
+//
+//
+//
+//
+//        AlertDialog dialog = new AlertDialog.Builder(this)
 //                .setTitle("업로드할 이미지 선택")
 //                .setPositiveButton("사진촬영", cameraListener)
-//                .setNegativeButton("앨범선택", albumListener)
 //                .setNeutralButton("취소", cancelListener)
-//                .show();
+//                .setNegativeButton("앨범선택", albumListener)
+//                .create();
+//
+//        dialog.show();
+//
+//        Button pbtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+//        pbtn.setTextColor(Color.BLACK);
+//        Button neubtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+//        neubtn.setTextColor(Color.BLACK);
+//        Button negbtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+//        negbtn.setTextColor(Color.BLACK);
 
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("업로드할 이미지 선택")
-                .setPositiveButton("사진촬영", cameraListener)
-                .setNeutralButton("취소", cancelListener)
-                .setNegativeButton("앨범선택", albumListener)
-                .create();
-
-        dialog.show();
-
-        Button pbtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        pbtn.setTextColor(Color.BLACK);
-        Button neubtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
-        neubtn.setTextColor(Color.BLACK);
-        Button negbtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-        negbtn.setTextColor(Color.BLACK);
+        Intent ICintent = new Intent(this,ProfileChangeActivity.class);
+        startActivityForResult(ICintent,Profile_Change);
 
 
     }
@@ -400,6 +396,24 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
 
+            case Profile_Change: {
+
+                if(resultCode == RESULT_OK) {
+                    String type = data.getExtras().getString("IC");
+
+                    if (type.equals("album")) {
+                        doTakeAlbumAction();
+                    } else if (type.equals("camera")) {
+                        doTakePhotoAction();
+                    } else {
+                        profileIV.setImageResource(R.drawable.default_profile_image);
+                        ImageDefaultThread idt = new ImageDefaultThread(userId);
+                        idt.start();
+                    }
+                }
+            }
+
+
 //            case CROP_FROM_IMAGE: {
 //
 //                if ( resultCode != RESULT_OK){
@@ -487,9 +501,8 @@ public class ProfileActivity extends AppCompatActivity {
 
             return 0;
 
-        }
-        else
-        {
+        }else{
+
             try {
 
                 // open a URL connection to the Servlet

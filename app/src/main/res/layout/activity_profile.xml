@@ -12,6 +12,7 @@
         android:layout_marginTop="60dp"
         android:text="Profile"
         android:textSize="25sp"
+        android:textColor="#000000"
         />
 
     <ImageView
@@ -34,17 +35,7 @@
         android:textSize="17sp"
         />
 
-    <Button
-        android:id="@+id/profileDefaultImageBtn"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="130dp"
-        android:text="기본 이미지로 변경"
-        android:onClick="imageDefault"
-        android:textSize="15sp"
-        android:visibility="invisible"/>
+
 
     <Button
         android:id="@+id/profilebtn"

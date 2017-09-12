@@ -87,7 +87,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
             ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
-            Log.d("집중집중",friendId+"###"+nickname+"####"+profile+"####"+content);
+
         }else if(type ==2){
             ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, now);
             ListData.add(addItem);
@@ -97,7 +97,18 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
 
+        }else if(type == 51){
+            ChatMessageItem addItem = new ChatMessageItem(51, friendId, nickname, profile, content, now);
+            ListData.add(addItem);
+            chatListAdapter.notifyDataSetChanged();
+        }else if(type == 52){
+            ChatMessageItem addItem = new ChatMessageItem(52, friendId, nickname, profile, content, now);
+            ListData.add(addItem);
+            chatListAdapter.notifyDataSetChanged();
         }
+
+
+
     }
 
     @Override

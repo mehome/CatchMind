@@ -9,13 +9,18 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.NavigationMenuView;
@@ -23,6 +28,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -54,11 +60,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,6 +124,12 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     ArrayList<MemberListItem> ListData;
 
     NavigationView navigationView;
+
+    final String upLoadServerUri = "http://vnschat.vps.phps.kr/SendImage.php";
+    private static final int PICK_FROM_CAMERA = 0;
+    private static final int PICK_FROM_ALBUM = 1;
+    private Uri mImageCaptureUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,6 +309,26 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                         nickname = NickHash.get(friendId);
                     }
                     drawCommunicator.drawChat(nickname,content);
+                }else if(msg.what==51){
+
+                    if(no ==0) {
+                        String content = msg.getData().getString("content");
+                        long time = msg.getData().getLong("time");
+                        fragmentCommunicator.passData(friendId, friendNickname, friendProfile, content, time, 51);
+                    }else{
+                        String friendId = msg.getData().getString("friendId");
+                        String content = msg.getData().getString("content");
+                        long time = msg.getData().getLong("time");
+                        fragmentCommunicator.passData(friendId, NickHash.get(friendId), ProfileHash.get(friendId), content, time, 51);
+                    }
+
+                }else if(msg.what==52){
+
+                    String friendId = msg.getData().getString("friendId");
+                    String content = msg.getData().getString("content");
+                    long time = msg.getData().getLong("time");
+                    fragmentCommunicator.passData("내아이디","내닉네임","내프로필", content, time, 52);
+
                 }
 
 
@@ -397,12 +435,51 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
+
             if(requestCode == MakeGroupActivity){
                 long now = System.currentTimeMillis();
                 String content = data.getExtras().getString("content");
                 String inviteId = data.getExtras().getString("inviteId");
 
                 mService.sendInvite(no,friendId,content,now,inviteId);
+
+            }else if(requestCode == PICK_FROM_CAMERA){
+
+                try {
+
+                    String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    String imgpath = ex_storage + "/tmp.png";
+
+                    Log.d("이미지경로",imgpath);
+
+
+                    ImageSendThread ist = new ImageSendThread(imgpath);
+                    ist.start();
+
+                    ist.join();
+
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }else if(requestCode == PICK_FROM_ALBUM ){
+
+                try {
+
+                    Log.d("이미지경로",getPath(data.getData()));
+
+                    ImageSendThread ist = new ImageSendThread(getPath(data.getData()));
+
+                    ist.start();
+
+                    ist.join();
+
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -648,6 +725,26 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             handler.sendMessage(message);
         }
 
+        @Override
+        public void sendImageMark(String friendId, String content, long time ,int kind) {
+
+
+            Message message= Message.obtain();
+            message.what = kind;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("content",content);
+            bundle.putLong("time",time);
+            bundle.putString("friendId",friendId);
+
+            message.setData(bundle);
+
+            handler.sendMessage(message);
+
+
+
+        }
+
         public void resetHash(){
             ResetHash();
             ResetMemberList();
@@ -780,7 +877,52 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     }
 
     public void ImageSendBtn(View v){
-        Toast.makeText(this,"ImageSendBtn",Toast.LENGTH_SHORT);
+        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                doTakePhotoAction();
+            }
+
+        };
+
+        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                doTakeAlbumAction();
+
+            }
+
+        };
+
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+            @Override public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+
+        };
+
+
+
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("이미지 전송")
+                .setPositiveButton("사진촬영", cameraListener)
+                .setNeutralButton("취소", cancelListener)
+                .setNegativeButton("앨범선택", albumListener)
+                .create();
+
+        dialog.show();
+
+        Button pbtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbtn.setTextColor(Color.BLACK);
+        Button neubtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+        neubtn.setTextColor(Color.BLACK);
+        Button negbtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negbtn.setTextColor(Color.BLACK);
     }
 
     public void DrawModeBtn(View v){
@@ -830,12 +972,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         };
 
-//        new AlertDialog.Builder(this)
-//                .setTitle("업로드할 이미지 선택")
-//                .setPositiveButton("사진촬영", cameraListener)
-//                .setNegativeButton("앨범선택", albumListener)
-//                .setNeutralButton("취소", cancelListener)
-//                .show();
+
 
 
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -876,5 +1013,276 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
         friendId = idArray.toString();
     }
+
+
+
+
+    public int uploadFile(String sourceFileUri) {
+
+        Log.d("이미지업로드시작CRA",sourceFileUri);
+        String fileName = sourceFileUri;
+
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+//        File sourceFile = new File(sourceFileUri);
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/tmp.png";
+
+        Bitmap b= BitmapFactory.decodeFile(sourceFileUri);
+        Bitmap out = Bitmap.createScaledBitmap(b, 400, 400, false);
+
+
+        File sourceFile = new File(path);
+        FileOutputStream fOut;
+
+
+
+        try {
+
+            Log.d("이미지새파일경로1",sourceFile.getAbsolutePath());
+            fOut = new FileOutputStream(sourceFile);
+            Log.d("이미지새파일경로2",sourceFile.getAbsolutePath());
+            out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+
+        } catch (Exception e) {
+
+        }
+
+
+
+        if (!sourceFile.isFile()) {
+
+            Log.d("이미지경로에없음","경로에없나?");
+//            dialog.dismiss();
+
+            return 0;
+
+        }else{
+
+            int serverResponseCode = 123;
+
+            try {
+
+                // open a URL connection to the Servlet
+                FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                URL url = new URL(upLoadServerUri);
+                // Open a HTTP  connection to  the URL
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setDoInput(true); // Allow Inputs
+                conn.setDoOutput(true); // Allow Outputs
+                conn.setUseCaches(false); // Don't use a Cached Copy
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Connection", "Keep-Alive");
+                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                conn.setRequestProperty("uploaded_file", fileName);
+
+                dos = new DataOutputStream(conn.getOutputStream());
+                dos.writeBytes(twoHyphens + boundary + lineEnd);
+
+
+                long now = System.currentTimeMillis();
+                String imageName = userId + "_" + now + ".png";
+
+
+                dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
+                        + imageName + "\"" + lineEnd);
+
+                dos.writeBytes(lineEnd);
+                // create a buffer of  maximum size
+                bytesAvailable = fileInputStream.available();
+
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                buffer = new byte[bufferSize];
+
+                // read file and write it into form...
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                while (bytesRead > 0) {
+
+                    dos.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                }
+
+                // send multipart form data necesssary after file data...
+                dos.writeBytes(lineEnd);
+                dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+                // Responses from the server (code and message)
+                serverResponseCode = conn.getResponseCode();
+                String serverResponseMessage = conn.getResponseMessage();
+
+                Log.d("이미지uploadFile", "HTTP Response is : "
+                        + serverResponseMessage + ": " + serverResponseCode);
+
+
+                //close the streams //
+                fileInputStream.close();
+                dos.flush();
+                dos.close();
+
+
+                InputStream is = null;
+                BufferedReader in = null;
+
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                String data = buff.toString().trim();
+                Log.d("이미지성공실패",data);
+
+                if(data.equals("OK")){
+                    mService.sendImage(no,friendId,imageName,now);
+                }
+
+
+            } catch (MalformedURLException ex) {
+
+
+                ex.printStackTrace();
+
+
+
+                Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+
+            }
+
+//            dialog.dismiss();
+            return serverResponseCode;
+
+        } // End else block
+
+    }
+
+
+
+
+    public class ImageSendThread extends Thread {
+
+        public String filePath;
+
+        public ImageSendThread (String uri){
+            this.filePath = uri;
+        }
+
+        @Override
+        public void run() {
+
+            uploadFile(filePath);
+
+        }
+
+
+    }
+
+
+//    public void imageSend(View v){
+//
+//        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener(){
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which){
+//                doTakePhotoAction();
+//            }
+//
+//        };
+//
+//        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which){
+//                doTakeAlbumAction();
+//
+//            }
+//
+//        };
+//
+//
+//        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+//
+//            @Override public void onClick(DialogInterface dialog, int which){
+//                dialog.dismiss();
+//            }
+//
+//        };
+//
+//
+//
+//
+//        AlertDialog dialog = new AlertDialog.Builder(this)
+//                .setTitle("이미지 전송")
+//                .setPositiveButton("사진촬영", cameraListener)
+//                .setNeutralButton("취소", cancelListener)
+//                .setNegativeButton("앨범선택", albumListener)
+//                .create();
+//
+//        dialog.show();
+//
+//        Button pbtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+//        pbtn.setTextColor(Color.BLACK);
+//        Button neubtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+//        neubtn.setTextColor(Color.BLACK);
+//        Button negbtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+//        negbtn.setTextColor(Color.BLACK);
+//
+//
+//    }
+
+
+    public void doTakePhotoAction(){
+
+        Intent intent = new Intent (MediaStore.ACTION_IMAGE_CAPTURE);
+
+        String url = "tmp" + ".png";
+//        mImageCaptureUri = Uri.fromFile ( new File(Environment.getExternalStorageDirectory(), url));
+        mImageCaptureUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName()+".provider", new File(Environment.getExternalStorageDirectory(), url));
+
+        Log.d("사진_doTakePhoto", Environment.getExternalStorageState().toString());
+        Log.d("사진_doTakePhoto", mImageCaptureUri.toString());
+
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+        startActivityForResult(intent, PICK_FROM_CAMERA);
+
+    }
+
+    public void doTakeAlbumAction(){
+
+        Intent intent = new Intent (Intent.ACTION_PICK);
+//        intent.setType (MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setType ("image/*");
+        startActivityForResult(intent, PICK_FROM_ALBUM);
+
+    }
+
+    public String getPath(Uri uri) {
+
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+
+        return cursor.getString(column_index);
+    }
+
 
 }
