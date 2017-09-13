@@ -227,8 +227,66 @@ public class ChatService extends Service {
 
     public void sendImage(int no,String friendId, String content, long time){
 
-        if (no < 0){
-            return;
+        if(no < 0 ){
+            getNoThread gnt = new getNoThread(no,friendId,time);
+            gnt.start();
+            try {
+                gnt.join();
+                no = gnt.returnNO();
+
+                if(no >0){
+                    if(boundCheck) {
+                        mCallback.changeNo(no);
+                        boundedNo = no;
+                    }
+                }
+
+                if(!chatRoomList.contains(no+"")) {
+
+                    db.insertChatFriendDataMultipleByJoin(friendId, no);
+                    db.insertChatRoomData(no, "group", time);
+                    chatRoomList.add(no + "");
+                    if (boundCheck) {
+                        mCallback.resetHash();
+                        mCallback.recvUpdate();
+                        mCallback.resetToolbar();
+                        mCallback.changeNo(no);
+                    }
+
+                    if(boundCheck_2 == true){
+                        mCallback_2.changeRoomList();
+                    }
+
+                }
+
+            }catch (InterruptedException e){
+                e.printStackTrace();
+                Log.d("gnt.InterruptedExep","no: "+no);
+            }
+
+        }
+
+
+
+        if( no == 0 && !chatRoomList.contains(friendId) ){
+
+
+            Cursor cursor = db.getFriendData(friendId);
+            cursor.moveToNext();
+
+            String nickname = cursor.getString(1);
+            String profile = cursor.getString(2);
+            String message = cursor.getString(3);
+
+            db.insertChatFriendData(0,friendId,nickname,profile,message,0);
+            Log.d("db.ICFD",userId+"###"+friendId);
+            db.insertChatRoomData(0,friendId,time);
+            Log.d("db.ICRD",userId+"###"+friendId);
+
+            addChatFriendThread acft = new addChatFriendThread(0,friendId,0);
+            acft.start();
+
+
         }
 
 
@@ -236,7 +294,11 @@ public class ChatService extends Service {
         SendThread st = new SendThread(socket, no, friendId, content, time, 55);
         st.start();
 
-        db.insertMessageData(userId, no, friendId, content, time, 52);
+        if(no ==0) {
+            db.insertMessageData(userId, no, friendId, content, time, 52);
+        }else{
+            db.insertMessageData(userId, no, userId, content, time, 52);
+        }
         mCallback.sendImageMark(userId,content,time,52);
 
     }

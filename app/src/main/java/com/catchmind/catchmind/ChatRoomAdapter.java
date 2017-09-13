@@ -88,9 +88,14 @@ public class ChatRoomAdapter extends BaseAdapter{
         String time;
 
         Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
+        Log.d("헬이",cursor.getColumnName(5));
         if(cursor.getCount() != 0) {
             cursor.moveToNext();
-            content = cursor.getString(3);
+            if(cursor.getInt(5) == 1 || cursor.getInt(5) == 2) {
+                content = cursor.getString(3);
+            }else{
+                content = "<사진>";
+            }
             when = cursor.getLong(4);
             myWhen = cursor.getLong(8);
             Log.d("myWhen_" + position, myWhen + "");

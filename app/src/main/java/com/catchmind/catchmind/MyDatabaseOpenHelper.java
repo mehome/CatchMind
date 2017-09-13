@@ -624,12 +624,23 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     public Cursor getLastRowJoinOnChatRoomList(String userId,String friendId,int no){
         Log.d("db.getLR",friendId);
 //        SQLiteDatabase db = this.getReadableDatabase();
+
         String sql;
+
+//        if(no == 0) {
+//            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no AND messageData_" + userId + ".friendId = chatRoomList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='"+no+"' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+//        }else{
+//            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no WHERE messageData_" + userId + ".no='" + no + "' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+//        }
+
+
         if(no == 0) {
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no AND messageData_" + userId + ".friendId = chatRoomList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='"+no+"' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no AND messageData_" + userId + ".friendId = chatRoomList.friendId WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='"+no+"' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2' OR messageData_" + userId +".type = '51' OR messageData_" + userId +".type = '52') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
         }else{
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no WHERE messageData_" + userId + ".no='" + no + "' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatRoomList ON messageData_" + userId + ".no = chatRoomList.no WHERE messageData_" + userId + ".no='" + no + "' AND ( messageData_"+ userId +".type = '1' OR messageData_" + userId +".type = '2' OR messageData_" + userId +".type = '51' OR messageData_" + userId +".type = '52') ORDER BY messageData_" + userId + ".idx DESC LIMIT 1;";
         }
+
+
         Log.d("getLastRow",sql);
         Cursor cursor = dbr.rawQuery(sql,null);
 
@@ -658,9 +669,9 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 //        SQLiteDatabase db = this.getReadableDatabase();
         String sql;
         if(no ==0) {
-            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='0' AND friendId='"+friendId+"' AND time >"+cTime+" AND type='1'";
+            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='0' AND friendId='"+friendId+"' AND time >"+cTime+" AND (type='1' OR type ='51')";
         }else{
-            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='"+no+"' AND time >"+cTime+" AND type='1'";
+            sql = "SELECT COUNT(*) FROM messageData_" + userId + " WHERE no='"+no+"' AND time >"+cTime+" AND (type='1' OR type ='51')";
         }
         Log.d("getUnRead",sql);
         Cursor cursor = dbr.rawQuery(sql,null);

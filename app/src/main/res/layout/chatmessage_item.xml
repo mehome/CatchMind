@@ -155,7 +155,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/default_profile_image"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="20dp"
+                    android:layout_margin="10dp"
                     android:id="@+id/sendImageView"
                     android:visibility="gone"/>
 
