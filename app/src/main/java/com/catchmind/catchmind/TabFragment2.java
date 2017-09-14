@@ -123,6 +123,9 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 //        Log.d("진짜로?",myId);
 //        Cursor cursor = db.getChatRoomList();
 //        Cursor cursor = db.getChatRoomListUnread();
+        if(db ==null){
+            return;
+        }
         Cursor cursor = db.getChatRoomListJoinWithMessage();
         ArrayList<ChatRoomItem> ListData = new ArrayList<>();
 

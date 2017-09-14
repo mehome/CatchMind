@@ -235,6 +235,8 @@ public class ChatMessageAdapter extends BaseAdapter {
 
         }else if(chatMessageList.get(position).Type == 3) {
 
+            Log.d("힘드네요",chatMessageList.get(position).getContent());
+
             viewHolder.layout.setGravity(Gravity.CENTER);
             viewHolder.profileContainer.setVisibility(View.GONE);
 

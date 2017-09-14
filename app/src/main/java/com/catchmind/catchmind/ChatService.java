@@ -1240,7 +1240,7 @@ public class ChatService extends Service {
                 data = buff.toString().trim();
                 Log.e("getGift.data",data);
                 JSONArray chatArray = new JSONArray(data);
-                db.insertMessageData(userId,sNo,sFriendId,sContent, sTime, 3);
+                db.insertMessageData(userId,sNo,userId,sContent, sTime, 3);
                 db.insertChatFriendDataMultiple(data);
                 db.insertChatRoomData(sNo,"group",0);
                 chatRoomList.add(this.sNo+"");
@@ -1338,7 +1338,7 @@ public class ChatService extends Service {
 
                 Log.d("db.ICFDM",userId+"###"+sFriendId);
 
-                db.insertMessageData(userId,sNo,sFriendId,sContent,sTime,3);
+                db.insertMessageData(userId,sNo,userId,sContent,sTime,3);
 
                 if(boundCheck == true) {
                     if(boundedNo == sNo) {
