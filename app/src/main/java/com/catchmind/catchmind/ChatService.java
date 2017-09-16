@@ -897,10 +897,18 @@ public class ChatService extends Service {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {
                             mCallback.recvData(sFriendId, sContent, sTime);
                         }else{
-                            NotificationAlarm(sFriendId,0,"#없음",sContent);
+                            if(sKind == 55) {
+                                NotificationAlarm(sFriendId, 0, "#없음", "<사진>");
+                            }else{
+                                NotificationAlarm(sFriendId, 0, "#없음", sContent);
+                            }
                         }
                     }else{
-                        NotificationAlarm(sFriendId,0,"#없음",sContent);
+                        if(sKind == 55) {
+                            NotificationAlarm(sFriendId, 0, "#없음", "<사진>");
+                        }else{
+                            NotificationAlarm(sFriendId, 0, "#없음", sContent);
+                        }
                     }
 
                     if(boundCheck_2 == true) {
@@ -1093,13 +1101,15 @@ public class ChatService extends Service {
         public String sFriendId;
         public String sContent;
         public long sTime;
+        public int sKind;
 
-        public getGroupThread(int no,String friendId,String content,long time){
+        public getGroupThread(int no,String friendId,String content,long time,int kind){
 
             this.sNo = no;
             this.sFriendId = friendId;
             this.sContent = content;
             this.sTime = time;
+            this.sKind = kind;
             Log.d("getGroupThread","Constructor 안,no: "+sNo);
 
         }
@@ -1156,10 +1166,18 @@ public class ChatService extends Service {
                     if(boundedNo == sNo ) {
                         mCallback.recvData(sFriendId, sContent, sTime);
                     }else{
-                        NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                        if(sKind == 55) {
+                            NotificationAlarm(sFriendId, 0, "#없음", "<사진>");
+                        }else{
+                            NotificationAlarm(sFriendId, 0, "#없음", sContent);
+                        }
                     }
                 }else{
-                    NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                    if(sKind == 55) {
+                        NotificationAlarm(sFriendId, 0, "#없음", "<사진>");
+                    }else{
+                        NotificationAlarm(sFriendId, 0, "#없음", sContent);
+                    }
                 }
 
                 if(boundCheck_2 == true) {
@@ -1425,7 +1443,7 @@ public class ChatService extends Service {
 
                 } else if (sNo > 0 && !chatRoomList.contains(sNo + "")) {
 
-                    getGroupThread ggt = new getGroupThread(sNo, sFriendId, sContent, sTime);
+                    getGroupThread ggt = new getGroupThread(sNo, sFriendId, sContent, sTime ,1);
                     ggt.start();
 
                 } else {
@@ -1617,7 +1635,7 @@ public class ChatService extends Service {
 
                 } else if (sNo > 0 && !chatRoomList.contains(sNo + "")) {
 
-                    getGroupThread ggt = new getGroupThread(sNo, sFriendId, sContent, sTime);
+                    getGroupThread ggt = new getGroupThread(sNo, sFriendId, sContent, sTime,55);
                     ggt.start();
 
                 } else {
@@ -1633,7 +1651,7 @@ public class ChatService extends Service {
                                 mCallback.sendImageMark(sFriendId,sContent,sTime,51);
                                 Log.d("mCallback.recvData2",sFriendId+"###"+sContent+"####"+sNo);
                             }else{
-                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                                NotificationAlarm(sFriendId,sNo,"#없음","<사진>");
                             }
 
 
@@ -1643,13 +1661,13 @@ public class ChatService extends Service {
                                 mCallback.sendImageMark(sFriendId,sContent,sTime,51);
                                 Log.d("mCallback.recvData",sFriendId+"###"+sContent+"####"+sNo);
                             }else{
-                                NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                                NotificationAlarm(sFriendId,sNo,"#없음","<사진>");
                             }
                         }
 
                     }else{
 
-                        NotificationAlarm(sFriendId,sNo,"#없음",sContent);
+                        NotificationAlarm(sFriendId,sNo,"#없음","<사진>");
 
                     }
 
