@@ -225,6 +225,12 @@ public class ChatService extends Service {
     //액티비티에서 읽음 전송
 
 
+    public void sendVideoCall(String friendId, String content){
+        SendThread st = new SendThread(socket, 0, friendId, content, 0, 999);
+        st.start();
+
+    }
+
     public void sendImage(int no,String friendId, String content, long time){
 
         if(no < 0 ){
@@ -1658,6 +1664,19 @@ public class ChatService extends Service {
 
 
 
+            }else if(sKind == 999){
+                try {
+                    Intent videoCallIntent = new Intent(getApplicationContext(), ReceiveCallActivity.class);
+                    videoCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    videoCallIntent.putExtra("friendId", sFriendId);
+                    JSONObject jsonObject = new JSONObject(sContent);
+                    videoCallIntent.putExtra("roomId",jsonObject.getString("roomId"));
+                    videoCallIntent.putExtra("nickname",jsonObject.getString("nickname"));
+                    startActivity(videoCallIntent);
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
             }
 
 

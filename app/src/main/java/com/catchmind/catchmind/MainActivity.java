@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         fragmentCommunicator.startChatRoomActivity(0,friendId,nickname);
     }
 
+
+
     private ServiceConnection mConnection = new ServiceConnection() {
         // Called when the connection with the service is established
         public void onServiceConnected(ComponentName className, IBinder service) {

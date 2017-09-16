@@ -37,6 +37,7 @@ public class TabFragment1 extends Fragment {
     public SharedPreferences mPref;
     public SharedPreferences.Editor editor;
     public ListViewAdapter myListAdapter;
+    public static final int sendVideoCall = 235711;
     ListView lv;
 
 
@@ -140,13 +141,25 @@ public class TabFragment1 extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        Log.d("태프원",resultCode+"");
         if(resultCode == RESULT_OK) {
 //            Toast.makeText(getContext(), requestCode + "###" + resultCode, Toast.LENGTH_SHORT).show();
             String friendId = data.getExtras().getString("friendId");
             String nickname = data.getExtras().getString("nickname");
             STA.sendToActivity(friendId,nickname);
         }
+
+//        if(resultCode == sendVideoCall){
+//            String friendId = data.getExtras().getString("friendId");
+//            String roomId = data.getExtras().getString("roomId");
+//            Toast.makeText(getContext(),friendId,Toast.LENGTH_SHORT).show();
+//
+//
+//        }
     }
+
+
 
     public interface sendToActivity {
         void sendToActivity(String friendId,String nickname);

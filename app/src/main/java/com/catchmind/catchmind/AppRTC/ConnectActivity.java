@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.catchmind.catchmind.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,6 +171,16 @@ public class ConnectActivity extends Activity {
       String room = sharedPref.getString(keyprefRoom, "");
       connectToRoom(room, true, loopback, useValuesFromIntent, runTimeMs);
     }
+
+
+    Calendar calendar = Calendar.getInstance();
+
+    int hour = calendar.get(Calendar.HOUR);
+    int minute = calendar.get(Calendar.MINUTE);
+    connectToRoom(""+hour+""+minute, false, false, false, 0);
+    finish();
+
+
   }
 
   @Override
