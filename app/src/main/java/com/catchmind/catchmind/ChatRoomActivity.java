@@ -116,6 +116,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public Button drawModeBtn;
     public Button sendMsgBtn;
     public Button drawChatBtn;
+    public ImageButton alarmActive;
     DrawerLayout drawer;
 
     public static final int MakeGroupActivity = 6839;
@@ -130,6 +131,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     private static final int PICK_FROM_ALBUM = 1;
     private Uri mImageCaptureUri;
 
+    String alarmKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -383,6 +385,19 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         navigationView.setNavigationItemSelectedListener(this);
 
 
+        alarmActive = (ImageButton) findViewById(R.id.alarmImageBtn);
+
+        if(no == 0){
+            alarmKey = friendId;
+        }else{
+            alarmKey = no + "";
+        }
+        if(!mPref.getBoolean(alarmKey,true)){
+            alarmActive.setBackgroundResource(R.drawable.alarm_disable_icon);
+        }else{
+            alarmActive.setBackgroundResource(R.drawable.alarm_active_icon);
+        }
+
 
 //        Menu menu = navigationView.getMenu();
 //        Log.d("미쳐씨발",menu.size()+"");
@@ -395,6 +410,23 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 //            P2PChat.setVisible(false);
 //        }
 
+    }
+
+    public void activeAlarm(View v){
+
+        if(mPref.getBoolean(alarmKey,true)){
+            editor.putBoolean(alarmKey,false);
+            editor.commit();
+            alarmActive.setBackgroundResource(R.drawable.alarm_disable_icon);
+
+        }else{
+
+            editor.putBoolean(alarmKey,true);
+            editor.commit();
+            alarmActive.setBackgroundResource(R.drawable.alarm_active_icon);
+
+
+        }
     }
 
     private View.OnClickListener mClickListener = new View.OnClickListener() {

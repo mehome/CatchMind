@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         userId = mPref.getString("userId","닉없음");
         nickname = mPref.getString("nickname","메세지없음");
 
+
         editor = mPref.edit();
 
         mNCR = new NetworkChangeReceiver();

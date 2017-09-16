@@ -1689,6 +1689,17 @@ public class ChatService extends Service {
 
     public void NotificationAlarm(String friendId, int no, String nickname, String content){
 
+
+        if(no == 0){
+            if(!mPref.getBoolean(friendId,true)){
+                return;
+            }
+        }else{
+            if(!mPref.getBoolean(no+"",true)){
+                return;
+            }
+        }
+
         Intent mAlarmIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);
 
         mAlarmIntent.putExtra("no",no);
@@ -1710,7 +1721,9 @@ public class ChatService extends Service {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(mPendingIntent)
                         .setContentTitle("캐치마인드메신저")
+                        .setPriority(Notification.PRIORITY_HIGH)
                         .setContentText(content);
+
 
 
         NotificationManager mNotificationManager =

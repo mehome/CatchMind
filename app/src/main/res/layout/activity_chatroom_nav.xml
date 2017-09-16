@@ -159,7 +159,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom">
+                android:layout_gravity="bottom"
+                android:layout_margin="10dp">
 
                 <ImageButton
                     android:layout_width="50dp"
@@ -169,6 +170,17 @@
                     android:scaleType="centerCrop"
                     android:background="#FFFFFFFF"
                     android:onClick="exitRoom"/>
+
+
+                <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:background="#FFFFFFFF"
+                    android:onClick="activeAlarm"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/alarmImageBtn"/>
 
 
             </RelativeLayout>

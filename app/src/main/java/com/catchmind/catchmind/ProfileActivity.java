@@ -919,6 +919,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         try {
 
+
             Random random = new Random();
 
             String roomId = userId + random.nextInt(100000);
@@ -930,6 +931,7 @@ public class ProfileActivity extends AppCompatActivity {
             jsonObject.put("nickname", myNickname);
 
             mService.sendVideoCall(userId, jsonObject.toString());
+
 
         }catch (JSONException e){
             e.printStackTrace();
