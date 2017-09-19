@@ -37,6 +37,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 //                context.startService(serviceIntent);
                 Log.d("담배Net","Receiver wifi##");
 
+
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                 // connected to the mobile provider's data plan
 
@@ -51,6 +52,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 //                context.startService(serviceIntent);
 
                 Log.d("담배Net","Receiver mobile##");
+
 
             }
         } else {

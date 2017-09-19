@@ -1,7 +1,9 @@
 package com.catchmind.catchmind;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -25,7 +27,7 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-import com.facebook.stetho.Stetho;
+//import com.facebook.stetho.Stetho;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,11 +49,12 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     public String nickname;
     public static final int MakeGroupActivity = 5409;
     public NetworkChangeReceiver mNCR;
+    BroadcastReceiver NetworkChangeUpdater;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Stetho.initializeWithDefaults(this);
+//        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         tabPosition = 0;
@@ -74,8 +77,26 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         editor = mPref.edit();
 
         mNCR = new NetworkChangeReceiver();
-        registerReceiver(mNCR,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        registerReceiver(mNCR, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        NetworkChangeUpdater = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //UI update here
+                if (intent != null) {
+//                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+                    String networkType = intent.getExtras().getString("wifi");
+                    UpdateNetwork(networkType);
+
+                }
+            }
+        };
+
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("receiver.to.activity.transfer");
+        registerReceiver(mNCR, filter);
 
 
 //        Intent serviceIntentMain = new Intent(getApplicationContext(),ChatService.class);
@@ -205,6 +226,20 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
 
     }
+
+
+    public void UpdateNetwork(String type){
+        if(type.equals("wifi")) {
+            Intent serviceIntent = new Intent(this, ChatService.class);
+            bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
+            Log.d("담배Net","UPDATE wifi##"+type);
+        }else{
+            Intent serviceIntent = new Intent(this, ChatService.class);
+            bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
+            Log.d("담배Net","UPDATE nonewifi##"+type);
+        }
+    }
+
 
     @Override
     public void sendToActivity(String friendId,String nickname) {

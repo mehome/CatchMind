@@ -152,14 +152,17 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         actionBar.setDisplayShowCustomEnabled(true); //커스터마이징 하기 위해 필요
 //        actionBar.setDisplayShowTitleEnabled(false);
 
+
         db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
         mPref = getSharedPreferences("login",MODE_PRIVATE);
         editor = mPref.edit();
+
 
         userId = mPref.getString("userId","아이디없음");
         userNickname = mPref.getString("nickname","닉없음");
         Log.d("chatroomId",userId);
         Intent GI = getIntent();
+
 
         friendId = GI.getStringExtra("friendId");
         no = GI.getIntExtra("no",0);
