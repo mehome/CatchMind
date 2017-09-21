@@ -16,6 +16,7 @@ import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,11 +149,23 @@ public class ChatService extends Service {
 
             Log.d("생성자","생성전");
 
-            if(socket == null) {
+            if(socket == null ) {
+
                 ConnectThread ct = new ConnectThread();
                 ct.start();
 
             }
+
+
+            if( socket != null) {
+
+                if(socket.isClosed() || !socket.isConnected()) {
+                    ConnectThread ct = new ConnectThread();
+                    ct.start();
+                }
+
+            }
+
 //        }
 
 
@@ -171,6 +184,17 @@ public class ChatService extends Service {
 
             Log.d("커서야챗스타트",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2));
         }
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("content title");
+        builder.setTicker("ticker");
+        builder.setContentText("content text");
+
+        Notification notification = builder.build();
+
+        startForeground(1,notification);
 
 
 //        return super.onStartCommand(intent, flags, startId);
@@ -520,11 +544,11 @@ public class ChatService extends Service {
 
             try {
                 Log.d("여긴지낫니1","보고싶다");
-                if(socket != null) {
-                    Log.d("여긴지낫니2","보고싶다");
-                    socket.close();
-                    socket = null;
-                }
+//                if(socket != null) {
+//                    Log.d("여긴지낫니2","보고싶다");
+//                    socket.close();
+//                    socket = null;
+//                }
 
                     socket = new Socket(dstAddress, 5000);
 
@@ -692,14 +716,14 @@ public class ChatService extends Service {
 
         }
 
-        try {
-            socket.close();
-            socket = null ;
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+//        try {
+//            socket.close();
+//            socket = null ;
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//        }catch (IOException e){
+//            e.printStackTrace();
+//        }
 
         Message message= Message.obtain();
         message.what = 4;
@@ -710,14 +734,14 @@ public class ChatService extends Service {
 
         Log.d("자살","justReconnect");
 
-        try {
-            socket.close();
-            socket = null ;
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+//        try {
+//            socket.close();
+//            socket = null ;
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//        }catch (IOException e){
+//            e.printStackTrace();
+//        }
 
         Message message= Message.obtain();
         message.what = 4;
@@ -933,16 +957,17 @@ public class ChatService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d("서비스종료",userId);
+        Toast.makeText(this,"서비스종료!!!",Toast.LENGTH_SHORT).show();
     }
 
     public void terminateService(){
-        try {
-            this.socket.close();
-        }catch (IOException e){
-
-            Log.d("chatService","terminateService-exception");
-        }
-        Log.d("chatService","terminateService");
+//        try {
+//            this.socket.close();
+//        }catch (IOException e){
+//
+//            Log.d("chatService","terminateService-exception");
+//        }
+//        Log.d("chatService","terminateService");
         this.stopSelf();
     }
 

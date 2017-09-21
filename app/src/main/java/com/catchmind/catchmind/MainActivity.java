@@ -76,27 +76,32 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         editor = mPref.edit();
 
-        mNCR = new NetworkChangeReceiver();
+//        mNCR = new NetworkChangeReceiver();
+//
+//        IntentFilter NCRfilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+//
+//
+//        registerReceiver(mNCR, NCRfilter);
 
-        registerReceiver(mNCR, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//        NetworkChangeUpdater = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                //UI update here
+//                if (intent != null) {
+////                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+//                    String networkType = intent.getExtras().getString("wifi");
+//                    UpdateNetwork(networkType);
+//
+//                }
+//            }
+//        };
+//
+//
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("receiver.to.activity.transfer");
+//
+//        registerReceiver(NetworkChangeUpdater, filter);
 
-        NetworkChangeUpdater = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //UI update here
-                if (intent != null) {
-//                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
-                    String networkType = intent.getExtras().getString("wifi");
-                    UpdateNetwork(networkType);
-
-                }
-            }
-        };
-
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("receiver.to.activity.transfer");
-        registerReceiver(mNCR, filter);
 
 
 //        Intent serviceIntentMain = new Intent(getApplicationContext(),ChatService.class);
@@ -275,9 +280,11 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         }
 
         public void changeRoomList(){
+
             Message message= Message.obtain();
             message.what = 2;
             handler.sendMessage(message);
+
         }
 
     };
@@ -294,7 +301,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             mService.terminateService();
         }
 
-        unregisterReceiver(mNCR);
+//        unregisterReceiver(mNCR);
+//        unregisterReceiver(NetworkChangeUpdater);
         mNCR = null;
 
     }

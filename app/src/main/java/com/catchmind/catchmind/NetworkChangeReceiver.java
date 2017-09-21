@@ -31,7 +31,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 Intent local = new Intent();
                 local.setAction("receiver.to.activity.transfer");
                 local.putExtra("wifi","wifi");
-                context.sendBroadcast(local);
+                context.sendOrderedBroadcast(local,null);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
 //                Intent serviceIntent = new Intent(context,ChatService.class);
 //                context.startService(serviceIntent);
@@ -44,7 +44,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 Intent local = new Intent();
                 local.setAction("receiver.to.activity.transfer");
                 local.putExtra("wifi","mobile");
-                context.sendBroadcast(local);
+                context.sendOrderedBroadcast(local,null);
                 Toast.makeText(context, activeNetwork.getTypeName(), Toast.LENGTH_SHORT).show();
 
 //                Intent serviceIntent = new Intent(context,ChatService.class);
