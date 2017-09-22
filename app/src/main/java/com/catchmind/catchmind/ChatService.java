@@ -157,7 +157,7 @@ public class ChatService extends Service {
             }
 
 
-            if( socket != null) {
+            if( socket != null ) {
 
                 if(socket.isClosed() || !socket.isConnected()) {
                     ConnectThread ct = new ConnectThread();
@@ -544,11 +544,11 @@ public class ChatService extends Service {
 
             try {
                 Log.d("여긴지낫니1","보고싶다");
-//                if(socket != null) {
-//                    Log.d("여긴지낫니2","보고싶다");
-//                    socket.close();
-//                    socket = null;
-//                }
+                if(socket != null) {
+                    Log.d("여긴지낫니2","보고싶다");
+                    socket.close();
+                    socket = null;
+                }
 
                     socket = new Socket(dstAddress, 5000);
 
@@ -716,14 +716,14 @@ public class ChatService extends Service {
 
         }
 
-//        try {
-//            socket.close();
-//            socket = null ;
-//        }catch (NullPointerException e){
-//            e.printStackTrace();
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
+        try {
+            socket.close();
+            socket = null ;
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
         Message message= Message.obtain();
         message.what = 4;
@@ -734,14 +734,14 @@ public class ChatService extends Service {
 
         Log.d("자살","justReconnect");
 
-//        try {
-//            socket.close();
-//            socket = null ;
-//        }catch (NullPointerException e){
-//            e.printStackTrace();
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
+        try {
+            socket.close();
+            socket = null ;
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
         Message message= Message.obtain();
         message.what = 4;

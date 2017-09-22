@@ -82,6 +82,7 @@ public class ListViewAdapter extends BaseAdapter {
         nameViewHolder viewHolder;
         String userId = "";
         String nickname = "";
+        String message = "";
         String profile = "";
 
 
@@ -119,6 +120,7 @@ public class ListViewAdapter extends BaseAdapter {
             viewHolder.profile_container.setVisibility(View.VISIBLE);
             userId = MyProfile.getId();
             nickname = MyProfile.getName();
+            message = MyProfile.getMessage();
             profile = MyProfile.getProfile();
             Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/"+userId+".png")
                     .error(R.drawable.default_profile_image)
@@ -142,6 +144,7 @@ public class ListViewAdapter extends BaseAdapter {
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
                     userId = FlistViewItemList.get(position-3).getId();
                     nickname = FlistViewItemList.get(position-3).getName();
+                    message = FlistViewItemList.get(position-3).getMessage();
                     profile = FlistViewItemList.get(position-3).getProfile();
                     if(profile.equals("none")){
                         viewHolder.icon.setImageResource(R.drawable.default_profile_image);
@@ -164,6 +167,7 @@ public class ListViewAdapter extends BaseAdapter {
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
                     userId = listViewItemList.get(position-4-FlistSize).getId();
                     nickname = listViewItemList.get(position-4-FlistSize).getName();
+                    message = listViewItemList.get(position-4-FlistSize).getMessage();
                     profile = listViewItemList.get(position-4-FlistSize).getProfile();
                     if(profile.equals("none")){
                         viewHolder.icon.setImageResource(R.drawable.default_profile_image);
@@ -194,6 +198,7 @@ public class ListViewAdapter extends BaseAdapter {
                     viewHolder.profile_container.setVisibility(View.VISIBLE);
                     userId = listViewItemList.get(position-3).getId();
                     nickname = listViewItemList.get(position-3).getName();
+                    message = listViewItemList.get(position-3).getMessage();
                     profile = listViewItemList.get(position-3).getProfile();
 
                     if(profile.equals("none")){
@@ -216,6 +221,7 @@ public class ListViewAdapter extends BaseAdapter {
         convertView.setTag(R.id.userId,userId);
         convertView.setTag(R.id.nickname,nickname);
         convertView.setTag(R.id.profile,profile);
+        convertView.setTag(R.id.message,message);
 
         Log.d("힘들다",""+position);
 

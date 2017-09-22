@@ -93,6 +93,7 @@ public class TabFragment1 extends Fragment {
                 String userId =(String) view.getTag(R.id.userId);
                 String nickname =(String) view.getTag(R.id.nickname);
                 String profile =(String) view.getTag(R.id.profile);
+                String message = (String) view.getTag(R.id.message);
 
                 if(userId.equals("")){
                     return;
@@ -104,6 +105,7 @@ public class TabFragment1 extends Fragment {
                 intent.putExtra("userId",userId);
                 intent.putExtra("nickname",nickname);
                 intent.putExtra("profile",profile);
+                intent.putExtra("message",message);
                 startActivityForResult(intent,1234);
 
             }

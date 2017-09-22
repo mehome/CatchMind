@@ -204,23 +204,23 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-//        NetworkChangeUpdater = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                //UI update here
-//                if (intent != null) {
-////                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
-//                    String networkType = intent.getExtras().getString("wifi");
-//                    UpdateNetwork(networkType);
-//
-//                }
-//            }
-//        };
-//
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("receiver.to.activity.transfer");
-//
-//        registerReceiver(NetworkChangeUpdater, filter);
+        NetworkChangeUpdater = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //UI update here
+                if (intent != null) {
+//                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+                    String networkType = intent.getExtras().getString("wifi");
+                    UpdateNetwork(networkType);
+
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("receiver.to.activity.transfer");
+
+        registerReceiver(NetworkChangeUpdater, filter);
 
         // Initializing ViewPager
         viewPager = (ChatRoomViewPager) findViewById(R.id.pagerChatRoom);
@@ -840,7 +840,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         mService.boundedNo = -1;
         mService.boundedFriendId ="";
         unbindService(mConnection);
-//        unregisterReceiver(NetworkChangeUpdater);
+        unregisterReceiver(NetworkChangeUpdater);
         ChatRoomViewPager.DrawMode = false;
     }
 

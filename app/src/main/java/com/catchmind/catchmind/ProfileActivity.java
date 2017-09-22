@@ -89,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
     final String upLoadServerUri = "http://vnschat.vps.phps.kr/UploadToServer.php";
 
     public TextView profileTitle;
+    public TextView profileMessage;
     public Button profilebtn;
     public Button talkbtn;
     public Button videoBtn;
@@ -177,6 +178,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         profileTitle = (TextView)findViewById(R.id.ProfileTitle);
+        profileMessage = (TextView)findViewById(R.id.ProfileMessage);
         profileIV = (ImageView)findViewById(R.id.ProfileImage);
         profilebtn = (Button)findViewById(R.id.profilebtn);
         talkbtn = (Button)findViewById(R.id.talkbtn);
@@ -192,6 +194,8 @@ public class ProfileActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userId");
         String profile = intent.getStringExtra("profile");
         profileTitle.setText(nickname+"님의 프로필");
+        String message = intent.getStringExtra("message");
+        profileMessage.setText(message);
         if(position ==1){
             if(profile.equals("none")){
                 profileIV.setImageResource(R.drawable.default_profile_image);

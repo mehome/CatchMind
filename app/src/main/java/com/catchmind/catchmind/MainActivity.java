@@ -76,31 +76,31 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
         editor = mPref.edit();
 
-//        mNCR = new NetworkChangeReceiver();
-//
-//        IntentFilter NCRfilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-//
-//
-//        registerReceiver(mNCR, NCRfilter);
+        mNCR = new NetworkChangeReceiver();
 
-//        NetworkChangeUpdater = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                //UI update here
-//                if (intent != null) {
-////                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
-//                    String networkType = intent.getExtras().getString("wifi");
-//                    UpdateNetwork(networkType);
-//
-//                }
-//            }
-//        };
-//
-//
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("receiver.to.activity.transfer");
-//
-//        registerReceiver(NetworkChangeUpdater, filter);
+        IntentFilter NCRfilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+
+
+        registerReceiver(mNCR, NCRfilter);
+
+        NetworkChangeUpdater = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //UI update here
+                if (intent != null) {
+//                    Toast.makeText(context, "액티비티의 리시버작동!"+intent.toString(), Toast.LENGTH_LONG).show();
+                    String networkType = intent.getExtras().getString("wifi");
+                    UpdateNetwork(networkType);
+
+                }
+            }
+        };
+
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("receiver.to.activity.transfer");
+
+        registerReceiver(NetworkChangeUpdater, filter);
 
 
 
@@ -301,8 +301,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             mService.terminateService();
         }
 
-//        unregisterReceiver(mNCR);
-//        unregisterReceiver(NetworkChangeUpdater);
+        unregisterReceiver(mNCR);
+        unregisterReceiver(NetworkChangeUpdater);
         mNCR = null;
 
     }
