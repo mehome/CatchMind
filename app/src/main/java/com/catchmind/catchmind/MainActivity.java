@@ -340,10 +340,18 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
             case R.id.action_align:
 
                 break;
-            case R.id.action_search:
-                txt = "search click";
-                Toast.makeText(this,txt, Toast.LENGTH_LONG).show();
+            case R.id.action_search_friend:
+
+                Intent intentSF = new Intent(this,SearchFriendActivity.class);
+                startActivity(intentSF);
                 break;
+
+            case R.id.action_search_chatroom:
+
+                Intent intentSR = new Intent(this,SearchRoomActivity.class);
+                startActivity(intentSR);
+                break;
+
 
             case R.id.add_friend:
                 Intent intentadd = new Intent(this,AddFriendActivity.class);

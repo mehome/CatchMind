@@ -20,7 +20,7 @@
 
     </item>
 
-    <item android:id="@+id/action_search"
+    <item android:id="@+id/action_search_friend_friend"
         android:icon="@drawable/search_icon"
         android:title="search"
         app:showAsAction="ifRoom|withText"/>

@@ -99,6 +99,7 @@ public class ListViewAdapter extends BaseAdapter {
             viewHolder.sectionTxt = (TextView) convertView.findViewById(R.id.sectionText);
             viewHolder.profile_container = (RelativeLayout) convertView.findViewById(R.id.profile_container);
 
+
             convertView.setTag(viewHolder);
 
         }else{
@@ -185,6 +186,7 @@ public class ListViewAdapter extends BaseAdapter {
             } else {
 
                 if (position == 2) {
+
                     viewHolder.sectionTxt.setText("친구");
                     viewHolder.section.setVisibility(View.VISIBLE);
                     viewHolder.profile_container.setVisibility(View.GONE);
@@ -257,6 +259,8 @@ public class ListViewAdapter extends BaseAdapter {
 //
 //        listViewItemList.add(item);
 //    }
+
+
 }
 
 

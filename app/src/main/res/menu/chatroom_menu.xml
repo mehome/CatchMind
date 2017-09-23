@@ -23,7 +23,7 @@
 
     </item>
 
-    <item android:id="@+id/action_search"
+    <item android:id="@+id/action_search_chatroom"
         android:icon="@drawable/search_icon"
         app:showAsAction="ifRoom|withText"/>
 

@@ -18,6 +18,9 @@ public class ChatRoomItem{
         this.FriendId = friendId;
         this.MemberNum = 0;
         this.recentMessageTime = RMT;
+        if(no != 0){
+            this.FriendId = "그룹채팅 " + no;
+        }
 
     }
 

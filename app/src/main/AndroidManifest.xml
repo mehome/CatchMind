@@ -55,6 +55,14 @@
         <activity android:name=".ReceiveCallActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
+
+        <activity android:name=".SearchRoomActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name=".SearchFriendActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ColorPickerActivity"/>
 
         <activity android:name=".OpenCVActivity"

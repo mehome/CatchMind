@@ -1,57 +1,73 @@
 package com.catchmind.catchmind;
 
+/**
+ * Created by sonsch94 on 2017-09-22.
+ */
+
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.StringSignature;
 
-import org.json.JSONArray;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import org.json.JSONArray;
+
 import java.util.Date;
 
-public class ChatRoomAdapter extends BaseAdapter{
+/**
+ * Created by sonsch94 on 2017-09-22.
+ */
 
-    public ListViewItem MyProfile;
-    public ArrayList<ChatRoomItem> chatRoomList = new ArrayList<ChatRoomItem>() ;
+public class SearchRoomAdapter extends BaseAdapter {
+
+
+    public ArrayList<ChatRoomItem> SearchRoomList = new ArrayList<>() ;
     public Context mContext;
     public LayoutInflater inflater ;
     public MyDatabaseOpenHelper db;
     public String userId;
     public SimpleDateFormat sdfNow ;
 
-    // ListViewAdapter의 생성자
-    public ChatRoomAdapter(Context context,ArrayList<ChatRoomItem> ListData,String myId ) {
+
+    public SearchRoomAdapter(Context context, ArrayList<ChatRoomItem> searchRoomList, String myId) {
+
         this.mContext = context;
         this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.chatRoomList = ListData;
+        this.SearchRoomList = searchRoomList;
+        db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
         this.userId = myId;
         this.sdfNow = new SimpleDateFormat("HH:mm");
-        db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
-        Log.d("새로생기나?",db.toString());
+
     }
 
-    public void setChatRoomList(ArrayList<ChatRoomItem> ListData) {
-        this.chatRoomList = ListData;
+
+    public void clearList(){
+        this.SearchRoomList = new ArrayList<>();
     }
 
-    // Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현
+
+    public void addCRItem(ChatRoomItem addItem){
+        this.SearchRoomList.add(addItem);
+    }
+
+
     @Override
     public int getCount() {
-        return chatRoomList.size();
+
+        return SearchRoomList.size();
+
     }
+
 
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
@@ -60,7 +76,7 @@ public class ChatRoomAdapter extends BaseAdapter{
 
         chatViewHolder viewHolder;
 
-        // "listview_item" Layout을 inflate하여 convertView 참조 획득.
+
         if (convertView == null) {
 
             convertView = this.inflater.inflate(R.layout.chatroom_item, parent, false);
@@ -87,7 +103,7 @@ public class ChatRoomAdapter extends BaseAdapter{
         Date recvTime;
         String time;
 
-        Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,chatRoomList.get(position).getFriendId(),chatRoomList.get(position).getNo());
+        Cursor cursor = db.getLastRowJoinOnChatRoomList(userId,SearchRoomList.get(position).getFriendId(),SearchRoomList.get(position).getNo());
         Log.d("헬이",cursor.getColumnName(5));
         if(cursor.getCount() != 0) {
             cursor.moveToNext();
@@ -99,7 +115,7 @@ public class ChatRoomAdapter extends BaseAdapter{
             when = cursor.getLong(4);
             myWhen = cursor.getLong(8);
             Log.d("myWhen_" + position, myWhen + "");
-            unRead = db.getUnRead(userId, chatRoomList.get(position).getFriendId(), chatRoomList.get(position).getNo(), myWhen);
+            unRead = db.getUnRead(userId, SearchRoomList.get(position).getFriendId(), SearchRoomList.get(position).getNo(), myWhen);
             recvTime = new Date(when);
             time = this.sdfNow.format(recvTime);
         }else{
@@ -117,9 +133,9 @@ public class ChatRoomAdapter extends BaseAdapter{
 
 
 
-        if(chatRoomList.get(position).getNo()==0) {
+        if(SearchRoomList.get(position).getNo()==0) {
 
-            Cursor userCS = db.getChatFriendListByIdAndNo(chatRoomList.get(position).getNo(),chatRoomList.get(position).getFriendId());
+            Cursor userCS = db.getChatFriendListByIdAndNo(SearchRoomList.get(position).getNo(),SearchRoomList.get(position).getFriendId());
             String nickname = "";
             String profile = "";
             Log.d("가라",position+"###"+userCS.getCount());
@@ -134,48 +150,47 @@ public class ChatRoomAdapter extends BaseAdapter{
             }
             userCS.close();
 
-            Log.d("오호1",chatRoomList.get(position).getNo()+"###"+position);
+            Log.d("오호1",SearchRoomList.get(position).getNo()+"###"+position);
 
             viewHolder.title.setText(nickname);
             viewHolder.content.setText(content);
             viewHolder.time.setText(time);
-            viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + chatRoomList.get(position).getFriendId() + ".png")
+            viewHolder.memberNum.setText("" + SearchRoomList.get(position).getMemberNum());
+            Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + SearchRoomList.get(position).getFriendId() + ".png")
                     .error(R.drawable.default_profile_image)
                     .signature(new StringSignature(profile))
                     .into(viewHolder.profileImage);
 
-            convertView.setTag(R.id.userId, chatRoomList.get(position).getFriendId());
+            convertView.setTag(R.id.userId, SearchRoomList.get(position).getFriendId());
             convertView.setTag(R.id.nickname, nickname);
-            convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
+            convertView.setTag(R.id.no, SearchRoomList.get(position).getNo());
 
         }else{
-
-            viewHolder.title.setText("그룹채팅 "+chatRoomList.get(position).getNo());
+            viewHolder.title.setText("그룹채팅 "+SearchRoomList.get(position).getNo());
             viewHolder.content.setText(content);
             viewHolder.time.setText(time);
 //            viewHolder.memberNum.setText("" + chatRoomList.get(position).getMemberNum());
             viewHolder.profileImage.setImageResource(R.drawable.group_icon);
-            Log.d("오호2",chatRoomList.get(position).getNo()+"###"+position);
+            Log.d("오호2",SearchRoomList.get(position).getNo()+"###"+position);
             JSONArray jarray = new JSONArray();
-            Cursor cs = db.getChatFriendListByNo(chatRoomList.get(position).getNo());
+            Cursor cs = db.getChatFriendListByNo(SearchRoomList.get(position).getNo());
             while(cs.moveToNext()) {
 
                 jarray.put(cs.getString(1));
 
-                Log.d("chatRoomAdapter","cs?"+cs.getString(1));
+                Log.d("SearchRoomAdapter","cs?"+cs.getString(1));
             }
             cs.close();
 
             convertView.setTag(R.id.userId, jarray.toString());
-            convertView.setTag(R.id.nickname, "그룹채팅 "+chatRoomList.get(position).getNo());
-            convertView.setTag(R.id.no, chatRoomList.get(position).getNo());
-
+            convertView.setTag(R.id.nickname, "그룹채팅 "+SearchRoomList.get(position).getNo());
+            convertView.setTag(R.id.no, SearchRoomList.get(position).getNo());
         }
 
         return convertView;
 
     }
+
 
     // 지정한 위치(position)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴. : 필수 구현
     @Override
@@ -183,24 +198,13 @@ public class ChatRoomAdapter extends BaseAdapter{
         return position ;
     }
 
+
     // 지정한 위치(position)에 있는 데이터 리턴 : 필수 구현
     @Override
     public Object getItem(int position) {
-        return chatRoomList.get(position) ;
-    }
-
-
-    public void ChangeList(ArrayList<ChatRoomItem> ListData){
-        this.chatRoomList = ListData;
+        return SearchRoomList.get(position) ;
     }
 
 
 
-
-    // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-//    public void addItem(String title, String content, int memberNum, String date) {
-//        ChatRoomItem item = new ChatRoomItem(title,content,memberNum, date);
-//
-//        chatRoomList.add(item);
-//    }
 }

@@ -149,22 +149,56 @@ public class ChatService extends Service {
 
             Log.d("생성자","생성전");
 
-            if(socket == null ) {
+//
+
+//            if(intent != null){
+//                if(intent.getBooleanExtra("FromLogin",false)){
+//
+//                    try {
+//                        socket.close();
+//                        socket = null ;
+//                        Thread.sleep(2000);
+//                    }catch (NullPointerException e){
+//                        e.printStackTrace();
+//                    }catch (IOException e){
+//                        e.printStackTrace();
+//                    }catch (InterruptedException e){
+//                        e.printStackTrace();
+//                    }
+//
+//
+//                }
+//            }
+
+
+            if( socket == null ) {
 
                 ConnectThread ct = new ConnectThread();
                 ct.start();
 
-            }
+            }else{
 
-
-            if( socket != null ) {
-
-                if(socket.isClosed() || !socket.isConnected()) {
+                if( socket.isClosed() || !socket.isConnected() ){
                     ConnectThread ct = new ConnectThread();
                     ct.start();
                 }
 
             }
+
+
+
+
+
+
+
+//            if( socket != null ) {
+//
+//                if(socket.isClosed() || !socket.isConnected()) {
+//                    ConnectThread ct = new ConnectThread();
+//                    ct.start();
+//                }
+//
+//            }
 
 //        }
 
