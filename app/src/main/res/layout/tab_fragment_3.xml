@@ -12,14 +12,8 @@
         android:layout_marginTop="30dp"
         android:id="@+id/settingProfile"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="계정"
-        android:textSize="16sp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingProfile"
-        android:id="@+id/settingAccount"/>
+
+
 
     <Button
         android:layout_width="match_parent"
@@ -27,36 +21,11 @@
         android:text="알림"
         android:textSize="16sp"
         android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingAccount"
+        android:layout_below="@+id/settingProfile"
         android:id="@+id/settingNotice"/>
 
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="친구"
-        android:textSize="16sp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingNotice"
-        android:id="@+id/settingFriend" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="화면"
-        android:textSize="16sp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingFriend"
-        android:id="@+id/settingDisplay" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="잠금"
-        android:textSize="16sp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingDisplay"
-        android:id="@+id/settingLock" />
 
     <Button
         android:layout_width="match_parent"
@@ -64,7 +33,7 @@
         android:text="로그아웃"
         android:textSize="16sp"
         android:layout_marginTop="20dp"
-        android:layout_below="@+id/settingLock"
+        android:layout_below="@+id/settingNotice"
         android:id="@+id/logout"
         android:onClick="Logout"/>
 

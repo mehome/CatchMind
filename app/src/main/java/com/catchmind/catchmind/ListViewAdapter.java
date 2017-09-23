@@ -49,6 +49,10 @@ public class ListViewAdapter extends BaseAdapter {
         this.FlistViewItemList = FListData;
     }
 
+    public void changeMyItem(ListViewItem MyItem){
+        this.MyProfile = MyItem;
+    }
+
     public void sizeReset(){
         this.listSize = listViewItemList.size();
         this.FlistSize = FlistViewItemList.size();

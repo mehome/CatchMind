@@ -69,6 +69,10 @@
 
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ColorPickerActivity"/>
 
+        <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ChangeMessage"/>
+
+        <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ChangeNickname"/>
+
         <activity android:name=".OpenCVActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"

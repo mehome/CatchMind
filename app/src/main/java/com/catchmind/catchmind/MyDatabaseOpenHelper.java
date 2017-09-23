@@ -173,9 +173,9 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         Log.d("왜갑자기","씨이발");
         String sql;
         if(no==0) {
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId AND messageData_" + userId + ".no = chatFriendList.no WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatMessageList ON messageData_" + userId + ".friendId = chatMessageList.friendId AND messageData_" + userId + ".no = chatMessageList.no WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
         }else{
-            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId AND messageData_" + userId + ".no = chatFriendList.no WHERE messageData_" + userId + ".no='" + no +"'" ;
+            sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatMessageList ON messageData_" + userId + ".friendId = chatMessageList.friendId AND messageData_" + userId + ".no = chatMessageList.no WHERE messageData_" + userId + ".no='" + no +"'" ;
         }
         Cursor cursor = dbr.rawQuery(sql,null);
 
@@ -337,6 +337,28 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             dbw.endTransaction();
         }
 //        db.close();
+
+
+
+
+        dbw.beginTransaction();
+        String sql2="INSERT INTO chatMessageList VALUES('"+no+"','"+friendId+"','"+nickname+"','"+profile_image+"','"+message+"','"+time+"');";
+
+        try
+        {
+            dbw.execSQL(sql2);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+
     }
 
 
@@ -409,6 +431,63 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             e.printStackTrace();
 
         }
+
+
+
+
+
+
+
+        //////////////////////////////////////////
+
+
+        try {
+            JSONArray jarray = new JSONArray(friendId);
+            String sql = "SELECT * FROM friendList WHERE friendId='"+jarray.getString(0)+"'";
+            Log.d("ICFDMBJ",sql);
+            for(int i=1; i<jarray.length();i++){
+                sql = sql + " OR friendId='"+jarray.getString(i)+"'";
+            }
+
+//            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = dbr.rawQuery(sql,null);
+
+            dbr.beginTransaction();
+
+            String sql_2="INSERT INTO chatMessageList VALUES ";
+
+            cursor.moveToNext();
+
+            sql_2 = sql_2 + "('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            while(cursor.moveToNext()){
+                sql_2 = sql_2 + ",('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            }
+            sql_2 = sql_2 + ",('"+no+"','"+mPref.getString("userId","null")+"','"+mPref.getString("nickname","null")+"','"+mPref.getString("profile","null")+"','"+mPref.getString("message","null")+"','0')";
+
+            Log.d("ICFDM",sql_2);
+
+            try
+            {
+                dbr.execSQL(sql_2);
+                dbr.setTransactionSuccessful();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                dbr.endTransaction();
+            }
+//            db.close();
+
+        }catch(JSONException e){
+            Log.d("ICFDM.JSONException",friendId);
+            e.printStackTrace();
+
+        }
+
+
     }
 
 
@@ -457,6 +536,61 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             e.printStackTrace();
 
         }
+
+
+
+
+
+
+        ////////////////////////////////////////
+
+
+        try {
+            JSONArray jarray = new JSONArray(friendId);
+            String sql = "SELECT * FROM friendList WHERE friendId='"+jarray.getString(0)+"'";
+            Log.d("ICFDMBJI",sql);
+            for(int i=1; i<jarray.length();i++){
+                sql = sql + " OR friendId='"+jarray.getString(i)+"'";
+            }
+
+//            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = dbr.rawQuery(sql,null);
+
+            dbr.beginTransaction();
+
+            String sql_2="INSERT INTO chatMessageList VALUES ";
+
+            cursor.moveToNext();
+
+            sql_2 = sql_2 + "('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            while(cursor.moveToNext()){
+                sql_2 = sql_2 + ",('"+no+"','"+cursor.getString(0)+"','"+cursor.getString(1)+"','"+cursor.getString(2)+"','"+cursor.getString(3)+"','0')";
+            }
+
+            Log.d("ICFDMI",sql_2);
+
+            try
+            {
+                dbr.execSQL(sql_2);
+                dbr.setTransactionSuccessful();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                dbr.endTransaction();
+            }
+//            db.close();
+
+        }catch(JSONException e){
+            Log.d("ICFDM.JSONException",friendId);
+            e.printStackTrace();
+
+        }
+
+
     }
 
 
@@ -508,9 +642,15 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             e.printStackTrace();
 
         }
-    }
 
-    public void insertChatMessageListMultiple(String jarray){
+
+
+////////////////////////////////////////////////////
+
+
+
+
+
         try {
 //            SQLiteDatabase db = getWritableDatabase();
             JSONArray chatArray = new JSONArray(jarray);
@@ -557,7 +697,12 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
             e.printStackTrace();
 
         }
+
+
+
+
     }
+
 
 
     public void createChatRoomList(){

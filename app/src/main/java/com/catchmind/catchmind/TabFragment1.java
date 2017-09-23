@@ -55,6 +55,7 @@ public class TabFragment1 extends Fragment {
         String myProfile = getArguments().getString("profile");
         String myMessage = getArguments().getString("message");
 
+        mPref = getActivity().getSharedPreferences("login",getActivity().MODE_PRIVATE);
 
         ListViewItem myItem = new ListViewItem(myId,myNickname,myProfile,myMessage);
 
@@ -118,6 +119,16 @@ public class TabFragment1 extends Fragment {
     public void onResume() {
         super.onResume();
 
+        String myId = getArguments().getString("userId");
+        String myNickname = mPref.getString("nickname","노닉네임");
+        String myProfile = getArguments().getString("profile");
+        String myMessage = mPref.getString("message","노메세지");
+
+
+        ListViewItem myItem = new ListViewItem(myId,myNickname,myProfile,myMessage);
+
+        myListAdapter.changeMyItem(myItem);
+
         ArrayList<ListViewItem> ListData = new ArrayList<ListViewItem>();
         ArrayList<ListViewItem> FListData = new ArrayList<ListViewItem>();
 
@@ -144,7 +155,9 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+
         Log.d("태프원",resultCode+"");
+
         if(resultCode == RESULT_OK) {
 //            Toast.makeText(getContext(), requestCode + "###" + resultCode, Toast.LENGTH_SHORT).show();
             String friendId = data.getExtras().getString("friendId");

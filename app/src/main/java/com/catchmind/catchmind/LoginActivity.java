@@ -242,6 +242,7 @@ public class LoginActivity extends AppCompatActivity{
                 db.createMessageData(sUserId);
                 db.createChatFriendList();
                 db.createChatRoomList();
+                db.createChatMessageList();
 
 //                db.insertChatFriendData(sUserId,0,"thdwndrl","송중기","xxx","상태메시지",1234);
 

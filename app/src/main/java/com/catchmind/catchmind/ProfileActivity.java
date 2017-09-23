@@ -81,6 +81,8 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
     private static final int Profile_Change = 4292;
+    private static final int Nickname_Change = 3279;
+    private static final int Message_Change = 9510;
     private static final String TAG = "ProfileActivity_openCV";
     private Uri mImageCaptureUri;
     private String absolutePath;
@@ -93,6 +95,8 @@ public class ProfileActivity extends AppCompatActivity {
     public Button profilebtn;
     public Button talkbtn;
     public Button videoBtn;
+    public Button nicknameBtn;
+    public Button messageBtn;
     public ImageView profileIV;
     public Bitmap photo;
     public File sourceFile ;
@@ -104,8 +108,10 @@ public class ProfileActivity extends AppCompatActivity {
     public String userId;
     public String nickname;
     private Mat matResult;
+    String message;
 
     public SharedPreferences mPref;
+    public SharedPreferences.Editor editor;
     public String myNickname;
 
     public static native long loadCascade(String cascadeFileName );
@@ -183,10 +189,14 @@ public class ProfileActivity extends AppCompatActivity {
         profilebtn = (Button)findViewById(R.id.profilebtn);
         talkbtn = (Button)findViewById(R.id.talkbtn);
         videoBtn = (Button)findViewById(R.id.VideoCallBtn);
+        nicknameBtn = (Button)findViewById(R.id.nicknamebtn);
+        messageBtn = (Button)findViewById(R.id.messagebtn);
         Intent intent = getIntent();
         int position = intent.getIntExtra("position",0);
         if(position == 1){
             profilebtn.setVisibility(View.VISIBLE);
+            nicknameBtn.setVisibility(View.VISIBLE);
+            messageBtn.setVisibility(View.VISIBLE);
             talkbtn.setVisibility(View.GONE);
             videoBtn.setVisibility(View.GONE);
         }
@@ -194,7 +204,7 @@ public class ProfileActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userId");
         String profile = intent.getStringExtra("profile");
         profileTitle.setText(nickname+"님의 프로필");
-        String message = intent.getStringExtra("message");
+        message = intent.getStringExtra("message");
         profileMessage.setText(message);
         if(position ==1){
             if(profile.equals("none")){
@@ -223,6 +233,7 @@ public class ProfileActivity extends AppCompatActivity {
         read_cascade_file();
 
         mPref = getSharedPreferences("login",MODE_PRIVATE);
+        editor = mPref.edit();
 
         myNickname = mPref.getString("nickname","메세지없음");
 
@@ -560,8 +571,41 @@ public class ProfileActivity extends AppCompatActivity {
                         idt.start();
                     }
                 }
+
+                break;
             }
 
+
+            case Nickname_Change: {
+                if(resultCode == RESULT_OK) {
+                    String nick = data.getExtras().getString("nickname");
+                    profileTitle.setText(nick+"님의 프로필");
+
+                    editor.putString("nickname",nick);
+                    editor.commit();
+
+                    ChangeNicknameThread cnt = new ChangeNicknameThread(nick);
+                    cnt.start();
+
+                }
+                break;
+            }
+
+
+            case Message_Change: {
+
+                if(resultCode == RESULT_OK) {
+                    String msg = data.getExtras().getString("message");
+                    profileMessage.setText(msg);
+
+                    editor.putString("message",msg);
+                    editor.commit();
+
+                    ChangeMessageThread cmt = new ChangeMessageThread(msg);
+                    cmt.start();
+                }
+                break;
+            }
 
 //            case CROP_FROM_IMAGE: {
 //
@@ -781,6 +825,126 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
+    public class ChangeNicknameThread extends Thread {
+
+        String sNickname;
+
+        public ChangeNicknameThread (String Nickname){
+            this.sNickname = Nickname;
+        }
+
+        @Override
+        public void run() {
+
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "userId="+userId+"&nickname="+this.sNickname;
+
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/changeNickname.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+
+            /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.e("acft.data",data);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
+
+
+    public class ChangeMessageThread extends Thread {
+
+
+        String sMessage;
+
+        public ChangeMessageThread (String Message){
+            this.sMessage = Message;
+        }
+
+        @Override
+        public void run() {
+
+            String data="";
+
+            /* 인풋 파라메터값 생성 */
+            String param = "userId="+userId+"&message="+this.sMessage;
+
+            try {
+            /* 서버연결 */
+                URL url = new URL("http://vnschat.vps.phps.kr/changeMessage.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+            /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+
+            /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+                Log.e("acft.data",data);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
+
+
+
     public class ImageSendThread extends Thread {
 
         public String filePath;
@@ -860,6 +1024,18 @@ public class ProfileActivity extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
 
+    }
+
+    public void messageChange(View v){
+        Intent intent = new Intent(this,ChangeMessage.class);
+        intent.putExtra("message",message);
+        startActivityForResult(intent, Message_Change);
+    }
+
+    public void nicknameChange(View v){
+        Intent intent = new Intent(this,ChangeNickname.class);
+        intent.putExtra("nickname",nickname);
+        startActivityForResult(intent, Nickname_Change);
     }
 
     //////////////////////////////////////
@@ -1302,5 +1478,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     ///////////////// End Connect Part/////
+
+
+
 
 }
