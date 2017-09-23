@@ -10,7 +10,8 @@
         android:text="프로필"
         android:textSize="16sp"
         android:layout_marginTop="30dp"
-        android:id="@+id/settingProfile"/>
+        android:id="@+id/settingProfile"
+        android:onClick="myProfileBtn"/>
 
 
 
@@ -22,7 +23,7 @@
         android:textSize="16sp"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/settingProfile"
-        android:id="@+id/settingNotice"/>
+        android:id="@+id/settingNotice" />
 
 
 

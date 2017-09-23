@@ -403,6 +403,19 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
     }
 
+    public void myProfileBtn(View v){
+        Intent intent = new Intent(this,ProfileActivity.class);
+        intent.putExtra("position",1);
+        intent.putExtra("userId",mPref.getString("userId","noUserId"));
+        intent.putExtra("nickname",mPref.getString("nickname","noNickname"));
+        intent.putExtra("profile",mPref.getString("profile", "noprofile"));
+        intent.putExtra("message",mPref.getString("message", "Nomessage"));
+        startActivity(intent);
+
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

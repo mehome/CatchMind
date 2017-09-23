@@ -1766,6 +1766,9 @@ public class ChatService extends Service {
 
     public void NotificationAlarm(String friendId, int no, String nickname, String content){
 
+        if(!mPref.getBoolean("aa",true)){
+            return;
+        }
 
         if(no == 0){
             if(!mPref.getBoolean(friendId,true)){
