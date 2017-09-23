@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="70dp"   >
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/chatRoomImage"
+        android:src="@drawable/default_profile_image"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_marginStart="10dp"
+        android:layout_centerVertical="true"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:id="@+id/chatRoomTitle"
+        android:textSize="22sp"
+        android:textColor="#000000"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/chatRoomImage"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message"
+        android:id="@+id/chatRoomContent"
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/chatRoomImage"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="15dp"/>
+
+
+
+
+    <ImageView
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:id="@+id/check_image_room"
+        android:src="@drawable/check_icon_inact"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:foregroundGravity="center_vertical"/>
+
+</RelativeLayout>

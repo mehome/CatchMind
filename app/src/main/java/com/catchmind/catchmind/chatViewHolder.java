@@ -15,5 +15,6 @@ public class chatViewHolder {
     public TextView time;
     public TextView unRead;
     public ImageView profileImage;
+    public ImageView check;
 
 }

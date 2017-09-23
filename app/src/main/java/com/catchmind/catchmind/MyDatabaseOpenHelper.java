@@ -12,6 +12,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -169,6 +170,7 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     public Cursor getMessageListJoinChatFriendList(String userId,String friendId,int no){
 
 //        SQLiteDatabase db = this.getReadableDatabase();
+        Log.d("왜갑자기","씨이발");
         String sql;
         if(no==0) {
             sql = "SELECT * FROM messageData_" + userId + " INNER JOIN chatFriendList ON messageData_" + userId + ".friendId = chatFriendList.friendId AND messageData_" + userId + ".no = chatFriendList.no WHERE messageData_" + userId + ".friendId='" + friendId + "' AND messageData_"+userId+".no='0'" ;
@@ -295,6 +297,26 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
     }
 
+
+
+    public void createChatMessageList(){
+
+//        SQLiteDatabase db = getWritableDatabase();
+        String sql_del="DROP TABLE IF EXISTS chatMessageList";
+        String sql = "CREATE TABLE IF NOT EXISTS chatMessageList(no INTEGER NOT NULL,friendId TEXT NOT NULL,nickname TEXT NOT NULL,profileImage TEXT,message TEXT,time INTEGER,PRIMARY KEY (no,friendId) );";
+        try {
+            dbw.execSQL(sql_del);
+            dbw.execSQL(sql);
+        }
+        catch (SQLException e) {
+            Log.d("db.exeptionCFL",sql);
+        }
+
+    }
+
+
+
+
     public void insertChatFriendData(int no,String friendId, String nickname, String profile_image,String message,long time) {
         Log.d("db.insertCFD","####"+friendId+"####"+nickname);
 //        SQLiteDatabase db = this.getWritableDatabase();
@@ -316,6 +338,30 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }
 //        db.close();
     }
+
+
+    public void insertChatMessageList(int no,String friendId, String nickname, String profile_image,String message,long time) {
+        Log.d("db.insertCML","####"+friendId+"####"+nickname);
+//        SQLiteDatabase db = this.getWritableDatabase();
+        dbw.beginTransaction();
+        String sql="INSERT INTO chatMessageList VALUES('"+no+"','"+friendId+"','"+nickname+"','"+profile_image+"','"+message+"','"+time+"');";
+        Log.d("insertCML안",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+//        db.close();
+    }
+
 
     public void insertChatFriendDataMultipleByJoin(String friendId, int no){
         try {
@@ -464,6 +510,56 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
         }
     }
 
+    public void insertChatMessageListMultiple(String jarray){
+        try {
+//            SQLiteDatabase db = getWritableDatabase();
+            JSONArray chatArray = new JSONArray(jarray);
+
+            String sql="INSERT INTO chatMessageList VALUES ";
+
+            for(int i=0;i<chatArray.length();i++){
+                if(i>0){
+                    sql = sql + ",";
+                }
+                JSONObject jobject = new JSONObject(chatArray.get(i).toString());
+                int no = (int) jobject.getInt("no");
+                String friendId = (String) jobject.getString("friendId");
+                String nickname = (String) jobject.getString("nickname");
+                String profile = (String) jobject.getString("profile");
+                String message = (String) jobject.getString("message");
+                long time = (long) jobject.getLong("time");
+
+                sql = sql + "('"+no+"','"+friendId+"','"+nickname+"','"+profile+"','"+message+"','"+time+"')";
+            }
+
+
+            Log.d("ICFDM",sql);
+
+            dbw.beginTransaction();
+
+            try
+            {
+                dbw.execSQL(sql);
+                dbw.setTransactionSuccessful();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                dbw.endTransaction();
+            }
+//            db.close();
+
+        }catch(JSONException e){
+            Log.d("ICFDM.JSONException",jarray);
+            e.printStackTrace();
+
+        }
+    }
+
+
     public void createChatRoomList(){
 
 //        SQLiteDatabase db = getWritableDatabase();
@@ -572,12 +668,27 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
     }
 
     public Cursor getChatFriendListByNo(int no){
-        Log.d("db.getCFLByNO","noUserId");
+        Log.d("db.getCFLByNO",no+"");
 //        SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM chatFriendList WHERE no='"+no+"'";
         Cursor cursor = dbr.rawQuery(sql,null);
 
         return cursor;
+    }
+
+    public String getChatFriendListByNoJarray(int no){
+        Log.d("db.getCFLByNOJ",no+"");
+//        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM chatFriendList WHERE no='"+no+"'";
+        Cursor cursor = dbr.rawQuery(sql,null);
+
+            org.json.simple.JSONArray jarray = new org.json.simple.JSONArray();
+            while (cursor.moveToNext()) {
+                Log.d("죽고싶다", cursor.getString(1));
+                jarray.add(cursor.getString(1));
+            }
+
+        return jarray.toString();
     }
 
     public Cursor getChatFriendListByIdAndNo(int no,String friendId){

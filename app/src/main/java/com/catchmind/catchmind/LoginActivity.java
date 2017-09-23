@@ -243,7 +243,6 @@ public class LoginActivity extends AppCompatActivity{
                 db.createChatFriendList();
                 db.createChatRoomList();
 
-
 //                db.insertChatFriendData(sUserId,0,"thdwndrl","송중기","xxx","상태메시지",1234);
 
 //                db.insertMessageData(sUserId,"thdwndrl","안녕중기야","오후 5시20분",1);
@@ -301,6 +300,7 @@ public class LoginActivity extends AppCompatActivity{
                         editor.putString("profile",profile);
                         editor.putString("message",message);
                         db.insertChatFriendData(0,sUserId,nickname,profile,message,0);
+
                         editor.commit();
                     }else {
                         db.insert(friendId, nickname, profile, message, bookmark);
@@ -323,6 +323,7 @@ public class LoginActivity extends AppCompatActivity{
 //                    db.insertChatFriendData(sUserId,no,friendId,nickname,profile,message,time);
 
                     db.insertChatFriendDataMultiple(dataArray.get(1).toString());
+
 
 //                }
 

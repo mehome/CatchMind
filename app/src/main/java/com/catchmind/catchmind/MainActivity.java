@@ -29,6 +29,10 @@ import android.widget.Toast;
 
 //import com.facebook.stetho.Stetho;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     public String userId;
     public String nickname;
     public static final int MakeGroupActivity = 5409;
+    public static final int EditChatRoom = 5828;
     public NetworkChangeReceiver mNCR;
     BroadcastReceiver NetworkChangeUpdater;
     @Override
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         userId = mPref.getString("userId","닉없음");
         nickname = mPref.getString("nickname","메세지없음");
 
+        db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
 
         editor = mPref.edit();
 
@@ -371,8 +377,9 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
                 break;
 
             case R.id.edit_chatroom:
-                Intent openCVIntent = new Intent(this,OpenCVActivity.class);
-                startActivity(openCVIntent);
+
+                Intent intentEdit = new Intent(this,EditChatRoomActivity.class);
+                startActivityForResult(intentEdit,EditChatRoom);
                 break;
 
 
@@ -407,6 +414,74 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
                 String nick = data.getExtras().getString("nickname");
                 fragmentCommunicator.startChatRoomActivity(no,fId,nick);
             }
+        }else if(requestCode == EditChatRoom){
+            if(resultCode == RESULT_OK){
+                try {
+                    String roomSet = data.getExtras().getString("roomSet");
+
+                    JSONArray jarray = new JSONArray(roomSet);
+
+                    String content =  nickname + "님이 나갔습니다";
+                    long now = System.currentTimeMillis();
+
+                    for(int i=0;i<jarray.length();i++){
+
+                        JSONObject jsonObject = new JSONObject(jarray.get(i).toString());
+
+                        if(jsonObject.getBoolean("group")){
+
+                            int no = jsonObject.getInt("id");
+
+                            String friendIdExit = jsonObject.getString("FIE");
+
+                            ExitThread et = new ExitThread(no,friendIdExit);
+                            et.start();
+
+
+
+                        }else{
+
+                            mService.sendExit(0,jsonObject.getString("id"),content,now);
+                        }
+
+                    }
+
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
+
+
+
+
+    public class ExitThread extends Thread{
+
+
+        int no;
+        String content;
+        long now;
+        String friendIdExit;
+
+        public ExitThread(int No,String FriendIdExit){
+            this.no = No;
+            this.now = System.currentTimeMillis();
+            this.content = nickname + "님이 나갔습니다";
+            this.friendIdExit = FriendIdExit;
+        }
+
+        @Override
+        public void run() {
+
+            mService.sendExit(no,friendIdExit,content,now);
+        }
+
+
+    }
+
+
+
 }

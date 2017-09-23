@@ -592,7 +592,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         Cursor cursor = db.getChatFriendListByNo(no);
 
         while(cursor.moveToNext()){
-
+            Log.d("리시브시발",cursor.getString(1));
             NickHash.put(cursor.getString(1),cursor.getString(2));
             ProfileHash.put(cursor.getString(1),cursor.getString(3));
         }
