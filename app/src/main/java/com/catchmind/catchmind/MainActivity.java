@@ -301,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         mService.boundCheck_2 = false;
         unbindService(mConnection);
 
+
         boolean autoLogin = mPref.getBoolean("autoLogin",false);
         Log.d("MainActivity","onDestroy"+autoLogin);
         if(!autoLogin){
@@ -395,6 +396,8 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         editor.putBoolean("autoLogin",false);
         editor.commit();
         mService.terminateService();
+        Intent stopIntent = new Intent(this,ChatService.class);
+        stopService(stopIntent);
         Log.d("MainActivity","Logout");
 
         Intent intent = new Intent(this,LoginActivity.class);

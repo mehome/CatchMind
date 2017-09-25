@@ -76,6 +76,8 @@ public class ChatService extends Service {
 
         connectable = true;
 
+        mPref = getSharedPreferences("login",MODE_PRIVATE);
+        editor = mPref.edit();
 
         handler = new Handler(){
             @Override
@@ -115,6 +117,9 @@ public class ChatService extends Service {
 //                e.printStackTrace();
 //            }
 //        }
+
+        editor.putBoolean("SA",true);
+        editor.commit();
 
         db = new MyDatabaseOpenHelper(this,"catchMind",null,1);
 
@@ -559,10 +564,12 @@ public class ChatService extends Service {
 
         String dstAddress;
         int dstPort;
+        SharedPreferences tPref;
 
         public ConnectThread(){
             this.dstAddress = "115.71.233.144";
             this.dstPort = 5000;
+            this.tPref = getSharedPreferences("login",MODE_PRIVATE);
 
             Log.d("serviceConnectThread생성자",this.dstAddress+"##"+this.dstPort+"##"+userId);
         }
@@ -595,9 +602,12 @@ public class ChatService extends Service {
 //                Intent serviceIntent = new Intent(getApplicationContext(),ChatService.class);
 //                startService(serviceIntent);
 
+                if(tPref.getBoolean("SA",false)) {
 
-                ConnectThread ct = new ConnectThread();
-                ct.start();
+                    ConnectThread ct = new ConnectThread();
+                    ct.start();
+
+                }
 
                 e.printStackTrace();
                 return;
@@ -990,6 +1000,10 @@ public class ChatService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        editor.putBoolean("SA",false);
+        editor.commit();
+
         Log.d("서비스종료",userId);
         Toast.makeText(this,"서비스종료!!!",Toast.LENGTH_SHORT).show();
     }

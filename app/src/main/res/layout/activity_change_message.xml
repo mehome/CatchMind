@@ -6,7 +6,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="메세지 변경"
+        android:text="상태 메세지 변경"
         android:textSize="20sp"
         android:gravity="center"
         android:layout_weight="1"/>

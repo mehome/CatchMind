@@ -417,7 +417,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 //                    dialog = ProgressDialog.show(this, "", "Uploading file...", true);
 
-
                     Bitmap bitmap = BitmapFactory.decodeFile(imgpath);
 
                     Mat matInput = new Mat (bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC1);
