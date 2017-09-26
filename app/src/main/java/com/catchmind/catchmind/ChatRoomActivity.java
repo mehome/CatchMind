@@ -483,8 +483,16 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
                 try {
 
-                    String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    String imgpath = ex_storage + "/tmp.png";
+//                    String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
+//                    String imgpath = ex_storage + "/tmp.png";
+
+
+                    String imgpath = data.getExtras().getString("CustomPath");
+
+                    if(imgpath.equals("none")) {
+                        Toast.makeText(this,"사진촬영 실패",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     Log.d("이미지경로",imgpath);
 
@@ -516,6 +524,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                 }catch(Exception e){
                     e.printStackTrace();
                 }
+
             }
         }
     }
@@ -1071,7 +1080,9 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/tmp.png";
 
         Bitmap b= BitmapFactory.decodeFile(sourceFileUri);
-        Bitmap out = Bitmap.createScaledBitmap(b, 400, 400, false);
+
+        Log.d("뭘기대",b.getWidth()+"###"+b.getHeight());
+       Bitmap out = Bitmap.createScaledBitmap(b, 400, 400, false);
 
 
         File sourceFile = new File(path);
@@ -1286,17 +1297,22 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
     public void doTakePhotoAction(){
 
-        Intent intent = new Intent (MediaStore.ACTION_IMAGE_CAPTURE);
+//        Intent intent = new Intent (MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//        String url = "tmp" + ".png";
+//
+//        mImageCaptureUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName()+".provider", new File(Environment.getExternalStorageDirectory(), url));
+//
+//        Log.d("사진_doTakePhoto", Environment.getExternalStorageState().toString());
+//        Log.d("사진_doTakePhoto", mImageCaptureUri.toString());
+//
+//
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+//        startActivityForResult(intent, PICK_FROM_CAMERA);
 
-        String url = "tmp" + ".png";
-//        mImageCaptureUri = Uri.fromFile ( new File(Environment.getExternalStorageDirectory(), url));
-        mImageCaptureUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName()+".provider", new File(Environment.getExternalStorageDirectory(), url));
 
-        Log.d("사진_doTakePhoto", Environment.getExternalStorageState().toString());
-        Log.d("사진_doTakePhoto", mImageCaptureUri.toString());
+        Intent intent = new Intent (this, CustomCameraActivity.class);
 
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         startActivityForResult(intent, PICK_FROM_CAMERA);
 
     }

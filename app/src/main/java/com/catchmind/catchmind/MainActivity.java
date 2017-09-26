@@ -381,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
                 Intent intentEdit = new Intent(this,EditChatRoomActivity.class);
                 startActivityForResult(intentEdit,EditChatRoom);
+
                 break;
 
 
