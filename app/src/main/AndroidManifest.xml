@@ -68,6 +68,8 @@
         <activity android:name=".CustomCameraActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ImageEnlargeActivity"
+            android:screenOrientation="portrait"/>
 
 
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ColorPickerActivity"/>

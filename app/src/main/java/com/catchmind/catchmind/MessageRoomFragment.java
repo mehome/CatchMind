@@ -32,6 +32,8 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
     String friendId;
     int no;
     public MyDatabaseOpenHelper db;
+    ListView lv;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,15 +59,19 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
 //            Date recvTime = new Date(cursor.getLong(4));
 //            String time = sdfNow.format(recvTime);
+
+
             ChatMessageItem addItem = new ChatMessageItem(cursor.getInt(5),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(3),cursor.getLong(4));
             ListData.add(addItem);
 
             Log.d("커서야ChatMessageItem",cursor.getString(0)+"#####"+cursor.getString(1)+"#####"+cursor.getString(2)+"#####"+cursor.getString(3)+"#####"+cursor.getString(4)+"#####"+cursor.getString(5)+"#####"+cursor.getString(6)+"#####"+cursor.getString(7)+"#####"+cursor.getString(8));
+
+
         }
 
-        ListView lv = (ListView) rootView.findViewById(R.id.messageList);
+        lv = (ListView) rootView.findViewById(R.id.messageList);
 
-        chatListAdapter = new ChatMessageAdapter(getActivity().getApplicationContext(),ListData,userId,no,friendId);
+        chatListAdapter = new ChatMessageAdapter(getActivity(),ListData,userId,no,friendId);
 
         lv.setAdapter(chatListAdapter);
 
@@ -74,6 +80,8 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         return rootView;
 
     }
+
+
 
     @Override
     public void passData(String friendId,String nickname, String profile,String content,long now,int type) {
@@ -111,6 +119,9 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
 
     }
 
+
+
+
     @Override
     public void alertChange() {
         Log.d("MessageRoomF","alertChange");
@@ -125,5 +136,17 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         chatListAdapter.no = sNo;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        lv.setSelection(ListData.size()-1);
 
+    }
+
+
+    @Override
+    public void deleteMessage(int position) {
+        chatListAdapter.deleteMessage(position);
+        chatListAdapter.notifyDataSetChanged();
+    }
 }

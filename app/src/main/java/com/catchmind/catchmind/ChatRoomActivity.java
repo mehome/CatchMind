@@ -121,6 +121,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
     public static final int MakeGroupActivity = 6839;
 
+    public static final int DeleteImage = 3102;
+
     MemberListAdapter memberListAdapter;
     ArrayList<MemberListItem> ListData;
 
@@ -525,7 +527,15 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     e.printStackTrace();
                 }
 
+            }else if(requestCode == DeleteImage){
+
+
+                int position = data.getExtras().getInt("position");
+                fragmentCommunicator.deleteMessage(position);
+
+
             }
+
         }
     }
 
@@ -633,6 +643,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         void passData(String friendId, String nickname, String profile, String content, long time,int type);
         void alertChange();
         void changeNo(int sNo);
+        void deleteMessage(int position);
+
     }
 
     public interface DrawCommunicator {
@@ -1082,7 +1094,10 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         Bitmap b= BitmapFactory.decodeFile(sourceFileUri);
 
         Log.d("뭘기대",b.getWidth()+"###"+b.getHeight());
-       Bitmap out = Bitmap.createScaledBitmap(b, 400, 400, false);
+
+        float height = 400 * (float)b.getHeight() /  (float)b.getWidth();
+
+        Bitmap out = Bitmap.createScaledBitmap(b, 400, (int)height, false);
 
 
         File sourceFile = new File(path);

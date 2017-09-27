@@ -1062,6 +1062,36 @@ public class MyDatabaseOpenHelper extends SQLiteOpenHelper
 
 
 
+    public void deleteMessageData(int no, String friendId, long time){
+
+
+        dbw.beginTransaction();
+        String sql;
+        if(no ==0) {
+            sql = "DELETE FROM messageData_"+mPref.getString("userId","noId")+" WHERE no='0' AND friendId='"+friendId+"' AND time = '"+time+"'";
+        }else{
+            sql = "DELETE FROM messageData_"+mPref.getString("userId","noId")+" WHERE no='"+no+"' AND time = '"+time+"'";
+        }
+        Log.d("deleteMessageData안time",sql);
+        try
+        {
+            dbw.execSQL(sql);
+            dbw.setTransactionSuccessful();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            dbw.endTransaction();
+        }
+
+
+    }
+
+
+
     public void deleteChatFriend(int no, String friendId){
 
 

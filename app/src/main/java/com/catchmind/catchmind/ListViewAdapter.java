@@ -92,6 +92,7 @@ public class ListViewAdapter extends BaseAdapter {
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
+
             convertView = this.inflater.inflate(R.layout.listview_item, parent, false);
 
 
@@ -107,6 +108,7 @@ public class ListViewAdapter extends BaseAdapter {
             convertView.setTag(viewHolder);
 
         }else{
+
             viewHolder = (nameViewHolder) convertView.getTag();
 
         }

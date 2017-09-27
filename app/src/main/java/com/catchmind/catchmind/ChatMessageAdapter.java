@@ -1,7 +1,11 @@
 package com.catchmind.catchmind;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +42,11 @@ public class ChatMessageAdapter extends BaseAdapter {
     public int no;
     public SimpleDateFormat sdfNow ;
     public SimpleDateFormat sdfDate ;
+    public int px;
+
+    public static final int DeleteImage = 3102;
+
+
     // ListViewAdapter의 생성자
     public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no, String friendId) {
         this.mContext = context;
@@ -46,10 +58,16 @@ public class ChatMessageAdapter extends BaseAdapter {
         this.sdfDate = new SimpleDateFormat("yyyy년 MM월 dd일 E요일");
         this.zeroFriendId = friendId;
         db = new MyDatabaseOpenHelper(mContext,"catchMind",null,1);
+        px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,150,mContext.getResources().getDisplayMetrics());
     }
 
     public void setChatRoomList(ArrayList<ChatMessageItem> ListData) {
         this.chatMessageList = ListData;
+    }
+
+
+    public void deleteMessage(int position){
+        this.chatMessageList.remove(position);
     }
 
     // Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현
@@ -61,7 +79,7 @@ public class ChatMessageAdapter extends BaseAdapter {
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         MessageViewHolder viewHolder;
         String friendId = "";
@@ -96,6 +114,11 @@ public class ChatMessageAdapter extends BaseAdapter {
         }else{
             viewHolder = (MessageViewHolder) convertView.getTag();
         }
+
+
+        viewHolder.sendImage = null;
+        viewHolder.sendImage = (ImageView) convertView.findViewById(R.id.sendImageView);
+
 
 //        if(chatMessageList.get(position).Type == 0) {
 //
@@ -294,7 +317,9 @@ public class ChatMessageAdapter extends BaseAdapter {
 
             friendId = chatMessageList.get(position).getUserId();
             profile = chatMessageList.get(position).getProfile();
+
             try {
+
                 Glide.with(mContext).load("http://vnschat.vps.phps.kr/profile_image/" + friendId + ".png")
                         .error(R.drawable.default_profile_image)
                         .signature(new StringSignature(profile))
@@ -304,6 +329,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                         .error(R.drawable.default_profile_image)
                         .signature(new StringSignature(chatMessageList.get(position).getContent()))
                         .into(viewHolder.sendImage);
+
             }catch (NullPointerException e){
                 Log.d("널널",friendId);
             }
@@ -366,10 +392,52 @@ public class ChatMessageAdapter extends BaseAdapter {
 //                    .signature(new StringSignature(profile))
 //                    .into(viewHolder.profileImage);
 
-            Glide.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent())
-                    .error(R.drawable.default_profile_image)
-                    .signature(new StringSignature(chatMessageList.get(position).getContent()))
-                    .into(viewHolder.sendImage);
+
+
+//            Glide.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent())
+//                    .error(R.drawable.default_profile_image)
+//                    .signature(new StringSignature(chatMessageList.get(position).getContent()))
+//                    .into(viewHolder.sendImage);
+
+//            Glide.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent())
+//                    .error(R.drawable.default_profile_image)
+//                    .signature(new StringSignature(chatMessageList.get(position).getContent()))
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .into(viewHolder.sendImage);
+
+
+            Picasso.with(mContext).load("http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(position).getContent()).into(viewHolder.sendImage);
+
+
+            viewHolder.sendImage.setTag(R.id.sendImage,position);
+            viewHolder.sendImage.setTag(R.id.userId,friendId);
+
+            final long msgTime = chatMessageList.get(position).getTime();
+
+            viewHolder.sendImage.setTag(R.id.time,msgTime);
+
+
+            viewHolder.sendImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int pos = (int)v.getTag(R.id.sendImage);
+                    String friendId = (String)v.getTag(R.id.userId);
+                    long time = (long)v.getTag(R.id.time);
+
+                    Intent IEintent = new Intent(mContext,ImageEnlargeActivity.class);
+                    String IV = "http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(pos).getContent();
+                    IEintent.putExtra("IV",IV);
+                    IEintent.putExtra("no",no);
+                    IEintent.putExtra("friendId",friendId);
+                    IEintent.putExtra("time",time);
+                    IEintent.putExtra("position",pos);
+                    ((Activity)mContext).startActivityForResult(IEintent,DeleteImage);
+
+
+                }
+            });
+
 
             int tmpUnread = db.getUnReadWithLeft(myId,zeroFriendId,no,now) ;
             if(tmpUnread <=0) {
