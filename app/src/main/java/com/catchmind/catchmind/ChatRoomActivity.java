@@ -123,6 +123,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
     public static final int DeleteImage = 3102;
 
+    public static final int DeleteMessage = 2013;
+
     MemberListAdapter memberListAdapter;
     ArrayList<MemberListItem> ListData;
 
@@ -337,6 +339,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                     long time = msg.getData().getLong("time");
                     fragmentCommunicator.passData("내아이디","내닉네임","내프로필", content, time, 52);
 
+                }else if(msg.what == 365){
+                    fragmentCommunicator.bottomSelect();
                 }
 
 
@@ -504,6 +508,8 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
                     ist.join();
 
+                    SetBottomThread sbt = new SetBottomThread();
+                    sbt.start();
 
                 }catch(Exception e){
                     e.printStackTrace();
@@ -522,12 +528,24 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
                     ist.join();
 
+                    SetBottomThread sbt = new SetBottomThread();
+                    sbt.start();
+
+
 
                 }catch(Exception e){
                     e.printStackTrace();
                 }
 
             }else if(requestCode == DeleteImage){
+
+
+                int position = data.getExtras().getInt("position");
+                fragmentCommunicator.deleteMessage(position);
+
+
+
+            }else if(requestCode == DeleteMessage){
 
 
                 int position = data.getExtras().getInt("position");
@@ -644,6 +662,7 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         void alertChange();
         void changeNo(int sNo);
         void deleteMessage(int position);
+        void bottomSelect();
 
     }
 
@@ -1351,5 +1370,37 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
         return cursor.getString(column_index);
     }
 
+
+
+
+    public class SetBottomThread extends Thread {
+
+        public String filePath;
+
+        public SetBottomThread (){
+
+        }
+
+        @Override
+        public void run() {
+
+            try {
+
+                Thread.sleep(700);
+
+                Message message= Message.obtain();
+                message.what = 365;
+
+                handler.sendMessage(message);
+
+
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
 
 }

@@ -35,6 +35,7 @@ public class ImageEnlargeActivity extends Activity {
 
     public ImageView IV;
     public LinearLayout IE_ButtonSet;
+    public LinearLayout BackBtnContainer;
     public Button Back_Btn;
     public RelativeLayout IE_Whole;
     private AQuery aq;
@@ -57,6 +58,7 @@ public class ImageEnlargeActivity extends Activity {
         setContentView(R.layout.activity_image_enlarge);
         IV = (ImageView)findViewById(R.id.ImageEnlargeIV);
         IE_ButtonSet = (LinearLayout)findViewById(R.id.IE_ButtonSet);
+        BackBtnContainer = (LinearLayout)findViewById(R.id.Back_Btn_Container);
         Back_Btn = (Button)findViewById(R.id.IE_back_btn);
         IE_Whole = (RelativeLayout)findViewById(R.id.IE_whole);
 
@@ -81,10 +83,10 @@ public class ImageEnlargeActivity extends Activity {
             public void onClick(View v) {
                 if(IE_ButtonSet.getVisibility() == View.GONE) {
                     IE_ButtonSet.setVisibility(View.VISIBLE);
-                    Back_Btn.setVisibility(View.VISIBLE);
+                    BackBtnContainer.setVisibility(View.VISIBLE);
                 }else{
                     IE_ButtonSet.setVisibility(View.GONE);
-                    Back_Btn.setVisibility(View.GONE);
+                    BackBtnContainer.setVisibility(View.GONE);
                 }
 
             }
@@ -152,15 +154,17 @@ public class ImageEnlargeActivity extends Activity {
 
     public void IE_finish(View v){
 
+
+
         finish();
+
+
 
     }
 
 
 
     public void IE_delete(View v){
-
-
 
 
 

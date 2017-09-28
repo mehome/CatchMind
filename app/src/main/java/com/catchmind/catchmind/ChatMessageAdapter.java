@@ -45,6 +45,7 @@ public class ChatMessageAdapter extends BaseAdapter {
     public int px;
 
     public static final int DeleteImage = 3102;
+    public static final int DeleteMessage = 2013;
 
 
     // ListViewAdapter의 생성자
@@ -86,6 +87,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         String nickname = "";
         String profile = "";
 
+        long msgTime = chatMessageList.get(position).getTime();
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
@@ -412,7 +414,7 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.sendImage.setTag(R.id.sendImage,position);
             viewHolder.sendImage.setTag(R.id.userId,friendId);
 
-            final long msgTime = chatMessageList.get(position).getTime();
+
 
             viewHolder.sendImage.setTag(R.id.time,msgTime);
 
@@ -420,6 +422,7 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.sendImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
 
                     int pos = (int)v.getTag(R.id.sendImage);
                     String friendId = (String)v.getTag(R.id.userId);
@@ -438,6 +441,26 @@ public class ChatMessageAdapter extends BaseAdapter {
                 }
             });
 
+            viewHolder.sendImage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int pos = (int)v.getTag(R.id.sendImage);
+                    String friendId = (String)v.getTag(R.id.userId);
+                    long time = (long)v.getTag(R.id.time);
+
+                    Intent intent = new Intent(mContext,MessageDeleteCopy.class);
+
+                    intent.putExtra("no",no);
+                    intent.putExtra("friendId",friendId);
+                    intent.putExtra("time",time);
+                    intent.putExtra("position",pos);
+
+                    ((Activity)mContext).startActivityForResult(intent,DeleteMessage);
+                    return true;
+                }
+            });
+
 
             int tmpUnread = db.getUnReadWithLeft(myId,zeroFriendId,no,now) ;
             if(tmpUnread <=0) {
@@ -449,6 +472,31 @@ public class ChatMessageAdapter extends BaseAdapter {
 
         }
 
+
+        convertView.setTag(R.id.index, position);
+        convertView.setTag(R.id.userId, friendId);
+        convertView.setTag(R.id.time, msgTime);
+
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                int pos = (int) v.getTag(R.id.index);
+                String friendId = (String)v.getTag(R.id.userId);
+                long time = (long)v.getTag(R.id.time);
+
+                Intent intent = new Intent(mContext, MessageDeleteCopy.class );
+
+                intent.putExtra("no",no);
+                intent.putExtra("friendId",friendId);
+                intent.putExtra("time",time);
+                intent.putExtra("position",pos);
+
+                ((Activity)mContext).startActivityForResult(intent,DeleteMessage);
+                return true;
+            }
+        });
 
         return convertView;
 

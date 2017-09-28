@@ -74,6 +74,8 @@
 
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ColorPickerActivity"/>
 
+        <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".MessageDeleteCopy"/>
+
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ChangeMessage"/>
 
         <activity android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:screenOrientation="portrait" android:name=".ChangeNickname"/>

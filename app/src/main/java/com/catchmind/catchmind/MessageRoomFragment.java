@@ -95,11 +95,13 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
             ChatMessageItem addItem = new ChatMessageItem(1, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
+            lv.setSelection(ListData.size()-1);
 
         }else if(type ==2){
             ChatMessageItem addItem = new ChatMessageItem(2, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
+            lv.setSelection(ListData.size()-1);
         }else if(type == 3){
             ChatMessageItem addItem = new ChatMessageItem(3, friendId, nickname, profile, content, now);
             ListData.add(addItem);
@@ -109,10 +111,14 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
             ChatMessageItem addItem = new ChatMessageItem(51, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
+            lv.setSelection(ListData.size()-1);
+
         }else if(type == 52){
             ChatMessageItem addItem = new ChatMessageItem(52, friendId, nickname, profile, content, now);
             ListData.add(addItem);
             chatListAdapter.notifyDataSetChanged();
+            lv.setSelection(ListData.size()-1);
+
         }
 
 
@@ -136,12 +142,7 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         chatListAdapter.no = sNo;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        lv.setSelection(ListData.size()-1);
 
-    }
 
 
     @Override
@@ -149,4 +150,14 @@ public class MessageRoomFragment extends Fragment implements ChatRoomActivity.Fr
         chatListAdapter.deleteMessage(position);
         chatListAdapter.notifyDataSetChanged();
     }
+
+
+    @Override
+    public void bottomSelect() {
+
+        lv.setSelection(ListData.size()-1);
+
+    }
+
+
 }
