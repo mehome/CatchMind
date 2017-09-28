@@ -1582,6 +1582,7 @@ public class ChatService extends Service {
                 }
             }else if(sKind == 10){
 
+
                 if(boundCheck) {
                     if(sNo == 0 ) {
                         if(boundedNo == 0 && boundedFriendId.equals(sFriendId)) {

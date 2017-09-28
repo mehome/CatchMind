@@ -48,6 +48,7 @@ public class ChatMessageAdapter extends BaseAdapter {
     public static final int DeleteMessage = 2013;
 
 
+
     // ListViewAdapter의 생성자
     public ChatMessageAdapter(Context context,ArrayList<ChatMessageItem> ListData,String myId ,int no, String friendId) {
         this.mContext = context;
@@ -455,6 +456,8 @@ public class ChatMessageAdapter extends BaseAdapter {
                     intent.putExtra("friendId",friendId);
                     intent.putExtra("time",time);
                     intent.putExtra("position",pos);
+                    intent.putExtra("subType","image");
+
 
                     ((Activity)mContext).startActivityForResult(intent,DeleteMessage);
                     return true;
@@ -492,6 +495,17 @@ public class ChatMessageAdapter extends BaseAdapter {
                 intent.putExtra("friendId",friendId);
                 intent.putExtra("time",time);
                 intent.putExtra("position",pos);
+
+                if(chatMessageList.get(pos).Type == 51 || chatMessageList.get(pos).Type == 52 || chatMessageList.get(pos).Type == 3){
+
+                    intent.putExtra("subType","image");
+
+                }else{
+
+                    intent.putExtra("subType","text");
+                    intent.putExtra("content",chatMessageList.get(pos).getContent());
+
+                }
 
                 ((Activity)mContext).startActivityForResult(intent,DeleteMessage);
                 return true;

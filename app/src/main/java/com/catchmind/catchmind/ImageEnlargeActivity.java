@@ -1,12 +1,15 @@
 package com.catchmind.catchmind;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -168,15 +171,51 @@ public class ImageEnlargeActivity extends Activity {
 
 
 
-        db.deleteMessageData(no,friendId,time);
+        DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener(){
 
-        Intent resultIntent = new Intent();
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                db.deleteMessageData(no,friendId,time);
 
-        resultIntent.putExtra("position" , position);
+                Intent resultIntent = new Intent();
 
-        setResult(RESULT_OK,resultIntent);
+                resultIntent.putExtra("position" , position);
 
-        finish();
+                setResult(RESULT_OK,resultIntent);
+
+                finish();
+            }
+
+        };
+
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+            @Override public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+
+        };
+
+
+
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage("선택한 메시지를 삭제하시겠습니까 \n \n 삭제한 메시지는 내 채팅방에서만 적용되며 상대방의 채팅방에서는 삭제되지 않습니다.")
+                .setPositiveButton("확인", deleteListener)
+                .setNegativeButton("취소", cancelListener)
+                .create();
+
+
+        dialog.show();
+
+
+        Button deleteBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        deleteBtn.setTextColor(Color.BLACK);
+
+        Button cancelBtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        cancelBtn.setTextColor(Color.BLACK);
+
 
 
 

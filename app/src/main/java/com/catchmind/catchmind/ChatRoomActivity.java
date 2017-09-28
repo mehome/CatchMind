@@ -1,6 +1,8 @@
 package com.catchmind.catchmind;
 
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -119,11 +121,15 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
     public ImageButton alarmActive;
     DrawerLayout drawer;
 
+    public int delPosition;
+
     public static final int MakeGroupActivity = 6839;
 
     public static final int DeleteImage = 3102;
 
     public static final int DeleteMessage = 2013;
+
+
 
     MemberListAdapter memberListAdapter;
     ArrayList<MemberListItem> ListData;
@@ -540,6 +546,9 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             }else if(requestCode == DeleteImage){
 
 
+
+
+
                 int position = data.getExtras().getInt("position");
                 fragmentCommunicator.deleteMessage(position);
 
@@ -548,9 +557,64 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
             }else if(requestCode == DeleteMessage){
 
 
-                int position = data.getExtras().getInt("position");
-                fragmentCommunicator.deleteMessage(position);
+                delPosition = data.getExtras().getInt("position");
+                String type = data.getExtras().getString("type");
 
+                if(type.equals("del")) {
+
+                    DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            fragmentCommunicator.deleteMessage(delPosition);
+                        }
+
+                    };
+
+
+                    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+
+                    };
+
+
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setMessage("선택한 메시지를 삭제하시겠습니까 \n \n 삭제한 메시지는 내 채팅방에서만 적용되며 상대방의 채팅방에서는 삭제되지 않습니다.")
+                            .setPositiveButton("확인", deleteListener)
+                            .setNegativeButton("취소", cancelListener)
+                            .create();
+
+
+                    dialog.show();
+
+
+                    Button deleteBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    deleteBtn.setTextColor(Color.BLACK);
+
+                    Button cancelBtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    cancelBtn.setTextColor(Color.BLACK);
+
+
+                }else if(type.equals("copy")){
+
+
+                    String subType = data.getExtras().getString("subType");
+
+                    if(subType.equals("text")) {
+
+                        String content = data.getExtras().getString("content");
+
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("catchMind", content);
+                        clipboard.setPrimaryClip(clip);
+                    }
+
+
+                }
 
             }
 
@@ -1375,7 +1439,6 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
     public class SetBottomThread extends Thread {
 
-        public String filePath;
 
         public SetBottomThread (){
 
