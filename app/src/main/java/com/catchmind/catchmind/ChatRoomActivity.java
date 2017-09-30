@@ -51,6 +51,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,6 +80,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -611,6 +614,57 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText("catchMind", content);
                         clipboard.setPrimaryClip(clip);
+                    }
+
+
+                }else if(type.equals("share")){
+
+
+
+                    String subType = data.getExtras().getString("subType");
+
+                    if(subType.equals("text")) {
+
+                        String content = data.getExtras().getString("content");
+
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, content);
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
+
+                    }else if(subType.equals("image")){
+
+                        String content = data.getExtras().getString("content");
+
+                        ImageShareThread ist = new ImageShareThread(content,this);
+                        ist.start();
+
+
+//                        try {
+//
+//                            String content = data.getExtras().getString("content");
+//
+//                            Bitmap bitmap = Glide.
+//                                    with(this).
+//                                    load(content).
+//                                    asBitmap().
+//                                    into(-1, -1).
+//                                    get();
+//
+//                            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap,"title", null);
+//                            Uri bitmapUri = Uri.parse(bitmapPath);
+//
+//                            Intent intent = new Intent(Intent.ACTION_SEND);
+//                            intent.setType("image/*");
+//                            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+//                            startActivity(Intent.createChooser(intent, "Share"));
+//
+//                        }catch (InterruptedException e){
+//                            e.printStackTrace();
+//                        }catch (ExecutionException e){
+//                            e.printStackTrace();
+//                        }
                     }
 
 
@@ -1465,5 +1519,55 @@ public class ChatRoomActivity extends BaseActivity implements DrawLine.sendToAct
 
 
     }
+
+
+
+
+
+    public class ImageShareThread extends Thread {
+
+        String sContent;
+        Context mContext;
+
+        public ImageShareThread (String content,Context context) {
+
+            sContent = content;
+            mContext = context;
+
+        }
+
+        @Override
+        public void run() {
+
+            try {
+
+
+                Bitmap bitmap = Glide.
+                        with(mContext).
+                        load(sContent).
+                        asBitmap().
+                        into(-1, -1).
+                        get();
+
+                String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap,"title", null);
+                Uri bitmapUri = Uri.parse(bitmapPath);
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+                startActivity(Intent.createChooser(intent, "Share"));
+
+
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }catch (ExecutionException e){
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
+
 
 }

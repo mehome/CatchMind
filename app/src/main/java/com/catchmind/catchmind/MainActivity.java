@@ -4,12 +4,14 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,6 +19,7 @@ import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -37,7 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements TabFragment1.sendToActivity {
+public class MainActivity extends AppCompatActivity implements TabFragment1.sendToActivity{
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -54,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
     public static final int MakeGroupActivity = 5409;
     public static final int EditChatRoom = 5828;
     public NetworkChangeReceiver mNCR;
+
+    public int dNo;
+    public String dFriendId;
+
     BroadcastReceiver NetworkChangeUpdater;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,7 +266,56 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         fragmentCommunicator.startChatRoomActivity(0,friendId,nickname);
     }
 
+    public void sendToActivity2(int no,String friendId) {
 
+        dNo = no;
+        dFriendId = friendId;
+
+        DialogInterface.OnClickListener exitListener = new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                try {
+                    ExitThread et = new ExitThread(dNo, dFriendId,true);
+                    et.start();
+                    et.join();
+                    fragmentCommunicator.changeRoomListFC();
+
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+
+        };
+
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+            @Override public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+
+        };
+
+
+
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage("채팅방에서 나가기를 하면 대화 내용 및 채팅목록에서 모두 삭제됩니다.\n채팅방에서 나가시겠습니까?")
+                .setPositiveButton("확인", exitListener)
+                .setNegativeButton("취소", cancelListener)
+                .create();
+
+        dialog.show();
+
+        Button exitBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        exitBtn.setTextColor(Color.BLACK);
+
+        Button cancelBtn = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        cancelBtn.setTextColor(Color.BLACK);
+
+
+    }
 
     private ServiceConnection mConnection = new ServiceConnection() {
         // Called when the connection with the service is established
@@ -451,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
 
                             String friendIdExit = jsonObject.getString("FIE");
 
-                            ExitThread et = new ExitThread(no,friendIdExit);
+                            ExitThread et = new ExitThread(no,friendIdExit,false);
                             et.start();
 
 
@@ -482,16 +539,26 @@ public class MainActivity extends AppCompatActivity implements TabFragment1.send
         String content;
         long now;
         String friendIdExit;
+        boolean deleteDB;
 
-        public ExitThread(int No,String FriendIdExit){
+        public ExitThread(int No,String FriendIdExit,boolean DeleteDB){
             this.no = No;
             this.now = System.currentTimeMillis();
             this.content = nickname + "님이 나갔습니다";
             this.friendIdExit = FriendIdExit;
+            this.deleteDB = DeleteDB;
         }
 
         @Override
         public void run() {
+
+            if(deleteDB){
+
+                db.deleteRoom(no,friendIdExit);
+                db.deleteChatFriendAll(no,friendIdExit);
+                db.deleteMessageData(no,friendIdExit);
+
+            }
 
             mService.sendExit(no,friendIdExit,content,now);
         }

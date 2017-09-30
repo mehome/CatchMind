@@ -25,6 +25,7 @@ public class MessageDeleteCopy extends Activity {
 
     TextView deleteTV;
     TextView copyTV;
+    TextView shareTV;
 
     String subType;
     String content;
@@ -40,6 +41,9 @@ public class MessageDeleteCopy extends Activity {
 
         deleteTV = (TextView)findViewById(R.id.MessageDC_DeleteTV);
         copyTV = (TextView)findViewById(R.id.MessageDC_CopyTV);
+        shareTV = (TextView)findViewById(R.id.MessageDC_ShareTV);
+
+
 
         WholeMDC = (LinearLayout)findViewById(R.id.wholeMDC);
 
@@ -59,7 +63,7 @@ public class MessageDeleteCopy extends Activity {
         if(!subType.equals("text")){
 
             copyTV.setVisibility(View.GONE);
-            WholeMDC.getLayoutParams().height = (int) (100 * Resources.getSystem().getDisplayMetrics().density);
+            WholeMDC.getLayoutParams().height = (int) (150 * Resources.getSystem().getDisplayMetrics().density);
 
         }
 
@@ -100,6 +104,27 @@ public class MessageDeleteCopy extends Activity {
                 setResult(RESULT_OK,resultIntent);
 
                 finish();
+
+            }
+        });
+
+
+        shareTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Intent resultIntent = new Intent();
+
+                resultIntent.putExtra("position",position);
+                resultIntent.putExtra("type","share");
+                resultIntent.putExtra("subType",subType);
+                resultIntent.putExtra("content",content);
+
+                setResult(RESULT_OK,resultIntent);
+
+                finish();
+
 
             }
         });

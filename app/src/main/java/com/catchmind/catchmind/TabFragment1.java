@@ -40,7 +40,6 @@ public class TabFragment1 extends Fragment {
     public static final int sendVideoCall = 235711;
     ListView lv;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -194,4 +193,6 @@ public class TabFragment1 extends Fragment {
             throw new ClassCastException(MA.toString() + " must implement onSomeEventListener");
         }
     }
+
+
 }

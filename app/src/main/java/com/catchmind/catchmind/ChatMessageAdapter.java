@@ -457,7 +457,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                     intent.putExtra("time",time);
                     intent.putExtra("position",pos);
                     intent.putExtra("subType","image");
-
+                    intent.putExtra("content","http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(pos).getContent());
 
                     ((Activity)mContext).startActivityForResult(intent,DeleteMessage);
                     return true;
@@ -499,6 +499,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 if(chatMessageList.get(pos).Type == 51 || chatMessageList.get(pos).Type == 52 || chatMessageList.get(pos).Type == 3){
 
                     intent.putExtra("subType","image");
+                    intent.putExtra("content","http://vnschat.vps.phps.kr/sendImage/"+chatMessageList.get(pos).getContent());
 
                 }else{
 

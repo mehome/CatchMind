@@ -373,7 +373,7 @@ public class ChatService extends Service {
     }
 
     public void sendExit(int no,String friendId, String content, long time){
-        if (no < 0){
+        if (no <= 0){
             return;
         }
 

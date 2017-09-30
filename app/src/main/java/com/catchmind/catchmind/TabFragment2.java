@@ -1,5 +1,6 @@
 package com.catchmind.catchmind;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -29,10 +30,14 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
     String myId;
     String myNickname;
 
+    MainActivity mainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.tab_fragment_2, container, false);
+
+        mainActivity = (MainActivity)getActivity();
 
         myId = getArguments().getString("userId");
 //        Log.d("진짜로?",myId);
@@ -55,7 +60,9 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
 
             ChatRoomItem addItem = new ChatRoomItem(cursor.getInt(0),cursor.getString(1),cursor.getLong(7));
             if(ListData.size() == 0) {
+
                 ListData.add(addItem);
+
             }else{
 
                 int addPosition = 0;
@@ -66,6 +73,7 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
                     }
                 }
                 ListData.add(addPosition,addItem);
+
             }
 
             Log.d("커서야ChatRoomItem",cursor.getString(0)+"#####"+cursor.getString(1));
@@ -93,6 +101,19 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
             }
         });
 
+
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String friendId = (String) view.getTag(R.id.userId);
+                int no = (int) view.getTag(R.id.no);
+
+                mainActivity.sendToActivity2(no,friendId);
+
+                return false;
+            }
+        });
 
         //test
 
@@ -181,4 +202,12 @@ public class TabFragment2 extends Fragment implements MainActivity.FragmentCommu
         changeRoomListFC();
 //        myListAdapter.notifyDataSetChanged();
     }
+
+
+
+
+
+
+
+
 }

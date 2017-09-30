@@ -103,6 +103,7 @@ public class ImageEnlargeActivity extends Activity {
 
     }
 
+
     public void SaveImage(View v){
 
 
@@ -130,6 +131,8 @@ public class ImageEnlargeActivity extends Activity {
 
 
     public void ShareImage(View v){
+
+
 
         IV.buildDrawingCache();
         Bitmap icon = IV.getDrawingCache();
